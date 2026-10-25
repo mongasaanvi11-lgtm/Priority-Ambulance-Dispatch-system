@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .config import DEFAULT_DB_PATH, EVENT_TYPE_AMBULANCE_DISPATCHED, EVENT_TYPE_INCIDENT_CREATED
+from .config import DEFAULT_DB_PATH
 from .constants import AmbulanceStatus, IncidentStatus, TriageLevel
 
 
