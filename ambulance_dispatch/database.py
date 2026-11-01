@@ -17,6 +17,12 @@ EVENT_TYPE_INCIDENT_CREATED = 'INCIDENT_CREATED'
 EVENT_TYPE_AMBULANCE_DISPATCHED = 'AMBULANCE_DISPATCHED'
 
 
+# Event type constants for audit trail (fixes NameError on Streamlit Cloud)
+EVENT_TYPE_INCIDENT_CREATED = "INCIDENT_CREATED"
+EVENT_TYPE_AMBULANCE_DISPATCHED = "AMBULANCE_DISPATCHED"
+EVENT_TYPE_AMBULANCE_RELEASED = "AMBULANCE_RELEASED"
+
+
 class DatabaseError(Exception):
     """Base exception for database operations."""
     pass
