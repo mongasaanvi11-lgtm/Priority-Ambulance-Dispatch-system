@@ -474,6 +474,76 @@ elif active_tab == "🚨 Dispatcher Dashboard":
 elif active_tab == "ℹ️ System Overview & Safety":
     st.subheader("ℹ️ System Architecture & Educational Framework")
 
+    # --- INTERACTIVE FLASHCARDS SECTION ---
+    st.markdown("""
+    <style>
+    .facility-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 16px;
+        min-height: 140px;
+        color: white;
+        margin-bottom: 8px;
+    }
+    .card-icon { font-size: 1.8rem; margin-bottom: 6px; }
+    .card-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; color: #38bdf8; }
+    .card-desc { font-size: 0.85rem; color: #94a3b8; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    facilities = [
+        {
+            "icon": "🚨",
+            "title": "Stage-1 Red-Flag Triage",
+            "summary": "Deterministic safety rules for immediate life threats.",
+            "detail": "Instantly elevates critical symptoms (chest pain, shortness of breath, severe hemorrhage, loss of consciousness) to Priority 1 (RED) without waiting for statistical models."
+        },
+        {
+            "icon": "🤖",
+            "title": "AI Decision Tree Classifier",
+            "summary": "Probability weighting with clinical vitals.",
+            "detail": "Calculates calibrated probabilities p(Red), p(Yellow), and p(Green) using age, pain severity, and optional vitals (BP, SpO2, heart rate) to prevent queue starvation."
+        },
+        {
+            "icon": "📍",
+            "title": "Haversine Proximity Routing",
+            "summary": "Locates and dispatches the closest available unit.",
+            "detail": "Computes real-time great-circle distances between patient coordinates and the 5-vehicle fleet to minimize response intervals and estimate arrival times."
+        },
+        {
+            "icon": "🏥",
+            "title": "Atomic State Engine",
+            "summary": "SQLite ACID guarantees for fleet allocation.",
+            "detail": "Ensures no double-booking of ambulances or orphan dispatches through atomic transactions, status progression tracking, and an append-only audit trail."
+        },
+    ]
+
+    st.markdown("### 🌟 ResQTrack Core Facilities & Capabilities")
+    cols = st.columns(len(facilities))
+
+    if "selected_facility_card" not in st.session_state:
+        st.session_state.selected_facility_card = None
+
+    for idx, (col, item) in enumerate(zip(cols, facilities)):
+        with col:
+            st.markdown(f"""
+            <div class="facility-card">
+                <div class="card-icon">{item['icon']}</div>
+                <div class="card-title">{item['title']}</div>
+                <div class="card-desc">{item['summary']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("Explore 🔍", key=f"fac_card_{idx}", use_container_width=True):
+                st.session_state.selected_facility_card = item
+
+    if st.session_state.selected_facility_card:
+        sel = st.session_state.selected_facility_card
+        st.info(f"### {sel['icon']} {sel['title']}\n{sel['detail']}")
+
+    st.markdown("---")
+
+
     st.markdown(
         """
         ### 🎓 Academic Prototype Architecture
