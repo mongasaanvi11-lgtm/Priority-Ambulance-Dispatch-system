@@ -58,7 +58,7 @@ class TriageLevel(str, Enum):
         }
         return emojis[self.value]
 
-
+EVENT_TYPE_INCIDENT_CREATED = "INCIDENT_CREATED"
 class AmbulanceStatus(str, Enum):
     """Ambulance fleet status states."""
     AVAILABLE = "AVAILABLE"    # Ready for immediate dispatch
