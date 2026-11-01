@@ -13,6 +13,9 @@ from typing import Any, Dict, List, Optional
 from .config import DEFAULT_DB_PATH
 from .constants import AmbulanceStatus, IncidentStatus, TriageLevel
 
+EVENT_TYPE_INCIDENT_CREATED = 'INCIDENT_CREATED'
+EVENT_TYPE_AMBULANCE_DISPATCHED = 'AMBULANCE_DISPATCHED'
+
 
 class DatabaseError(Exception):
     """Base exception for database operations."""
@@ -695,3 +698,4 @@ def list_events_for_incident(
         return [dict(row) for row in cursor.fetchall()]
     finally:
         conn.close()
+
