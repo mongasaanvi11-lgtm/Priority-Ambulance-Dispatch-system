@@ -24,7 +24,7 @@ from ambulance_dispatch.constants import (
     DISCLAIMER_TEXT,
     SHORT_DISCLAIMER,
     AmbulanceStatus,
-EVENT_TYPE_INCIDENT_CREATED
+
     IncidentStatus,
     TriageLevel,
 )
