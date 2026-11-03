@@ -13,6 +13,10 @@ import streamlit as st
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
+from ambulance_dispatch.extras import (
+    apply_theme, render_hero, render_billing,
+    render_live_map, render_feature_cards,
+)
 from ambulance_dispatch.config import (
     DEFAULT_DB_PATH,
     DEMO_CENTER_LAT,
@@ -59,6 +63,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+apply_theme()
+
 # Idempotently initialize SQLite tables and demo fleet on startup
 try:
     init_db()
@@ -72,24 +78,7 @@ except Exception as e:
 # ---------------------------------------------------------
 st.error(DISCLAIMER_TEXT, icon="🚨")
 
-# Header Section
-header_col1, header_col2 = st.columns([3, 1])
-with header_col1:
-    st.title("🚑 ResQTrack: Priority Ambulance Dispatch System")
-    st.caption("Educational Demonstration Prototype — Priority Triage & Nearest-Available Dispatch")
-
-with header_col2:
-    status_label = "● System Online (Demo Mode)" if db_initialized else "▲ Database Error"
-    status_color = "#4ade80" if db_initialized else "#f87171"
-    st.markdown(
-        f"""
-        <div style="background-color: #1e293b; padding: 10px; border-radius: 8px; text-align: center; color: white;">
-            <small>Environment Status</small><br>
-            <span style="color: {status_color}; font-weight: bold;">{status_label}</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+render_hero(db_initialized)
 
 # ---------------------------------------------------------
 # Sidebar Navigation & Fleet Summary
@@ -103,6 +92,9 @@ with st.sidebar:
         [
             "📝 Patient / Bystander Intake",
             "🚨 Dispatcher Dashboard",
+            "🗺️ Live Map Tracker (Delhi)",
+            "💰 Billing Estimator",
+            "🚑 Ambulance Features",
             "ℹ️ System Overview & Safety",
         ],
         index=0,
@@ -467,6 +459,14 @@ elif active_tab == "🚨 Dispatcher Dashboard":
 
     st.dataframe(fleet_rows, use_container_width=True, hide_index=True)
 
+elif active_tab == "🗺️ Live Map Tracker (Delhi)":
+    render_live_map()
+
+elif active_tab == "💰 Billing Estimator":
+    render_billing()
+
+elif active_tab == "🚑 Ambulance Features":
+    render_feature_cards()
 
 # =========================================================
 # MODULE 3: SYSTEM ARCHITECTURE & EDUCATIONAL INFO
