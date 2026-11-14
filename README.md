@@ -34,6 +34,16 @@ The platform provides a complete digital emergency lifecycle:
 
 ---
 
+## 💳 Real Insurance & Government Scheme Empanelment (Live API & Verification)
+
+The system features an automated insurance verification engine (`src/hospital_panel_service.py` & `src/insurance_discovery_service.py`):
+* **Real-World Insurance & TPA Matching:** Cross-references patient insurance providers (Star Health, HDFC ERGO, Care, ICICI Lombard, Niva Bupa, Bajaj Allianz, Max Bupa) against hospital Third-Party Administrator (TPA) desks.
+* **Government Health Schemes:** Real-time checking for **Ayushman Bharat (PM-JAY)**, **CGHS** (Central Government Health Scheme), **ECHS** (Ex-Servicemen Contributory Health Scheme), and State Government Health Schemes (DGEHS).
+* **Live Discovery & AI Research Fallback:** Integrates live panel research APIs and Google Gemini web search grounding to dynamically discover, verify, and cache cashless empanelment status for unverified hospitals.
+* **Cashless Admission Badges:** Color-coded badges display whether a hospital supports instant cashless admission, reimbursement, or government scheme coverage.
+
+---
+
 ## 🏥 Clinical Triage Framework
 
 Triage priority is determined sequentially through deterministic WHO-IITT protocols:
