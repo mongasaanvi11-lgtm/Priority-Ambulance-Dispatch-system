@@ -20,6 +20,17 @@ The platform provides a complete digital emergency lifecycle:
 3. **Condition-Matched Hospital Discovery** (`hospitals.html`): Recommends nearest verified medical facilities ranked by specialty match (Cardiology, Trauma, OBGYN, Burn) and bed/ICU capability.
 4. **Live Smart Ambulance Dispatch & Corridor Animation** (`allocation.html`): Real-time route tracking, live speed/ETA estimation, and turn-by-turn navigation from depot to patient pickup and destination hospital.
 5. **System Standards & Bilingual Documentation** (`detail.html`): Complete transparency into AIS-125 fleet types (PTV, BLS, ALS, Mobile ICU, Cardiac, Neonatal) and emergency response reports.
+6. **ARIA 3D AI Virtual Assistant** (`assistant.js`): Intelligent procedural 3D avatar & conversational assistant providing real-time guidance, intake assistance, and triage explanations in English and Hindi.
+
+---
+
+## 🤖 ARIA (Ambulance Response Intelligent Assistant)
+
+**ARIA** is an interactive, browser-native 3D AI Virtual Assistant integrated across the AmbuPriority portal:
+* **Three.js Powered 3D Avatar:** Procedurally modeled and animated 3D character with real-time responsive states (`idle`, `greeting`, `thinking`, `responding`, `error`).
+* **Bilingual Intelligence (English & हिंदी):** Understands queries and form-filling questions in both languages, seamlessly synced with the portal's language toggle.
+* **Emergency Domain Knowledge Base:** Provides immediate answers on triage priority meanings, AIS-125 ambulance types, GPS geolocation usage, hospital capability matching, and emergency protocols (102/108/112).
+* **Zero External Dependencies:** Built with a self-contained local knowledge engine for instantaneous offline-capable client responses.
 
 ---
 
