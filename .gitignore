@@ -1,0 +1,69 @@
+# Byte-compiled / optimized / URL-encoded files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables & API keys
+.env
+*.env
+!.env.example
+
+# Logs and databases
+*.log
+*.sqlite3
+uvicorn.log
+tunnel_active.log
+tunnel_new.log
+cf_*.log
+live_cf.log
+
+# Temporary test / audit assessments
+data/assessments/*.json
+!data/assessments/.gitkeep
+
+# Executables & Binaries
+*.exe
+*.msi
+*.dll
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.step2.bak
+*.txt
+!requirements.txt
+!README.md

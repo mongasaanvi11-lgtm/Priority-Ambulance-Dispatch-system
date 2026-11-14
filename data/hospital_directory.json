@@ -1,0 +1,47 @@
+[
+  {
+    "id": "em-1",
+    "name": "National Emergency Services Helpline",
+    "type": "Emergency",
+    "phone": "112",
+    "city": "All India / Unified Emergency",
+    "address": "Toll-Free Emergency Dispatch",
+    "verified": true
+  },
+  {
+    "id": "em-2",
+    "name": "National Ambulance Service",
+    "type": "Ambulance",
+    "phone": "108 / 102",
+    "city": "All India",
+    "address": "Government Emergency Medical Ambulance Services",
+    "verified": true
+  },
+  {
+    "id": "hosp-1",
+    "name": "AIIMS Emergency & Trauma Centre",
+    "type": "Hospital",
+    "phone": "+91-11-26588500",
+    "city": "New Delhi",
+    "address": "Sri Aurobindo Marg, Ansari Nagar, New Delhi, Delhi 110029",
+    "verified": true
+  },
+  {
+    "id": "hosp-2",
+    "name": "KEM Hospital Emergency Ward",
+    "type": "Hospital",
+    "phone": "+91-22-24107000",
+    "city": "Mumbai",
+    "address": "Acharya Donde Marg, Parel, Mumbai, Maharashtra 400012",
+    "verified": true
+  },
+  {
+    "id": "doc-1",
+    "name": "On-Call Emergency Tele-Triage Helpline",
+    "type": "Doctor / Telehealth",
+    "phone": "1075 (National Health Toll-Free)",
+    "city": "National",
+    "address": "Ministry of Health & Family Welfare Helpline",
+    "verified": true
+  }
+]

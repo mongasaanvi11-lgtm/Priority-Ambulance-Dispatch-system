@@ -1,0 +1,597 @@
+{
+  "aiims": {
+    "matched_names": [
+      "aiims",
+      "all india institute of medical sciences",
+      "aiims hospital",
+      "aiims trauma"
+    ],
+    "display_name": "All India Institute of Medical Sciences (AIIMS)",
+    "source": "Ministry of Health & Family Welfare / NHA Official Empanelment",
+    "last_verified": "October 2026",
+    "official_url": "https://dashboard.pmjay.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Apex National Referral Centre under NHA PM-JAY free secondary & tertiary care"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Direct cashless & reimbursement facility for Central Govt employees & pensioners"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Direct tertiary referral empanelment for Ex-Servicemen & dependants"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Super-specialty tie-up referral treatment for insured beneficiaries"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "National apex facility accepting interstate emergency referrals"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "All major TPAs / GIPSA / National Insurance cashless desks operational"
+      }
+    }
+  },
+  "safdarjung": {
+    "matched_names": [
+      "safdarjung",
+      "safdarjang",
+      "vmmc",
+      "vardhman mahavir"
+    ],
+    "display_name": "Vardhman Mahavir Medical College & Safdarjung Hospital",
+    "source": "Central CGHS & NHA National Portal",
+    "last_verified": "October 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Cashless treatment under PM-JAY packages"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Direct cashless treatment across all clinical departments"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Recognised Armed Forces Contributory scheme referral center"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Covered under secondary and tertiary referral"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Delhi Arogya Kosh (DAK) & interstate schemes accepted"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Cashless desk for GIPSA PSU insurers"
+      }
+    }
+  },
+  "ram_manohar_lohia": {
+    "matched_names": [
+      "ram manohar lohia",
+      "rml hospital",
+      "dr ram manohar lohia"
+    ],
+    "display_name": "Dr. Ram Manohar Lohia Hospital (RML)",
+    "source": "MoHFW Government Registry",
+    "last_verified": "October 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled public tertiary hospital"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Central Government Health Scheme headquarters hospital"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled for ex-servicemen"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Tie-up for insured workers"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Delhi Arogya Kosh & national schemes"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "TPA cashless available"
+      }
+    }
+  },
+  "kem_mumbai": {
+    "matched_names": [
+      "kem",
+      "king edward memorial",
+      "seth gs medical"
+    ],
+    "display_name": "King Edward Memorial (KEM) Hospital, Mumbai",
+    "source": "Maharashtra State Health Society & NHA",
+    "last_verified": "September 2026",
+    "official_url": "https://jeevandayee.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled under PM-JAY NHA network"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "CGHS Mumbai covered facility"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ECHS polyclinic referral"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ESIC Mumbai referral tie-up"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Mahatma Jyotirao Phule Jan Arogya Yojana (MJPJAY)"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Public cashless emergency desk"
+      }
+    }
+  },
+  "apollo": {
+    "matched_names": [
+      "apollo",
+      "apollo hospital",
+      "apollo gleneagles"
+    ],
+    "display_name": "Apollo Hospitals Group",
+    "source": "CGHS Empanelled List & Insurance TPA Network",
+    "last_verified": "October 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Select state branches empanelled; verify at desk"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled for NABH accredited super-specialty procedures"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled super-speciality hospital"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Secondary & tertiary SST tie-up in major metros"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Recognised under various state civil service rules"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Cashless with 30+ TPAs (Medi Assist, Vidal, Star Health, ICICI, etc.)"
+      }
+    }
+  },
+  "max_healthcare": {
+    "matched_names": [
+      "max healthcare",
+      "max super speciality",
+      "max hospital"
+    ],
+    "display_name": "Max Super Speciality Hospital",
+    "source": "CGHS Directorate & ECHS Central Portal",
+    "last_verified": "October 2026",
+    "official_url": "https://echs.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Verification subject to unit & package guidelines"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "CGHS empanelled private super-specialty hospital"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ECHS cashless referral approved"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Direct tie-up verified per regional office referral"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled for state govt accredited employees"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Cashless available with all standard IRDAI insurance TPAs"
+      }
+    }
+  },
+  "fortis": {
+    "matched_names": [
+      "fortis",
+      "fortis hospital",
+      "fortis escorts",
+      "fortis flt lt rajan dhall"
+    ],
+    "display_name": "Fortis Healthcare",
+    "source": "CGHS Empanelled Private Hospitals Directory",
+    "last_verified": "September 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Select branches; contact TPA counter for PM-JAY desk"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled for cardiovascular, oncology, and critical care"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ECHS authorised private hospital"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Referral dependent on regional ESIC tie-up"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "State government health scheme empanelled"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Extensive cashless coverage with all major insurers & TPAs"
+      }
+    }
+  },
+  "manipal": {
+    "matched_names": [
+      "manipal",
+      "manipal hospital",
+      "kasturba"
+    ],
+    "display_name": "Manipal Hospitals",
+    "source": "State Empanelment Registry & Insurance Portal",
+    "last_verified": "October 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled under state PM-JAY integration"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled for tertiary clinical specialties"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ECHS beneficiary referral partner"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ESIC super-speciality tie-up hospital"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Suvarna Arogya Suraksha Trust / state schemes"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Full cashless coverage with all leading general insurers"
+      }
+    }
+  },
+  "medanta": {
+    "matched_names": [
+      "medanta",
+      "the medicity"
+    ],
+    "display_name": "Medanta – The Medicity",
+    "source": "ECHS / CGHS Empanelment Portal",
+    "last_verified": "October 2026",
+    "official_url": "https://echs.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Information subject to active state empanelment status"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "NABH-accredited multi-super specialty CGHS empanelment"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "ECHS cashless referral approved"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Requires regional ESIC SST sanction"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Haryana / Delhi state govt employee empanelment"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Cashless pre-authorization counter with all TPAs"
+      }
+    }
+  },
+  "ganga_ram": {
+    "matched_names": [
+      "sir ganga ram",
+      "ganga ram",
+      "sgrh"
+    ],
+    "display_name": "Sir Ganga Ram Hospital, New Delhi",
+    "source": "CGHS / ECHS Central Notification",
+    "last_verified": "October 2026",
+    "official_url": "https://cghs.nic.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Check active PM-JAY billing desk for specific packages"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Empanelled private trust hospital"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Recognised ECHS empanelled facility"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Subject to ESIC regional authority referral"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Delhi Govt employee empanelment"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Over 25+ major health insurance panels supported"
+      }
+    }
+  },
+  "sms_jaipur": {
+    "matched_names": [
+      "sawai man singh",
+      "sms hospital",
+      "sms medical"
+    ],
+    "display_name": "Sawai Man Singh (SMS) Hospital, Jaipur",
+    "source": "Rajasthan State RGHS & NHA Portal",
+    "last_verified": "October 2026",
+    "official_url": "https://rghs.rajasthan.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Apex government hospital under PM-JAY Mukhya Mantri Ayushman Arogya"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Recognised public hospital under CGHS Jaipur"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Direct referral center for Ex-Servicemen"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Government referral tie-up for insured workers"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Rajasthan Government Health Scheme (RGHS) primary facility"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Public health cashless desk for GIPSA insurers"
+      }
+    }
+  },
+  "general_civil_hospital": {
+    "matched_names": [
+      "civil hospital",
+      "district hospital",
+      "government hospital",
+      "govt hospital",
+      "sub district hospital",
+      "primary health centre",
+      "community health centre",
+      "esic hospital"
+    ],
+    "display_name": "Government / District Healthcare Facility",
+    "source": "National Health Mission / Ministry of Health & Family Welfare",
+    "last_verified": "October 2026",
+    "official_url": "https://nhm.gov.in/",
+    "panels": {
+      "pmjay": {
+        "name": "Ayushman Bharat – PM-JAY",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "All public/civil hospitals automatically empanelled under PM-JAY"
+      },
+      "cghs": {
+        "name": "CGHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Recognised public institution under Central Government rules"
+      },
+      "echs": {
+        "name": "ECHS",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Free emergency & referral care for ex-servicemen"
+      },
+      "esic": {
+        "name": "ESIC",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "Public facility accepted under ESIC emergency rules"
+      },
+      "state_govt": {
+        "name": "State Govt Health Schemes",
+        "status": "Empanelled",
+        "badge": "empanelled",
+        "details": "100% free care under state health assurance schemes"
+      },
+      "tpa_insurance": {
+        "name": "Private Insurance / TPA Networks",
+        "status": "Status Not Verified",
+        "badge": "unverified",
+        "details": "Reimbursement / GIPSA claims accepted per state rules"
+      }
+    }
+  }
+}

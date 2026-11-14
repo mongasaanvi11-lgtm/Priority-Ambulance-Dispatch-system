@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AmbuPriority — National Emergency Ambulance Priority Routing System, Government of India">
+    <title>AmbuPriority — National Emergency Ambulance Priority System | Government of India</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Indian National Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar (GIGW 3.0 / UX4G Compliant) -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Authority -->
+            <div class="flex items-center gap-2 text-[11px] text-white/90">
+                <span class="font-bold tracking-wide" data-i18n="gov_authority">भारत सरकार | Government of India</span>
+                <span class="text-white/40">•</span>
+                <span data-i18n="nha_title">National Health Authority</span>
+            </div>
+            <!-- Right: Accessibility Controls -->
+            <div class="flex items-center gap-2 text-[11px]">
+                <!-- Text Zoom -->
+                <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded border border-white/15">
+                    <span class="text-white/60 hidden sm:inline" data-i18n="text_size">Size:</span>
+                    <button type="button" onclick="adjustPortalZoom(-1)" class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"  class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"  class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Increase text">A+</button>
+                </div>
+                <span class="text-white/30">|</span>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="text-white/80 hover:text-white transition cursor-pointer flex items-center gap-1">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" class="hidden sm:inline" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <!-- Language -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="text-yellow-300 hover:text-yellow-200 font-bold transition cursor-pointer">
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/70 hidden sm:inline">English</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header (Unified Standard Government Header) -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight" style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center" data-i18n="portal_subtitle">National Ambulance Priority Routing &amp; Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="register.html" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar — dark navy, matching register.html and hospitals.html -->
+    <nav class="gov-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" class="active" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="#features" class="hidden lg:inline-flex" data-i18n="nav_features"><i class="fa-solid fa-layer-group"></i> System Features</a>
+        </div>
+    </nav>
+
+    <!-- News Ticker -->
+    <div class="bg-[var(--bg-muted)] dark:bg-[#1a2235] border-b border-[var(--border-color)] py-2 transition-colors">
+        <div class="container mx-auto px-4 flex items-center gap-3 text-xs overflow-hidden">
+            <span class="bg-red-600 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded flex-shrink-0" data-i18n="ticker_latest">Latest</span>
+            <marquee class="text-[var(--text-secondary)] font-medium" data-i18n="ticker_news">
+                AmbuPriority green-corridor priority integrated across 48 major metropolitan hospitals. &nbsp;|&nbsp; Real-time traffic signal preemption operational at 120 key junctions. &nbsp;|&nbsp; Multilingual emergency hotline 102 &amp; 108 operating 24×7 nationwide.
+            </marquee>
+        </div>
+    </div>
+
+    <!-- ===== HERO SECTION — 3-SLIDE CAROUSEL ===== -->
+    <style>
+    /* ---- Hero Section ---- */
+    #hero {
+        position: relative;
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Background slides — stacked, opacity crossfade */
+    .hero-bg-slide {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1.1s ease-in-out;
+        overflow: hidden;
+        z-index: 0;
+    }
+    .hero-bg-slide.hero-active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    /* Slide image / video fills the panel */
+    .hero-bg-slide img,
+    .hero-bg-slide video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Ken Burns — slide 2 (ambulance interior) */
+    @keyframes kenburns-2 {
+        0%   { transform: scale(1.0)   translate(0%,    0%); }
+        40%  { transform: scale(1.08)  translate(-2%,   1%); }
+        70%  { transform: scale(1.05)  translate(1.5%, -1.5%); }
+        100% { transform: scale(1.0)   translate(0%,    0%); }
+    }
+    /* Ken Burns — slide 3 (stretcher transfer) */
+    @keyframes kenburns-3 {
+        0%   { transform: scale(1.05)  translate( 1%, -1%); }
+        40%  { transform: scale(1.0)   translate( 0%,  0%); }
+        70%  { transform: scale(1.08)  translate(-1.5%, 1.5%); }
+        100% { transform: scale(1.05)  translate( 1%, -1%); }
+    }
+
+    .hero-bg-slide[data-slide="1"] img { animation: none; }
+    .hero-bg-slide[data-slide="2"] img { animation: kenburns-2 12s ease-in-out infinite; }
+    .hero-bg-slide[data-slide="3"] img { animation: kenburns-3 12s ease-in-out infinite; }
+
+    /* Only the active slide animates */
+    .hero-bg-slide:not(.hero-active) img { animation-play-state: paused; }
+    .hero-bg-slide.hero-active      img { animation-play-state: running; }
+
+    /* Dark left-heavy overlay — keeps white text readable */
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to right,
+            rgba(0,31,63,0.95) 0%,
+            rgba(0,31,63,0.80) 50%,
+            rgba(0,31,63,0.30) 100%
+        );
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* ---- Dot indicators ---- */
+    .hero-dots {
+        position: absolute;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 20;
+    }
+    .hero-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.4);
+        border: 1px solid rgba(255,255,255,0.6);
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+        padding: 0;
+    }
+    .hero-dot.active {
+        background: #f39c12;
+        transform: scale(1.3);
+        border-color: #f39c12;
+    }
+
+    /* ---- Arrow controls ---- */
+    .hero-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 20;
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: rgba(0,31,63,0.55);
+        border: 1.5px solid rgba(255,255,255,0.3);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+        backdrop-filter: blur(4px);
+        font-size: 15px;
+        user-select: none;
+        padding: 0;
+    }
+    .hero-arrow:hover {
+        background: rgba(0,31,63,0.85);
+        transform: translateY(-50%) scale(1.08);
+    }
+    .hero-arrow-prev { left: 18px; }
+    .hero-arrow-next { right: 18px; }
+
+    /* ---- Play/Pause button — top-right ---- */
+    .hero-playpause {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        z-index: 25;
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: rgba(0,31,63,0.60);
+        border: 1.5px solid rgba(255,255,255,0.3);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+        backdrop-filter: blur(4px);
+        font-size: 12px;
+        user-select: none;
+        padding: 0;
+    }
+    .hero-playpause:hover { background: rgba(0,31,63,0.9); }
+
+    /* ---- Slide counter label ---- */
+    .hero-slide-label {
+        position: absolute;
+        bottom: 42px;
+        right: 18px;
+        z-index: 20;
+        background: rgba(0,31,63,0.70);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: rgba(255,255,255,0.80);
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(3px);
+        pointer-events: none;
+    }
+
+    @media (max-width: 640px) {
+        .hero-arrow { width: 36px; height: 36px; font-size: 13px; }
+        .hero-arrow-prev { left: 10px; }
+        .hero-arrow-next { right: 10px; }
+    }
+    </style>
+
+    <section id="hero">
+
+        <!-- ===== BACKGROUND SLIDES (stacked, opacity crossfade) ===== -->
+        <!-- SLIDE 1 — Original ambulance fleet photo -->
+        <div class="hero-bg-slide hero-active" data-slide="1">
+            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_1a232a2b46_8d98a997cb6fa945.png"
+                 alt="National Ambulance Fleet">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <!-- SLIDE 2 — Ambulance interior: medical staff treating patient -->
+        <div class="hero-bg-slide" data-slide="2">
+            <img src="ambulance_interior.jpg"
+                 alt="Advanced Life Support — Medical Staff Treating Patient Inside Ambulance">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <!-- SLIDE 3 — Patient transfer on stretcher beside ambulance -->
+        <div class="hero-bg-slide" data-slide="3">
+            <img src="ambulance_stretcher.jpg"
+                 alt="Emergency Patient Transfer — Medical Team with Stretcher Beside Ambulance">
+            <div class="hero-overlay"></div>
+        </div>
+        <!-- ========================================================== -->
+
+        <!-- Play / Pause button (top-right) -->
+        <button class="hero-playpause" id="heroPlayPause" title="Pause slideshow" aria-label="Pause slideshow">
+            <i class="fa-solid fa-pause" id="heroPlayPauseIcon"></i>
+        </button>
+
+        <!-- Previous arrow -->
+        <button class="hero-arrow hero-arrow-prev" id="heroPrev" aria-label="Previous slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <!-- Next arrow -->
+        <button class="hero-arrow hero-arrow-next" id="heroNext" aria-label="Next slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Dot indicators -->
+        <div class="hero-dots" role="tablist" aria-label="Hero carousel controls">
+            <button class="hero-dot active" data-index="0" aria-label="Slide 1" aria-selected="true"></button>
+            <button class="hero-dot"        data-index="1" aria-label="Slide 2" aria-selected="false"></button>
+            <button class="hero-dot"        data-index="2" aria-label="Slide 3" aria-selected="false"></button>
+        </div>
+
+        <!-- Slide counter label -->
+        <div class="hero-slide-label" id="heroLabel">1 / 3</div>
+
+        <!-- ===== HERO CONTENT (always on top, z-index 10) ===== -->
+        <div style="position:relative;z-index:10;width:100%;">
+            <div class="container mx-auto px-4 py-16 lg:py-20">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-16">
+
+                    <!-- Left: Text -->
+                    <div class="max-w-xl text-white">
+                        <p class="text-[11px] font-bold uppercase tracking-widest text-yellow-400 mb-3" data-i18n="hero_tag">National Health Emergency Corridor</p>
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-5 text-white" data-i18n="hero_heading">
+                            Seconds Save Lives.<br>Priority Ensures Reaching.
+                        </h2>
+                        <p class="text-blue-100 text-base leading-relaxed mb-8 font-normal" data-i18n="hero_desc">
+                            Centrally integrated automated emergency response system connecting GPS ambulances, signal corridors, and hospital ICU dashboards in real-time nationwide.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="register.html"
+                               class="inline-flex items-center gap-2 px-6 py-3 bg-[#f39c12] hover:bg-yellow-600 text-slate-900 font-bold rounded text-sm shadow transition">
+                                <i class="fa-solid fa-truck-medical"></i>
+                                <span data-i18n="hero_cta_help">Call for Ambulance</span>
+                            </a>
+                            <a href="detail.html"
+                               class="inline-flex items-center gap-2 px-6 py-3 border border-white/50 hover:bg-white/10 text-white font-semibold rounded text-sm transition">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span data-i18n="hero_cta_stats">View Documentation</span>
+                            </a>
+                        </div>
+                        <!-- Two-stat row -->
+                        <div class="mt-10 pt-6 border-t border-white/15 flex gap-8 text-xs text-blue-200">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-green-400"></i>
+                                <span data-i18n="hero_badge_247">24/7 Command Active</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-yellow-400"></i>
+                                <span data-i18n="hero_badge_avg">Avg. Arrival: 6.8 Min</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Stat block (desktop only) -->
+                    <div class="hidden lg:grid grid-cols-2 gap-px bg-white/10 rounded overflow-hidden border border-white/15 flex-shrink-0">
+                        <div class="bg-[#002244]/80 p-6 text-center">
+                            <div class="text-3xl font-black text-white mb-1">48+</div>
+                            <div class="text-xs text-blue-200 uppercase tracking-wide">Hospitals Linked</div>
+                        </div>
+                        <div class="bg-[#002244]/80 p-6 text-center">
+                            <div class="text-3xl font-black text-white mb-1">120</div>
+                            <div class="text-xs text-blue-200 uppercase tracking-wide">Smart Junctions</div>
+                        </div>
+                        <div class="bg-[#002244]/80 p-6 text-center">
+                            <div class="text-3xl font-black text-yellow-300 mb-1">6.8m</div>
+                            <div class="text-xs text-blue-200 uppercase tracking-wide">Avg. Response</div>
+                        </div>
+                        <div class="bg-[#002244]/80 p-6 text-center">
+                            <div class="text-3xl font-black text-white mb-1">24/7</div>
+                            <div class="text-xs text-blue-200 uppercase tracking-wide">Command Centre</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- ===================================================== -->
+
+    </section>
+
+    <!-- ===== HERO CAROUSEL SCRIPT ===== -->
+    <script>
+    (function () {
+        var TOTAL    = 3;
+        var INTERVAL = 6000;
+
+        var slides  = document.querySelectorAll('.hero-bg-slide');
+        var dots    = document.querySelectorAll('.hero-dot');
+        var label   = document.getElementById('heroLabel');
+        var ppBtn   = document.getElementById('heroPlayPause');
+        var ppIcon  = document.getElementById('heroPlayPauseIcon');
+
+        var current = 0;
+        var playing = true;
+        var timer   = null;
+
+        function goTo(idx) {
+            idx = ((idx % TOTAL) + TOTAL) % TOTAL;
+
+            slides.forEach(function(s, i) {
+                s.classList.toggle('hero-active', i === idx);
+            });
+
+            dots.forEach(function(d, i) {
+                d.classList.toggle('active', i === idx);
+                d.setAttribute('aria-selected', String(i === idx));
+            });
+
+            label.textContent = (idx + 1) + ' / ' + TOTAL;
+            current = idx;
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(function() { goTo(current + 1); }, INTERVAL);
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+            timer = null;
+        }
+
+        ppBtn.addEventListener('click', function() {
+            playing = !playing;
+            if (playing) {
+                ppIcon.className = 'fa-solid fa-pause';
+                ppBtn.setAttribute('title', 'Pause slideshow');
+                ppBtn.setAttribute('aria-label', 'Pause slideshow');
+                startTimer();
+            } else {
+                ppIcon.className = 'fa-solid fa-play';
+                ppBtn.setAttribute('title', 'Play slideshow');
+                ppBtn.setAttribute('aria-label', 'Play slideshow');
+                stopTimer();
+            }
+        });
+
+        document.getElementById('heroPrev').addEventListener('click', function() {
+            goTo(current - 1);
+            if (playing) startTimer();
+        });
+
+        document.getElementById('heroNext').addEventListener('click', function() {
+            goTo(current + 1);
+            if (playing) startTimer();
+        });
+
+        dots.forEach(function(d) {
+            d.addEventListener('click', function() {
+                goTo(parseInt(d.dataset.index, 10));
+                if (playing) startTimer();
+            });
+        });
+
+        // Touch swipe
+        var touchX = null;
+        var heroEl = document.getElementById('hero');
+        heroEl.addEventListener('touchstart', function(e) {
+            touchX = e.touches[0].clientX;
+        }, { passive: true });
+        heroEl.addEventListener('touchend', function(e) {
+            if (touchX === null) return;
+            var diff = touchX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) {
+                goTo(diff > 0 ? current + 1 : current - 1);
+                if (playing) startTimer();
+            }
+            touchX = null;
+        }, { passive: true });
+
+        // Init
+        goTo(0);
+        startTimer();
+    })();
+    </script>
+    <!-- ===== END HERO CAROUSEL ===== -->
+
+    <!-- ===== SYSTEM FEATURES ===== -->
+    <section id="features" class="section-pad bg-white dark:bg-[var(--bg-card)] border-b border-[var(--border-color)] transition-colors">
+        <div class="container mx-auto px-4">
+
+            <div class="max-w-2xl mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--gov-saffron)] mb-2" data-i18n="features_badge">System Architecture</p>
+                <h2 class="text-2xl sm:text-3xl text-[#003366] dark:text-sky-400" data-i18n="features_heading">Core Emergency Dispatch Architecture</h2>
+                <span class="section-accent"></span>
+                <p class="text-sm text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="features_subheading">
+                    Standardised under National Ambulance Services (NAS) and AIS-125 Code of Practice
+                </p>
+            </div>
+
+            <!-- Feature rows — left-aligned icon + text, no colored card borders -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+
+                <!-- F1 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-blue-50 dark:bg-blue-950 text-[#003366] dark:text-sky-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f1_title">Real-time GPS Tracking</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f1_desc">
+                        Continuous geofencing monitors every ambulance's location, velocity, and priority status to predict traffic preemption requirements at upcoming junctions.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- F2 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-amber-50 dark:bg-amber-950 text-[#f39c12] text-lg flex-shrink-0">
+                            <i class="fa-solid fa-traffic-light"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f2_title">Smart Signal Preemption</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f2_desc">
+                        Automated radio-frequency &amp; sensor integration switches upcoming traffic signals to green when emergency vehicles are detected within 500 metres.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- F3 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f3_title">Hospital ICU Bed Sync</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f3_desc">
+                        Direct telemetric feed to designated trauma centres to transmit patient vital telemetry and prepare emergency bays before the vehicle arrives.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CITIZEN RESOURCE CENTER ===== -->
+    <section id="help" class="section-pad bg-[var(--bg-muted)] dark:bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--gov-saffron)] mb-2" data-i18n="crc_badge">Citizen Services</p>
+                <h2 class="text-2xl sm:text-3xl text-[#003366] dark:text-sky-400" data-i18n="crc_heading">Citizen Resource &amp; Emergency Command Centre</h2>
+                <span class="section-accent"></span>
+                <p class="text-sm text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="crc_desc">
+                    Direct citizen access to emergency protocols, first responder instructions, and real-time helpline networks.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                <!-- Left: Info panels -->
+                <div class="lg:w-1/2 flex flex-col gap-6">
+
+                    <div class="gov-card rounded p-6 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-[#003366] dark:text-sky-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-book-medical"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-1" data-i18n="crc_card1_title">First Aid Medical Guide</h4>
+                            <p class="text-xs text-[var(--text-secondary)] leading-relaxed" data-i18n="crc_card1_desc">Official Standard Operating Procedures (SOP) for roadside trauma and acute cardiac arrest.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-card rounded p-6 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded bg-amber-50 dark:bg-amber-950 flex items-center justify-center text-[#f39c12] text-lg flex-shrink-0">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-1" data-i18n="crc_card2_title">Nearby Trauma Hubs</h4>
+                            <p class="text-xs text-[var(--text-secondary)] leading-relaxed" data-i18n="crc_card2_desc">Live network map of recognised emergency trauma centres and government tertiary hospitals.</p>
+                        </div>
+                    </div>
+
+                    <!-- Helpline -->
+                    <div class="gov-card rounded p-6 flex items-center gap-4 border-l-4 border-[var(--gov-red)]">
+                        <div class="w-12 h-12 rounded bg-red-50 dark:bg-red-950 flex items-center justify-center text-red-600 dark:text-red-400 text-xl flex-shrink-0">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-wide mb-0.5" data-i18n="crc_helpline_title">Toll-Free National Helpline</p>
+                            <p class="text-2xl font-black text-[var(--text-primary)] tracking-wide font-mono">102 / 108 / 112</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Gallery -->
+                <div class="lg:w-1/2">
+                    <div class="gov-card rounded overflow-hidden">
+                        <div class="flex justify-between items-center px-5 py-4 border-b border-[var(--border-color)]">
+                            <h3 class="text-sm font-semibold text-[var(--text-primary)]" data-i18n="crc_gallery_title">National Fleet &amp; Command Gallery</h3>
+                            <button onclick="nextImage()"
+                                class="btn-primary px-3 py-1.5 text-xs font-semibold cursor-pointer">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span data-i18n="gallery_next">Next</span>
+                            </button>
+                        </div>
+                        <div class="relative h-56 sm:h-64 bg-gray-100 dark:bg-slate-800">
+                            <img id="galleryMainImage"
+                                 src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png"
+                                 alt="Command Gallery"
+                                 class="w-full h-full object-cover transition-opacity duration-300">
+                        </div>
+                        <div class="flex gap-2 p-3 overflow-x-auto bg-[var(--bg-muted)] dark:bg-[#1a2235]">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 1">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_14a618c435_377f6f449240104b.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 2">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_a27f817392_7eff69f72e6c2370.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 3">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-[#111827] text-white mt-auto border-t-4 border-[var(--gov-saffron)]">
+        <div class="container mx-auto px-4 py-10">
+            <div class="flex flex-col md:flex-row md:justify-between gap-8">
+
+                <!-- Left: Identity -->
+                <div class="max-w-xs">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                             alt="National Emblem" class="h-10 brightness-0 invert opacity-80">
+                        <div>
+                            <h2 class="text-sm font-bold leading-tight" data-i18n="footer_title">AmbuPriority National Portal</h2>
+                            <p class="text-[10px] text-gray-400 mt-0.5" data-i18n="footer_dept">National Health Authority, Govt. of India</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed" data-i18n="footer_disclaimer">
+                        Official Central Citizen Emergency Health Corridor System. Ambulances monitored under AIS-125 Compliant Real-Time Priority Routing Protocol.
+                    </p>
+                </div>
+
+                <!-- Right: Links -->
+                <div class="flex flex-col gap-2">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Portal Links</p>
+                    <div class="grid grid-cols-2 gap-x-10 gap-y-1 text-xs text-gray-400">
+                        <a href="index.html" class="hover:text-white hover:underline" data-i18n="footer_links_home">Home</a>
+                        <a href="detail.html" class="hover:text-white hover:underline" data-i18n="footer_links_docs">Documentation</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_privacy">Privacy Policy</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_terms">Terms of Service</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_guidelines">GIGW Compliance</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_contact">Contact Directorate</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500">
+                <p data-i18n="footer_copyright">© 2026 National Health Authority, Government of India. All Rights Reserved. Emergency: 102 / 108 / 112</p>
+                <p data-i18n="footer_last_updated">Last Reviewed: 07 Nov 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portal Controller -->
+    <script src="gov-portal.js"></script>
+    <!-- ARIA 3D AI Virtual Assistant -->
+    <script src="assistant.js"></script>
+    <script>
+        const galleryImages = [
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png",
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_14a618c435_377f6f449240104b.png",
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_a27f817392_7eff69f72e6c2370.png"
+        ];
+        let currentGalleryIdx = 0;
+        function setMainImage(src) {
+            const mainImg = document.getElementById('galleryMainImage');
+            mainImg.style.opacity = 0;
+            setTimeout(() => {
+                mainImg.src = src;
+                mainImg.style.opacity = 1;
+                currentGalleryIdx = galleryImages.indexOf(src);
+            }, 200);
+        }
+        function nextImage() {
+            currentGalleryIdx = (currentGalleryIdx + 1) % galleryImages.length;
+            setMainImage(galleryImages[currentGalleryIdx]);
+        }
+    </script>
+</body>
+</html>

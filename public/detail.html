@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Official System Documentation & Standards — AmbuPriority | National Health Authority">
+    <title>About System — AmbuPriority | National Health Authority</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+</head>
+
+<body class="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#0f172a] text-gray-900 dark:text-gray-100 transition-colors">
+
+    <!-- Indian National Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar (GIGW 3.0 / UX4G Compliant) -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Authority -->
+            <div class="flex items-center gap-2 text-[11px] text-white/90">
+                <span class="font-bold tracking-wide" data-i18n="gov_authority">भारत सरकार | Government of India</span>
+                <span class="text-white/40">•</span>
+                <span data-i18n="nha_title">National Health Authority</span>
+            </div>
+            <!-- Right: Accessibility Controls -->
+            <div class="flex items-center gap-2 text-[11px]">
+                <!-- Text Zoom -->
+                <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded border border-white/15">
+                    <span class="text-white/60 hidden sm:inline" data-i18n="text_size">Size:</span>
+                    <button type="button" onclick="adjustPortalZoom(-1)"
+                        class="text-white/80 hover:text-yellow-300 px-1 font-bold transition"
+                        title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"
+                        class="text-white/80 hover:text-yellow-300 px-1 font-bold transition"
+                        title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"
+                        class="text-white/80 hover:text-yellow-300 px-1 font-bold transition"
+                        title="Increase text">A+</button>
+                </div>
+                <span class="text-white/30">|</span>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="text-white/80 hover:text-white transition cursor-pointer flex items-center gap-1">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" class="hidden sm:inline" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <!-- Language Toggle Button -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="text-yellow-300 hover:text-yellow-200 font-bold transition cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-language text-xs"></i>
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/70 hidden sm:inline">English</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header (Unified Standard Government Header) -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                    alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">
+                        Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight"
+                    style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center"
+                    data-i18n="portal_subtitle">National Ambulance Priority Routing &amp; Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="register.html" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="gov-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" class="active" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="detail.html#standards" class="hidden lg:inline-flex" data-i18n="nav_reports"><i class="fa-solid fa-chart-column"></i> Reports &amp; Statistics</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- EDUCATIONAL PURPOSE & DEMONSTRATION NOTICE BANNER -->
+        <div class="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-400 dark:border-amber-700/60 shadow-sm">
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-base shadow">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs sm:text-sm font-black text-amber-900 dark:text-amber-200 uppercase tracking-wide" data-i18n="docs_edu_disclaimer_title">
+                        Educational &amp; Demonstration Purpose Notice
+                    </h3>
+                    <p class="text-xs text-amber-950/90 dark:text-amber-100/90 mt-1 leading-relaxed" data-i18n="docs_edu_disclaimer_desc">
+                        This portal and triage algorithms are developed strictly for academic, technical demonstration, and emergency simulation purposes. For actual real-world medical emergencies, please dial national helpline 112 or 108 immediately.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <p class="text-xs font-bold uppercase tracking-widest text-[var(--gov-saffron)] mb-1" data-i18n="docs_badge">National Technical &amp; Emergency Standards</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-[#003366] dark:text-sky-400" data-i18n="docs_heading">
+                About System: Triage Engine &amp; Ambulance Fleet Standards
+            </h2>
+            <div class="w-16 h-1 bg-[var(--gov-saffron)] my-3 rounded"></div>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl" data-i18n="docs_sub">
+                Official specifications for Emergency Priority Determination and AIS-125 Ambulance Fleet Categories under Ministry of Health and Family Welfare (MoHFW).
+            </p>
+        </div>
+
+        <!-- 1. CLINICAL TRIAGE PRIORITY FRAMEWORK -->
+        <section class="bg-white dark:bg-[#161f30] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-10">
+            <div class="bg-gradient-to-r from-[#003366] to-[#0b4884] dark:from-[#111c2e] dark:to-[#1a2d47] px-6 py-5 text-white">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-[var(--gov-saffron)] text-[#002244] text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase">Triage Protocol</span>
+                    <span class="text-xs text-blue-200">WHO-IITT / AIIMS ATP / GVK EMRI Standards</span>
+                </div>
+                <h3 class="text-lg font-bold" data-i18n="docs_triage_title">How Patient Priority is Decided (RED, YELLOW, GREEN)</h3>
+                <p class="text-xs text-blue-100/90 mt-1 max-w-3xl leading-relaxed" data-i18n="docs_triage_sub">
+                    Calculated via standardized clinical evaluation: airway, breathing, circulation, disability, and complaint-specific danger signs (WHO-IITT / AIIMS / GVK EMRI).
+                </p>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- 3 Priority Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                    <!-- RED Priority -->
+                    <div class="rounded-xl border-2 border-red-500/40 bg-red-50/70 dark:bg-red-950/25 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase bg-red-600 text-white shadow-sm">
+                                    <i class="fa-solid fa-circle-exclamation"></i> RED PRIORITY
+                                </span>
+                                <span class="text-[11px] font-bold text-red-700 dark:text-red-400">&lt; 8 min</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-red-900 dark:text-red-200 uppercase tracking-wider mb-2" data-i18n="docs_prio_red_sub">Immediate Life Threat (Level 1)</h4>
+                            <p class="text-xs text-red-950/80 dark:text-red-200/80 mb-3 leading-relaxed" data-i18n="docs_prio_red_desc">
+                                Critical physiological collapse or severe trauma requiring immediate Advanced Life Support (ALS) with hospital ICU pre-alert (< 8 mins response).
+                            </p>
+                            <div class="space-y-1.5 border-t border-red-200 dark:border-red-900/50 pt-3 text-[11px]">
+                                <span class="font-bold text-red-800 dark:text-red-300" data-i18n="docs_lbl_triggers">Decision Criteria &amp; Clinical Triggers:</span>
+                                <p class="text-xs text-gray-800 dark:text-gray-200 leading-relaxed mt-1" data-i18n="docs_prio_red_trig">
+                                    Unconscious / unresponsive (AVPU), apnea or gasping, severe respiratory distress, airway obstruction or stridor, severe uncontrolled spurting bleeding, active continuous seizures, crushing chest pain radiating to arm with shock, acute stroke signs (FAST+), maternal trauma / head crowning / eclampsia fits.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-red-200 dark:border-red-900/40 text-[10px] text-red-700 dark:text-red-400 font-bold" data-i18n="docs_prio_red_fleet">
+                            Mandatory Fleet: Type-D ALS / Mobile ICU with Mechanical Ventilator
+                        </div>
+                    </div>
+
+                    <!-- YELLOW Priority -->
+                    <div class="rounded-xl border-2 border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/25 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase bg-amber-500 text-white shadow-sm">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> YELLOW PRIORITY
+                                </span>
+                                <span class="text-[11px] font-bold text-amber-700 dark:text-amber-400">&lt; 20 min</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider mb-2" data-i18n="docs_prio_yel_sub">Urgent Emergency (Level 2)</h4>
+                            <p class="text-xs text-amber-950/80 dark:text-amber-200/80 mb-3 leading-relaxed" data-i18n="docs_prio_yel_desc">
+                                Serious condition requiring prompt paramedic intervention to prevent clinical deterioration (< 20 mins response).
+                            </p>
+                            <div class="space-y-1.5 border-t border-amber-200 dark:border-amber-900/50 pt-3 text-[11px]">
+                                <div class="bg-amber-100/80 dark:bg-amber-900/40 p-2 rounded border border-amber-300 dark:border-amber-700 mb-2">
+                                    <strong class="text-amber-900 dark:text-amber-200" data-i18n="docs_preg_rule_label">Obstetric Protocol Rule:</strong>
+                                    <span class="text-amber-950 dark:text-amber-100 text-[11px]" data-i18n="docs_preg_rule_text">Per GVK EMRI 102 protocols, all pregnancy emergency calls are minimum YELLOW — never GREEN.</span>
+                                </div>
+                                <span class="font-bold text-amber-800 dark:text-amber-300" data-i18n="docs_lbl_triggers">Decision Criteria &amp; Clinical Triggers:</span>
+                                <p class="text-xs text-gray-800 dark:text-gray-200 leading-relaxed mt-1" data-i18n="docs_prio_yel_trig">
+                                    Audible wheezing, speaks single words, moderate dyspnea, excruciating abdominal pain without board rigidity, closed limb fractures, first-time seizure resolved, high persistent fever with severe dehydration.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-amber-200 dark:border-amber-900/40 text-[10px] text-amber-800 dark:text-amber-400 font-bold" data-i18n="docs_prio_yel_fleet">
+                            Mandatory Fleet: Type-C Basic Life Support (BLS) with Oxygen &amp; EMT
+                        </div>
+                    </div>
+
+                    <!-- GREEN Priority -->
+                    <div class="rounded-xl border-2 border-emerald-500/40 bg-emerald-50/70 dark:bg-emerald-950/25 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase bg-emerald-600 text-white shadow-sm">
+                                    <i class="fa-solid fa-circle-check"></i> GREEN PRIORITY
+                                </span>
+                                <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">&lt; 45 min</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-emerald-900 dark:text-emerald-200 uppercase tracking-wider mb-2" data-i18n="docs_prio_grn_sub">Non-Urgent / Stable (Level 3)</h4>
+                            <p class="text-xs text-emerald-950/80 dark:text-emerald-200/80 mb-3 leading-relaxed" data-i18n="docs_prio_grn_desc">
+                                Clinically stable condition with normal physiological parameters (< 45 mins response).
+                            </p>
+                            <div class="space-y-1.5 border-t border-emerald-200 dark:border-emerald-900/50 pt-3 text-[11px]">
+                                <span class="font-bold text-emerald-800 dark:text-emerald-300" data-i18n="docs_lbl_triggers">Decision Criteria &amp; Clinical Triggers:</span>
+                                <p class="text-xs text-gray-800 dark:text-gray-200 leading-relaxed mt-1" data-i18n="docs_prio_grn_trig">
+                                    Fully alert and responsive, normal comfortable breathing, clear airway, all stroke FAST signs strictly negative, mild abdominal pain, minor controlled cuts, isolated sprains.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-emerald-200 dark:border-emerald-900/40 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold" data-i18n="docs_prio_grn_fleet">
+                            Mandatory Fleet: Type-A/B Patient Transport Vehicle (PTV)
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 4-Step Flowchart -->
+                <div class="p-4 rounded-lg bg-gray-50 dark:bg-[#111927] border border-gray-200 dark:border-gray-800 text-xs">
+                    <h4 class="font-bold text-[#003366] dark:text-sky-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-project"></i> <span data-i18n="docs_workflow_title">4-Step Priority Triage Workflow</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-[11px]">
+                        <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-200 dark:border-gray-700">
+                            <span class="font-bold text-red-600 dark:text-red-400" data-i18n="docs_step1_title">1. ABCDE Survey</span>
+                            <p class="text-gray-600 dark:text-gray-300 mt-1" data-i18n="docs_step1_desc">Checks unconsciousness, airway, and breathing distress. Any failure = Immediate RED.</p>
+                        </div>
+                        <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-200 dark:border-gray-700">
+                            <span class="font-bold text-amber-600 dark:text-amber-400" data-i18n="docs_step2_title">2. Complaint Checks</span>
+                            <p class="text-gray-600 dark:text-gray-300 mt-1" data-i18n="docs_step2_desc">FAST stroke tests, cardiac radiation, severe bleeding, burns extent evaluation.</p>
+                        </div>
+                        <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-200 dark:border-gray-700">
+                            <span class="font-bold text-blue-600 dark:text-blue-400" data-i18n="docs_step3_title">3. Protocol Safeguards</span>
+                            <p class="text-gray-600 dark:text-gray-300 mt-1" data-i18n="docs_step3_desc">Mandatory minimums enforced: Obstetric emergencies clamped to minimum YELLOW.</p>
+                        </div>
+                        <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-200 dark:border-gray-700">
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400" data-i18n="docs_step4_title">4. Fleet &amp; Bed Match</span>
+                            <p class="text-gray-600 dark:text-gray-300 mt-1" data-i18n="docs_step4_desc">Matches patient priority to ICU trauma capability and dispatches ALS/BLS fleet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. AMBULANCE FLEET TYPES & CAPABILITIES (AIS-125) -->
+        <section class="bg-white dark:bg-[#161f30] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-10">
+            <div class="bg-gradient-to-r from-[#003366] to-[#0b4884] dark:from-[#111c2e] dark:to-[#1a2d47] px-6 py-5 text-white">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-[var(--gov-saffron)] text-[#002244] text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase">AIS-125 Specifications</span>
+                    <span class="text-xs text-blue-200">National Ambulance Fleet Categorisation</span>
+                </div>
+                <h3 class="text-lg font-bold" data-i18n="docs_fleet_title">Ambulance Fleet Types: Meaning, Equipments &amp; Deployment</h3>
+                <p class="text-xs text-blue-100/90 mt-1 max-w-3xl leading-relaxed" data-i18n="docs_fleet_sub">
+                    Under AIS-125 standards and National Health Mission guidelines, ambulances are categorised by clinical equipment and medical crew qualifications.
+                </p>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- 6 Ambulance Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                    <!-- 1. PTV -->
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-900/40 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                                    <i class="fa-solid fa-van-shuttle mr-1"></i> TYPE A/B: PTV
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">GREEN</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-1" data-i18n="docs_amb_ptv_title">Type A/B: Patient Transport Vehicle (PTV)</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 mb-3 leading-relaxed" data-i18n="docs_amb_ptv_desc">
+                                Non-emergency patient transfer between facilities with stretcher, first aid kit, and wheelchair ramp.
+                            </p>
+                            <div class="space-y-2 border-t border-gray-200 dark:border-gray-800 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-600 dark:text-gray-400" data-i18n="docs_amb_ptv_eq">Patient Stretcher, First Aid Box, Wheelchair Ramp/Access, Splints.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-600 dark:text-gray-400" data-i18n="docs_amb_ptv_staff">Trained Transport Driver &amp; Patient Attendant.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 dark:border-gray-800 text-[10px] text-gray-500 font-semibold">
+                            Fleet Usage: 102 Routine Scheme &amp; Private Networks
+                        </div>
+                    </div>
+
+                    <!-- 2. BLS -->
+                    <div class="rounded-xl border border-amber-300 dark:border-amber-800/50 bg-amber-50/40 dark:bg-amber-950/20 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+                                    <i class="fa-solid fa-truck-medical mr-1"></i> TYPE C: BLS
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200">YELLOW / GREEN</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-amber-950 dark:text-amber-200 uppercase tracking-wider mb-1" data-i18n="docs_amb_bls_title">Type C: Basic Life Support (BLS)</h4>
+                            <p class="text-xs text-amber-900/80 dark:text-amber-300/80 mb-3 leading-relaxed" data-i18n="docs_amb_bls_desc">
+                                Core emergency ambulance with Automated External Defibrillator (AED), oxygen cylinders, EMT crew, and spine board (108 Fleet).
+                            </p>
+                            <div class="space-y-2 border-t border-amber-200 dark:border-amber-900/40 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-amber-900 dark:text-amber-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_bls_eq">Automated External Defibrillator (AED), Portable Oxygen Cylinders, Suction Unit, Spine Board, Cervical Collars, Vital Signs Monitor.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-amber-900 dark:text-amber-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_bls_staff">Certified Emergency Medical Technician (EMT-Basic) &amp; Pilot.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-amber-200 dark:border-amber-900/40 text-[10px] text-amber-800 dark:text-amber-400 font-semibold">
+                            Primary Vehicle: Standard 108 Emergency Fleet
+                        </div>
+                    </div>
+
+                    <!-- 3. ALS -->
+                    <div class="rounded-xl border border-red-300 dark:border-red-800/50 bg-red-50/40 dark:bg-red-950/20 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-red-600 text-white shadow-sm">
+                                    <i class="fa-solid fa-heart-pulse mr-1"></i> TYPE D: ALS
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200">RED Priority</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-red-950 dark:text-red-200 uppercase tracking-wider mb-1" data-i18n="docs_amb_als_title">Type D: Advanced Life Support (ALS)</h4>
+                            <p class="text-xs text-red-900/80 dark:text-red-300/80 mb-3 leading-relaxed" data-i18n="docs_amb_als_desc">
+                                Critical care road ambulance with mechanical transport ventilator, multipara cardiac monitor, intubation kit, and ACLS paramedic crew.
+                            </p>
+                            <div class="space-y-2 border-t border-red-200 dark:border-red-900/40 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-red-900 dark:text-red-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_als_eq">Multipara Cardiac Monitor / Defibrillator, Transport Mechanical Ventilator, Endotracheal Intubation Kit, Syringe Infusion Pump, ACLS Drugs &amp; IV fluids.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-red-900 dark:text-red-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_als_staff">Advanced Paramedic &amp; Emergency Nurse with ACLS certification.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-red-200 dark:border-red-900/40 text-[10px] text-red-800 dark:text-red-400 font-semibold">
+                            Primary Vehicle: Critical 108 ALS / Trauma Corridor
+                        </div>
+                    </div>
+
+                    <!-- 4. Mobile ICU -->
+                    <div class="rounded-xl border border-purple-300 dark:border-purple-800/50 bg-purple-50/40 dark:bg-purple-950/20 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-purple-700 text-white">
+                                    <i class="fa-solid fa-bed-pulse mr-1"></i> MOBILE ICU
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-200">Critical Red</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1" data-i18n="docs_amb_icu_title">Mobile ICU Ambulance</h4>
+                            <p class="text-xs text-purple-900/80 dark:text-purple-300/80 mb-3 leading-relaxed" data-i18n="docs_amb_icu_desc">
+                                Tertiary inter-hospital transfer unit with ICU multi-channel ventilator, arterial pressure monitoring, and critical care intensivist physician.
+                            </p>
+                            <div class="space-y-2 border-t border-purple-200 dark:border-purple-900/40 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-purple-900 dark:text-purple-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_icu_eq">ICU Multi-channel Ventilator, Arterial Blood Gas (ABG) Lab, Invasive Pressure Line Monitors, Dual Infusion Pumps, External Pacer.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-purple-900 dark:text-purple-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_icu_staff">Critical Care Physician / Intensivist &amp; ICU Specialist Nurse.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-purple-200 dark:border-purple-900/40 text-[10px] text-purple-800 dark:text-purple-400 font-semibold">
+                            Fleet Usage: Tertiary Referral Hospitals &amp; Private Networks
+                        </div>
+                    </div>
+
+                    <!-- 5. Cardiac Care -->
+                    <div class="rounded-xl border border-rose-300 dark:border-rose-800/50 bg-rose-50/40 dark:bg-rose-950/20 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-rose-700 text-white">
+                                    <i class="fa-solid fa-stethoscope mr-1"></i> CARDIAC CARE
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200">STEMI / Heart Arrest</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-rose-950 dark:text-rose-200 uppercase tracking-wider mb-1" data-i18n="docs_amb_cardiac_title">Dedicated Cardiac Care Unit</h4>
+                            <p class="text-xs text-rose-900/80 dark:text-rose-300/80 mb-3 leading-relaxed" data-i18n="docs_amb_cardiac_desc">
+                                Specialized vehicle for heart attacks (STEMI) with 12-lead diagnostic ECG, direct catheterization lab telemetry relay, and cardiologist.
+                            </p>
+                            <div class="space-y-2 border-t border-rose-200 dark:border-rose-900/40 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-rose-900 dark:text-rose-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_cardiac_eq">12-Lead Diagnostic ECG with Telemedicine Relay, Bi-phasic Defibrillator with Transcutaneous Pacing, Emergency Thrombolytic Stock.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-rose-900 dark:text-rose-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_cardiac_staff">Cardiology Fellow / Specialist Cardiac Paramedic.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-rose-200 dark:border-rose-900/40 text-[10px] text-rose-800 dark:text-rose-400 font-semibold">
+                            Fleet Usage: Heart Institutes &amp; Super-Specialty Hospitals
+                        </div>
+                    </div>
+
+                    <!-- 6. Neonatal / NICU -->
+                    <div class="rounded-xl border border-sky-300 dark:border-sky-800/50 bg-sky-50/40 dark:bg-sky-950/20 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded text-[11px] font-black uppercase bg-sky-600 text-white">
+                                    <i class="fa-solid fa-baby mr-1"></i> NEONATAL / NICU
+                                </span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200">Infant Life Threat</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-sky-950 dark:text-sky-200 uppercase tracking-wider mb-1" data-i18n="docs_amb_nicu_title">Neonatal / NICU Transport Unit</h4>
+                            <p class="text-xs text-sky-900/80 dark:text-sky-300/80 mb-3 leading-relaxed" data-i18n="docs_amb_nicu_desc">
+                                Specialized vehicle for preterm infants and pediatric emergencies with transport incubator, servo temperature control, and neonatologist.
+                            </p>
+                            <div class="space-y-2 border-t border-sky-200 dark:border-sky-900/40 pt-3 text-[11px]">
+                                <div>
+                                    <span class="font-bold text-sky-900 dark:text-sky-300" data-i18n="docs_lbl_equipment">Onboard Equipment:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_nicu_eq">Transport Incubator with Servo-Temperature Control, Neonatal Specialized Resuscitator, Micro-cuff Airway, Infant Pulse Oximeter.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-sky-900 dark:text-sky-300" data-i18n="docs_lbl_staffing">Staffing / Medical Crew:</span>
+                                    <p class="text-gray-700 dark:text-gray-300" data-i18n="docs_amb_nicu_staff">Neonatologist / Pediatric Critical Care Nurse.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-sky-200 dark:border-sky-900/40 text-[10px] text-sky-800 dark:text-sky-400 font-semibold">
+                            Fleet Usage: Maternal &amp; Child Health Referral Centers
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Government vs Private Fleet Rule -->
+                <div class="p-4 rounded-lg bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs">
+                    <div class="font-bold text-[#003366] dark:text-sky-300 mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced text-blue-600"></i>
+                        <span data-i18n="docs_govt_vs_pvt_title">Government (102 / 108) vs Private Fleet Regulation</span>
+                    </div>
+                    <p class="text-blue-950/80 dark:text-blue-200/80 leading-relaxed text-[11px]" data-i18n="docs_govt_vs_pvt_desc">
+                        Government fleets strictly provide PTV, BLS, and ALS free or subsidized. Specialized Mobile ICU, Cardiac, and Neonatal units operate under regulated tariffs at tertiary and private medical networks.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. REPORTS & STATISTICS SECTION -->
+        <section id="standards" class="bg-white dark:bg-[#161f30] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-10">
+            <div class="bg-gradient-to-r from-[#003366] to-[#0b4884] dark:from-[#111c2e] dark:to-[#1a2d47] px-6 py-5 text-white">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-[var(--gov-saffron)] text-[#002244] text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase" data-i18n="stats_section_badge">Live National Health Data</span>
+                    <span class="text-xs text-blue-200">MoHFW Portal Ref: NHM-MIS-2026</span>
+                </div>
+                <h3 class="text-lg font-bold" data-i18n="stats_section_title">National Emergency Response Reports &amp; Statistics (2025–26)</h3>
+                <p class="text-xs text-blue-100/90 mt-1 max-w-3xl leading-relaxed" data-i18n="stats_section_sub">
+                    Aggregated dispatch metrics, average golden hour response times, and triage distribution under the National Health Mission across active urban corridors.
+                </p>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- 4 KPI Big Numbers -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- KPI 1 -->
+                    <div class="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide" data-i18n="stats_total_calls_label">Total Emergency Calls Handled</div>
+                            <div class="text-2xl sm:text-3xl font-black text-[#003366] dark:text-sky-300 my-1" data-i18n="stats_total_calls_val">1,42,850+</div>
+                        </div>
+                        <div class="text-[10px] text-blue-800 dark:text-blue-300 font-medium border-t border-blue-200 dark:border-blue-900/40 pt-1.5" data-i18n="stats_total_calls_sub">
+                            102 / 108 / 112 Integrated Intake
+                        </div>
+                    </div>
+
+                    <!-- KPI 2 -->
+                    <div class="p-4 rounded-xl bg-red-50/70 dark:bg-red-950/30 border border-red-200 dark:border-red-900/60 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold text-red-900 dark:text-red-300 uppercase tracking-wide" data-i18n="stats_resp_time_label">Average Response Time (Red)</div>
+                            <div class="text-2xl sm:text-3xl font-black text-red-600 dark:text-red-400 my-1" data-i18n="stats_resp_time_val">7.4 Mins</div>
+                        </div>
+                        <div class="text-[10px] text-red-800 dark:text-red-300 font-medium border-t border-red-200 dark:border-red-900/40 pt-1.5" data-i18n="stats_resp_time_sub">
+                            Golden Hour Target: &lt; 8.0 mins
+                        </div>
+                    </div>
+
+                    <!-- KPI 3 -->
+                    <div class="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/60 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold text-emerald-900 dark:text-emerald-300 uppercase tracking-wide" data-i18n="stats_lives_saved_label">Critical Resuscitation Success</div>
+                            <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 my-1" data-i18n="stats_lives_saved_val">94.2%</div>
+                        </div>
+                        <div class="text-[10px] text-emerald-800 dark:text-emerald-300 font-medium border-t border-emerald-200 dark:border-emerald-900/40 pt-1.5" data-i18n="stats_lives_saved_sub">
+                            STEMI &amp; Level-1 Trauma Cases
+                        </div>
+                    </div>
+
+                    <!-- KPI 4 -->
+                    <div class="p-4 rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/60 flex flex-col justify-between">
+                        <div>
+                            <div class="text-[11px] font-bold text-purple-900 dark:text-purple-300 uppercase tracking-wide" data-i18n="stats_active_fleet_label">GPS Monitored Ambulance Fleet</div>
+                            <div class="text-2xl sm:text-3xl font-black text-purple-700 dark:text-purple-300 my-1" data-i18n="stats_active_fleet_val">18,420+</div>
+                        </div>
+                        <div class="text-[10px] text-purple-800 dark:text-purple-300 font-medium border-t border-purple-200 dark:border-purple-900/40 pt-1.5" data-i18n="stats_active_fleet_sub">
+                            AIS-125 Compliant Vehicles
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphs & Breakdown Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <!-- Distribution Visual -->
+                    <div class="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-[#111927]">
+                        <h4 class="text-xs font-bold text-[#003366] dark:text-sky-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-[var(--gov-saffron)]"></i>
+                            <span data-i18n="stats_triage_dist_title">National Triage Priority Distribution</span>
+                        </h4>
+
+                        <!-- Progress Bar Visual -->
+                        <div class="w-full h-4 rounded-full overflow-hidden flex bg-gray-200 dark:bg-gray-800 mb-4 shadow-inner">
+                            <div style="width: 24.8%" class="bg-red-600 h-full" title="RED Priority 24.8%"></div>
+                            <div style="width: 58.4%" class="bg-amber-500 h-full" title="YELLOW Priority 58.4%"></div>
+                            <div style="width: 16.8%" class="bg-emerald-600 h-full" title="GREEN Priority 16.8%"></div>
+                        </div>
+
+                        <!-- Legend Items -->
+                        <div class="space-y-2 text-xs">
+                            <div class="flex items-center justify-between p-2 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-red-600"></span>
+                                    <span class="font-medium" data-i18n="stats_triage_red_lbl">RED (Immediate Threat): 24.8%</span>
+                                </span>
+                                <span class="text-[11px] font-bold text-red-600 dark:text-red-400">35,426 cases</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                    <span class="font-medium" data-i18n="stats_triage_yel_lbl">YELLOW (Urgent): 58.4%</span>
+                                </span>
+                                <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">83,424 cases</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+                                    <span class="font-medium" data-i18n="stats_triage_grn_lbl">GREEN (Non-Urgent): 16.8%</span>
+                                </span>
+                                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">24,000 cases</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Index -->
+                    <div class="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-[#111927]">
+                        <h4 class="text-xs font-bold text-[#003366] dark:text-sky-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-blue-600"></i>
+                            <span data-i18n="stats_category_perf_title">Specialty Emergency Performance Index</span>
+                        </h4>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-heart-pulse"></i> Cardiac Transit
+                                    </span>
+                                    <span class="font-bold text-green-600">98.2% on-time</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600 dark:text-gray-300" data-i18n="stats_perf_cardiac">Cardiac (STEMI) Transit-to-Cath-Lab Average: 28 Mins (Target: &lt; 45)</p>
+                            </div>
+
+                            <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-semibold text-blue-700 dark:text-sky-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-brain"></i> Stroke Window
+                                    </span>
+                                    <span class="font-bold text-green-600">91.6% golden window</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600 dark:text-gray-300" data-i18n="stats_perf_stroke">Acute Stroke Thrombolysis Window Adherence: 91.6%</p>
+                            </div>
+
+                            <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-person-pregnant"></i> Obstetric Zero-Refusal
+                                    </span>
+                                    <span class="font-bold text-green-600">99.4% compliant</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600 dark:text-gray-300" data-i18n="stats_perf_maternal">Obstetric Maternal Transfer Zero-Refusal Rate: 99.4%</p>
+                            </div>
+
+                            <div class="p-2.5 rounded bg-white dark:bg-[#1a2333] border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-traffic-light"></i> Smart Corridor Preemption
+                                    </span>
+                                    <span class="font-bold text-green-600">96.8% green wave</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600 dark:text-gray-300" data-i18n="stats_perf_trauma">Green-Corridor RF Traffic Preemption Success: 96.8%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Back Button -->
+        <div class="flex gap-3 mt-4">
+            <a href="index.html" class="btn-primary px-6 py-2.5 text-xs sm:text-sm shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span data-i18n="docs_back">Return to Main Portal</span>
+            </a>
+            <a href="register.html" class="btn-danger px-6 py-2.5 text-xs sm:text-sm shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-truck-medical"></i>
+                <span data-i18n="hero_cta_help">Call for Ambulance</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#111827] text-white mt-auto border-t-4 border-[var(--gov-saffron)]">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row md:justify-between items-center gap-6">
+                <div class="max-w-sm text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                            alt="National Emblem" class="h-10 brightness-0 invert opacity-80">
+                        <div>
+                            <h2 class="text-sm font-bold leading-tight" data-i18n="footer_title">AmbuPriority National Portal</h2>
+                            <p class="text-[10px] text-gray-400 mt-0.5" data-i18n="footer_dept">National Health Authority, Govt. of India</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed" data-i18n="footer_disclaimer">
+                        Official Central Citizen Emergency Health Corridor System. AIS-125 &amp; GIGW 3.0 Compliant.
+                    </p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 text-xs text-gray-400">
+                    <a href="index.html" class="hover:text-white hover:underline" data-i18n="footer_links_home">Home</a>
+                    <a href="detail.html" class="hover:text-white hover:underline" data-i18n="footer_links_docs">Documentation</a>
+                    <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_privacy">Privacy Policy</a>
+                    <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_terms">Terms of Service</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500 text-center sm:text-left">
+                <p data-i18n="footer_copyright">© 2026 National Health Authority, Government of India. Emergency: 102 / 108 / 112</p>
+                <p data-i18n="footer_last_updated">AIS-125 &amp; WHO-IITT Edition</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portal Controller (with cache-bust) -->
+    <script src="gov-portal.js?v=20261115_0315"></script>
+    <!-- ARIA 3D AI Virtual Assistant -->
+    <script src="assistant.js"></script>
+</body>
+
+</html>

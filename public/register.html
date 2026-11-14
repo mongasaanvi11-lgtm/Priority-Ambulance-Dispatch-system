@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Call for Ambulance — Emergency Patient Registration | AmbuPriority National Portal">
+    <title>Call for Ambulance — Patient Registration | AmbuPriority</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+    <style>
+        /* Registration Page — NIC/GOV Style Overrides */
+        .reg-nav-bar {
+            background: linear-gradient(180deg, #1a3a5c 0%, #0d2137 100%);
+        }
+        .reg-nav-bar a {
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 10px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.15s;
+            white-space: nowrap;
+        }
+        .reg-nav-bar a:hover,
+        .reg-nav-bar a.active {
+            background-color: rgba(255,255,255,0.12);
+            color: #ffffff;
+        }
+        .reg-nav-bar a i {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        .reg-advisory {
+            background-color: #fef2f2;
+            border-bottom: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        html.dark .reg-advisory {
+            background-color: rgba(127, 29, 29, 0.15);
+            border-bottom-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        .reg-page-heading {
+            background: linear-gradient(135deg, #e8f0fe 0%, #d4e4f7 100%);
+            border-bottom: 1px solid #bdd4ea;
+        }
+        html.dark .reg-page-heading {
+            background: linear-gradient(135deg, #1a2744 0%, #15203a 100%);
+            border-bottom-color: #2d3748;
+        }
+        .reg-sidebar {
+            background: linear-gradient(180deg, #1a3a5c 0%, #0f2740 100%);
+            color: #ffffff;
+        }
+        .reg-sidebar-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .reg-sidebar-item:last-child { border-bottom: none; }
+        .reg-sidebar-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+        .reg-form-area {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+        .reg-form-header {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .reg-form-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gov-navy);
+            margin-bottom: 2px;
+        }
+        html.dark .reg-form-section-title {
+            color: #7dd3fc;
+        }
+        .reg-form-section-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .reg-form-section-divider {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .reg-field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .reg-field-input {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            font-size: 13px;
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            font-family: inherit;
+        }
+        .reg-field-input:focus {
+            outline: none;
+            border-color: var(--gov-navy);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+        html.dark .reg-field-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+        }
+        .reg-footer {
+            background-color: #0f1b2d;
+            color: #ffffff;
+        }
+        .reg-footer-logos img {
+            height: 36px;
+            filter: brightness(0) invert(1);
+            opacity: 0.85;
+        }
+        /* Breadcrumb styling */
+        .breadcrumb-nav a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+        .breadcrumb-nav a:hover { color: var(--gov-navy); }
+        html.dark .breadcrumb-nav a:hover { color: #7dd3fc; }
+
+        /* Use My Location button on reg page */
+        .btn-gps-outline {
+            background-color: var(--gov-navy);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s;
+            white-space: nowrap;
+        }
+        .btn-gps-outline:hover { background-color: var(--gov-navy-dark); }
+        html.dark .btn-gps-outline { background-color: #1e3a5f; }
+        html.dark .btn-gps-outline:hover { background-color: #0d2137; }
+
+        /* Request Ambulance / Reset buttons */
+        .btn-request-ambulance {
+            background-color: var(--gov-navy);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 28px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s, box-shadow 0.15s;
+        }
+        .btn-request-ambulance:hover {
+            background-color: var(--gov-navy-dark);
+            box-shadow: 0 2px 8px rgba(0,51,102,0.3);
+        }
+        .btn-reset-form {
+            background-color: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.15s;
+        }
+        .btn-reset-form:hover { background-color: var(--bg-muted); }
+        html.dark .btn-reset-form { color: var(--text-secondary); border-color: var(--border-color); }
+        html.dark .btn-reset-form:hover { background-color: #1a2235; }
+
+        /* Healthy India image placeholder */
+        .healthy-india-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 12px;
+            margin-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .healthy-india-badge img {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        /* Skip to main content link */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+        }
+        .skip-link:focus {
+            position: static;
+            background: var(--gov-saffron);
+            color: #000;
+            padding: 4px 12px;
+            font-weight: 600;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Indian National Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Accessibility Top Bar — matching NIC/GOV reference -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Hindi label + Government authority -->
+            <div class="flex items-center gap-3 text-[11px] text-white/90">
+                <span class="font-bold" data-i18n="gov_authority_hindi">à¤­à¤¾à¤°à¤¤ à¤¸à¤°à¤•à¤¾à¤°</span>
+                <span class="text-white/40">|</span>
+                <span data-i18n="gov_authority">Government of India</span>
+            </div>
+            <!-- Right: Accessibility controls -->
+            <div class="flex items-center gap-2 text-[11px]">
+                <a href="#main-content" class="skip-link text-white">Skip to main content</a>
+                <a href="#" class="text-white/70 hover:text-white transition hidden sm:inline" data-i18n="screen_reader">Screen Reader Access</a>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <!-- Text Size -->
+                <div class="flex items-center gap-0.5">
+                    <button type="button" onclick="adjustPortalZoom(-1)" class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"  class="text-white hover:text-yellow-300 px-1.5 font-bold transition border border-white/30 rounded" title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"  class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Increase text">A+</button>
+                </div>
+                <span class="text-white/30">|</span>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="text-white/80 hover:text-white transition cursor-pointer flex items-center gap-1">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" class="hidden sm:inline" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <!-- Language -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="text-yellow-300 hover:text-yellow-200 font-bold transition cursor-pointer">
+                    <span id="langToggleText">à¤¹à¤¿à¤‚à¤¦à¥€</span>
+                </button>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/70 hidden sm:inline">English</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- White Portal Header — matching GOV reference -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight" style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center" data-i18n="portal_subtitle">National Ambulance Priority Routing & Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="tel:112" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar — dark navy, icon + text links -->
+    <nav class="reg-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" class="active" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="detail.html#standards" class="hidden lg:inline-flex" data-i18n="nav_reports"><i class="fa-solid fa-chart-column"></i> Reports &amp; Statistics</a>
+        </div>
+    </nav>
+
+    <!-- Emergency Advisory Strip -->
+    <div class="reg-advisory py-2 px-4">
+        <div class="container mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-xs">
+                <i class="fa-solid fa-triangle-exclamation text-red-600 dark:text-red-400 flex-shrink-0"></i>
+                <span class="font-bold text-red-700 dark:text-red-300" data-i18n="advisory_label">Emergency Advisory:</span>
+                <span class="text-red-800/80 dark:text-red-200/80" data-i18n="advisory_text">In case of medical emergency, please dial 112 or use this portal to request an ambulance.</span>
+            </div>
+            <button type="button" class="text-red-400 hover:text-red-600 transition text-sm flex-shrink-0" aria-label="Close advisory">×</button>
+        </div>
+    </div>
+
+    <!-- Page Heading Section — Light blue with breadcrumb -->
+    <div class="reg-page-heading py-6">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#003366] dark:text-sky-400 mb-1" style="font-family: 'Merriweather', serif;" data-i18n="reg_title">
+                Call for Ambulance
+            </h2>
+            <nav class="breadcrumb-nav text-xs text-[var(--text-muted)]" aria-label="Breadcrumb">
+                <i class="fa-solid fa-house text-[10px] mr-1"></i>
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <span class="mx-1.5">&gt;</span>
+                <span class="font-semibold text-[var(--text-secondary)]" data-i18n="reg_title">Call for Ambulance</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content — Two Column Layout -->
+    <main id="main-content" class="flex-grow">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col lg:flex-row gap-0">
+
+                <!-- LEFT SIDEBAR — Important Information -->
+                <aside class="reg-sidebar rounded-l-lg lg:rounded-l-lg lg:rounded-r-none rounded-t-lg lg:rounded-t-none w-full lg:w-[260px] xl:w-[280px] flex-shrink-0 p-5 lg:p-6">
+                    <h3 class="flex items-center gap-2 text-sm font-bold mb-4 pb-3 border-b border-white/15">
+                        <i class="fa-solid fa-circle-info text-sky-300"></i>
+                        <span data-i18n="sidebar_title">Important Information</span>
+                    </h3>
+
+                    <!-- Emergency Number -->
+                    <div class="reg-sidebar-item">
+                        <div class="reg-sidebar-icon">
+                            <i class="fa-solid fa-phone-volume text-red-300"></i>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-white/60 font-medium uppercase tracking-wider" data-i18n="sidebar_emergency_label">Emergency Number</div>
+                            <div class="text-3xl font-black text-white leading-none mt-1">112</div>
+                        </div>
+                    </div>
+
+                    <!-- Response Time -->
+                    <div class="reg-sidebar-item">
+                        <div class="reg-sidebar-icon">
+                            <i class="fa-solid fa-clock text-sky-300"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-bold text-white" data-i18n="sidebar_response_title">Response Time</div>
+                            <div class="text-xs text-white/70 mt-0.5 leading-relaxed" data-i18n="sidebar_response_desc">Typically within 15–30 minutes</div>
+                        </div>
+                    </div>
+
+                    <!-- Accurate Info -->
+                    <div class="reg-sidebar-item">
+                        <div class="reg-sidebar-icon">
+                            <i class="fa-solid fa-circle-info text-yellow-300"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/80 leading-relaxed" data-i18n="sidebar_accuracy_msg">Please provide accurate information for faster assistance.</p>
+                        </div>
+                    </div>
+
+                    <!-- Together for Healthier India -->
+                    <div class="healthy-india-badge">
+                        <div class="w-8 h-8 rounded bg-green-600/30 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-leaf text-green-300 text-sm"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-white/80 leading-snug" data-i18n="sidebar_healthier_india">Together for a<br>Healthier India</span>
+                    </div>
+                </aside>
+
+                <!-- RIGHT: Registration Form Area -->
+                <div id="registrationFormCard" class="reg-form-area rounded-r-lg lg:rounded-l-none rounded-b-lg lg:rounded-b-none flex-grow min-w-0">
+
+                    <!-- Form Header Bar -->
+                    <div class="reg-form-header rounded-tr-lg lg:rounded-tl-none">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-waveform text-yellow-400 text-lg"></i>
+                            <h3 class="text-sm font-bold" data-i18n="reg_card_title">Patient & Caller Registration Form</h3>
+                        </div>
+                        <span class="text-xs bg-white/10 border border-white/20 px-3 py-1 rounded font-medium whitespace-nowrap" data-i18n="reg_mandatory_note">Fields marked with * are mandatory</span>
+                    </div>
+
+                    <!-- The Registration Form -->
+                    <form id="ambulanceRegistrationForm" class="p-5 sm:p-6 space-y-6"
+                          onsubmit="event.preventDefault(); handleRegistrationSubmit();">
+
+                        <!-- ── SECTION 1: PATIENT INFORMATION ── -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="sec1_title">Patient Information</h4>
+                                <p class="reg-form-section-sub" data-i18n="sec1_sub">Identity of the individual requiring immediate medical response</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <!-- 1. Patient Name -->
+                                <div class="md:col-span-6">
+                                    <label for="patientName" class="reg-field-label">
+                                        <span data-i18n="field1_label">1. Patient Full Name</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-user text-xs"></i>
+                                        </span>
+                                        <input type="text" id="patientName" name="patientName" required
+                                               data-i18n-ph="field1_ph"
+                                               placeholder="Enter patient's full legal name"
+                                               class="reg-field-input">
+                                    </div>
+                                </div>
+
+                                <!-- 2. Age -->
+                                <div class="md:col-span-3">
+                                    <label for="patientAge" class="reg-field-label">
+                                        <span data-i18n="field2_label">2. Patient Age</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-calendar-days text-xs"></i>
+                                        </span>
+                                        <input type="number" id="patientAge" name="patientAge" required min="0" max="125"
+                                               data-i18n-ph="field2_ph"
+                                               placeholder="e.g. 45"
+                                               class="reg-field-input">
+                                    </div>
+                                </div>
+
+                                <!-- 3. Gender -->
+                                <div class="md:col-span-3">
+                                    <label for="patientGender" class="reg-field-label">
+                                        <span data-i18n="field3_label">3. Gender</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-venus-mars text-xs"></i>
+                                        </span>
+                                        <select id="patientGender" name="patientGender" required
+                                                class="reg-field-input appearance-none cursor-pointer" style="padding-right: 32px;">
+                                            <option value="" disabled selected data-i18n="field3_select">Select Gender</option>
+                                            <option value="Male" data-i18n="gender_male">Male</option>
+                                            <option value="Female" data-i18n="gender_female">Female</option>
+                                            <option value="Transgender" data-i18n="gender_trans">Transgender</option>
+                                            <option value="Other" data-i18n="gender_other">Other / Prefer not to say</option>
+                                        </select>
+                                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── SECTION 2: CONTACT NUMBERS ── -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="sec2_title">Emergency Contact Numbers</h4>
+                                <p class="reg-form-section-sub" data-i18n="sec2_sub">Active mobile numbers for driver and paramedic dispatch coordination</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- 4. Mobile -->
+                                <div>
+                                    <label for="mobileNumber" class="reg-field-label">
+                                        <span data-i18n="field4_label">4. Mobile Number</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center gap-1 text-[var(--text-secondary)] text-xs pointer-events-none">
+                                            <i class="fa-solid fa-phone text-[11px]"></i>
+                                            <span class="font-semibold font-mono border-r border-[var(--border-color)] pr-2 ml-0.5">+91</span>
+                                        </span>
+                                        <input type="tel" id="mobileNumber" name="mobileNumber" required
+                                               pattern="[0-9]{10}" maxlength="10"
+                                               data-i18n-ph="field4_ph"
+                                               placeholder="Enter mobile number"
+                                               class="reg-field-input font-mono" style="padding-left: 72px;">
+                                    </div>
+                                </div>
+
+                                <!-- 5. Alternate Mobile -->
+                                <div>
+                                    <label for="alternateMobile" class="reg-field-label flex items-center justify-between">
+                                        <span data-i18n="field5_label">5. Alternate Mobile Number</span>
+                                        <span class="text-[var(--text-muted)] font-normal" data-i18n="field5_opt">(Optional)</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center gap-1 text-[var(--text-secondary)] text-xs pointer-events-none">
+                                            <i class="fa-solid fa-mobile-screen text-[11px]"></i>
+                                            <span class="font-semibold font-mono border-r border-[var(--border-color)] pr-2 ml-0.5">+91</span>
+                                        </span>
+                                        <input type="tel" id="alternateMobile" name="alternateMobile"
+                                               pattern="[0-9]{10}" maxlength="10"
+                                               data-i18n-ph="field5_ph"
+                                               placeholder="Secondary contact number"
+                                               class="reg-field-input font-mono" style="padding-left: 72px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── SECTION 3: PICKUP LOCATION ── -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="sec3_title">Pickup Location & GeoTagging</h4>
+                                <p class="reg-form-section-sub" data-i18n="sec3_sub">Provide exact address or tap current location to ensure nearest fleet dispatch</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Address + GPS row -->
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <!-- 6. Address input -->
+                                    <div class="relative flex-grow">
+                                        <span class="absolute top-2.5 left-3 text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-location-dot text-[13px]"></i>
+                                        </span>
+                                        <input type="text" id="completeAddress" name="completeAddress" required
+                                               autocomplete="off"
+                                               data-i18n-ph="field6_ph"
+                                               placeholder="Enter pickup address"
+                                               class="reg-field-input">
+                                        <div id="addressSearchSpinner" class="hidden absolute top-2.5 right-3 text-[#003366] dark:text-sky-400">
+                                            <i class="fa-solid fa-circle-notch fa-spin text-sm"></i>
+                                        </div>
+                                        <!-- Suggestions Dropdown -->
+                                        <div id="suggestionsDropdown" class="suggestions-dropdown hidden absolute left-0 right-0 mt-1 z-50">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
+                                    <!-- GPS Button -->
+                                    <button type="button" id="btnCurrentLocation" onclick="fetchCurrentLocation()"
+                                        class="btn-gps-outline flex-shrink-0">
+                                        <span id="locBtnSpinner" class="hidden"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                                        <i id="locBtnIcon" class="fa-solid fa-crosshairs"></i>
+                                        <span id="locBtnText" data-i18n="btn_gps">Detect My Location</span>
+                                    </button>
+                                </div>
+
+                                <!-- GPS Status Alert -->
+                                <div id="locationStatusAlert" class="hidden text-xs flex items-start gap-2 pl-1">
+                                    <!-- Populated by JS -->
+                                </div>
+
+                                <!-- 7. Landmark -->
+                                <div>
+                                    <label for="landmark" class="reg-field-label flex items-center justify-between">
+                                        <span data-i18n="field7_label">7. Landmark</span>
+                                        <span class="text-[var(--text-muted)] font-normal" data-i18n="field7_opt">(optional)</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-monument text-xs"></i>
+                                        </span>
+                                        <input type="text" id="landmark" name="landmark"
+                                               data-i18n-ph="field7_ph"
+                                               placeholder="e.g. Near Metro Pillar 142, Opposite City Mall"
+                                               class="reg-field-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── SECTION 4: CALLER INFORMATION ── -->
+                        <div class="mb-2">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="sec4_title">Requestor / Caller Information</h4>
+                                <p class="reg-form-section-sub" data-i18n="sec4_sub">Details of the individual initiating this emergency registry request</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- 8. Requesting Person -->
+                                <div>
+                                    <label for="requestingPerson" class="reg-field-label">
+                                        <span data-i18n="field8_label">8. Person Requesting Ambulance</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-headset text-xs"></i>
+                                        </span>
+                                        <input type="text" id="requestingPerson" name="requestingPerson" required
+                                               data-i18n-ph="field8_ph"
+                                               placeholder="Enter caller / applicant's full name"
+                                               class="reg-field-input">
+                                    </div>
+                                </div>
+
+                                <!-- 9. Relationship -->
+                                <div>
+                                    <label for="relationship" class="reg-field-label">
+                                        <span data-i18n="field9_label">9. Relationship with Patient</span> <span class="text-red-600">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-people-arrows text-xs"></i>
+                                        </span>
+                                        <select id="relationship" name="relationship" required
+                                                class="reg-field-input appearance-none cursor-pointer" style="padding-right: 32px;">
+                                            <option value="" disabled selected data-i18n="field9_select">Select Relationship</option>
+                                            <option value="Self" data-i18n="rel_self">Self (I am the patient)</option>
+                                            <option value="Spouse" data-i18n="rel_spouse">Spouse / Partner</option>
+                                            <option value="Parent" data-i18n="rel_parent">Parent (Father / Mother)</option>
+                                            <option value="Child" data-i18n="rel_child">Child (Son / Daughter)</option>
+                                            <option value="Sibling" data-i18n="rel_sibling">Sibling (Brother / Sister)</option>
+                                            <option value="Relative" data-i18n="rel_relative">Other Family Relative</option>
+                                            <option value="Friend" data-i18n="rel_friend">Friend / Colleague</option>
+                                            <option value="Bystander" data-i18n="rel_bystander">Good Samaritan / Road Bystander</option>
+                                            <option value="Hospital Staff" data-i18n="rel_staff">Hospital / Clinic Attendant</option>
+                                            <option value="Other" data-i18n="rel_other">Other</option>
+                                        </select>
+                                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Registration Success Card (hidden until submit) -->
+                        <div id="registrationSuccessCard" class="hidden success-card">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded bg-green-600 flex items-center justify-center text-white flex-shrink-0 text-lg">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="flex-grow min-w-0">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                        <h4 class="text-sm font-bold text-green-900 dark:text-green-100" data-i18n="success_title">Patient Registration Recorded Successfully</h4>
+                                        <span class="bg-green-200 dark:bg-green-800 text-green-900 dark:text-green-100 text-xs font-mono font-bold px-3 py-0.5 rounded" id="regAckId">NAS-2026-9812</span>
+                                    </div>
+                                    <p class="text-xs text-green-800 dark:text-green-200 leading-relaxed" data-i18n="success_msg">
+                                        Patient identification and pickup coordinates have been recorded in the central emergency dispatch queue. The dispatch control centre has flagged this request for nearest vehicle assignment.
+                                    </p>
+                                    <div class="mt-4 pt-3 border-t border-green-200 dark:border-green-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                                        <div>
+                                            <span class="text-green-700 dark:text-green-300 block text-[10px] uppercase font-bold mb-0.5" data-i18n="ack_lbl_patient">Patient:</span>
+                                            <strong id="ackPatientName">-</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-green-700 dark:text-green-300 block text-[10px] uppercase font-bold mb-0.5" data-i18n="ack_lbl_contact">Contact:</span>
+                                            <strong id="ackPhone">-</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-green-700 dark:text-green-300 block text-[10px] uppercase font-bold mb-0.5" data-i18n="ack_lbl_requestor">Requestor:</span>
+                                            <strong id="ackRequestor">-</strong>
+                                        </div>
+                                        <div>
+                                            <span class="text-green-700 dark:text-green-300 block text-[10px] uppercase font-bold mb-0.5" data-i18n="ack_lbl_status">Status:</span>
+                                            <span class="text-green-700 dark:text-green-300 font-bold" data-i18n="ack_val_status">DISPATCH QUEUED</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-green-200 dark:border-green-800 flex flex-wrap items-center justify-between gap-3">
+                                        <span class="text-xs text-green-900 dark:text-green-200 font-medium">
+                                            <i class="fa-solid fa-stethoscope text-green-700 mr-1"></i> <span data-i18n="triage_prompt_text">Help paramedics prepare: submit detailed clinical symptom assessment.</span>
+                                        </span>
+                                        <a href="assessment.html" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-[#003366] text-white text-xs font-bold hover:bg-[#002244] shadow-sm transition">
+                                            <i class="fa-solid fa-clipboard-check text-yellow-300"></i> <span data-i18n="triage_prompt_btn">Proceed to Clinical Triage Assessment &rarr;</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Action Buttons -->
+                        <div class="pt-4 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <button type="submit" id="btnSubmitRegistration"
+                                class="btn-request-ambulance w-full sm:w-auto justify-center">
+                                <i class="fa-solid fa-ambulance"></i>
+                                <span data-i18n="btn_submit">Request Ambulance</span>
+                            </button>
+                            <button type="button" onclick="resetRegistrationForm()"
+                                class="btn-reset-form w-full sm:w-auto justify-center"
+                                data-i18n="btn_reset">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                Reset Form
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Professional Footer — NIC / GOV Style -->
+    <footer class="reg-footer mt-auto">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <!-- Left: Government branding -->
+                <div class="flex items-center gap-3">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                         alt="National Emblem" class="h-10 brightness-0 invert opacity-80 flex-shrink-0">
+                    <div>
+                        <h2 class="text-sm font-bold leading-tight" data-i18n="gov_india">Government of India</h2>
+                        <p class="text-[10px] text-gray-400 mt-0.5" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                    </div>
+                </div>
+
+                <!-- Center: Footer Links -->
+                <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-400">
+                    <a href="#" class="hover:text-white transition" data-i18n="footer_links_privacy">Privacy Policy</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="#" class="hover:text-white transition" data-i18n="footer_links_terms">Terms & Conditions</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="#" class="hover:text-white transition">Accessibility Statement</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="#" class="hover:text-white transition">Sitemap</a>
+                </div>
+
+                <!-- Right: NIC + Digital India placeholders -->
+                <div class="flex items-center gap-5 flex-shrink-0">
+                    <div class="text-center">
+                        <div class="text-[9px] text-gray-500 font-medium uppercase tracking-wider">National</div>
+                        <div class="text-[10px] text-gray-400 font-bold">Informatics</div>
+                        <div class="text-[9px] text-gray-500 font-medium">Centre</div>
+                    </div>
+                    <div class="w-px h-8 bg-gray-700"></div>
+                    <div class="text-center">
+                        <div class="text-xs font-bold text-gray-300 italic">Digital</div>
+                        <div class="text-xs font-black text-sky-400 italic">India</div>
+                        <div class="text-[8px] text-gray-500">Power to Empower</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom copyright line -->
+            <div class="mt-5 pt-4 border-t border-gray-800 text-center text-[10px] text-gray-500">
+                <span data-i18n="footer_copyright">© 2026 National Health Authority, Government of India. Emergency: 102 / 108 / 112</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS for Interactive GeoTagging Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Portal Controller -->
+    <script src="gov-portal.js"></script>
+    <!-- ARIA 3D AI Virtual Assistant -->
+    <script src="assistant.js"></script>
+
+    <!-- Location & Autocomplete Logic (PRESERVED EXACTLY) -->
+    <script>
+        /* ---- HIGH-ACCURACY ADDRESS AUTOCOMPLETE ---- */
+        let activeSearchController = null;
+        let autocompleteDebounceTimer = null;
+        let currentPickupCoords = { lat: 28.5672, lon: 77.2100 }; // Default AIIMS Delhi
+        // Address text that currentPickupCoords was resolved from. If the field
+        // has been edited since, the submit handler re-geocodes it.
+        let lastGeocodedText = null;
+
+        function initAddressAutocomplete() {
+            const input = document.getElementById('completeAddress');
+            const dropdown = document.getElementById('suggestionsDropdown');
+            const spinner = document.getElementById('addressSearchSpinner');
+
+            input.addEventListener('input', function () {
+                const query = this.value.trim();
+                clearTimeout(autocompleteDebounceTimer);
+                if (activeSearchController) {
+                    activeSearchController.abort();
+                    activeSearchController = null;
+                }
+
+                if (query.length < 2) {
+                    dropdown.classList.add('hidden');
+                    dropdown.innerHTML = '';
+                    spinner.classList.add('hidden');
+                    return;
+                }
+
+                spinner.classList.remove('hidden');
+                autocompleteDebounceTimer = setTimeout(() => fetchAddressSuggestions(query), 240);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Keyboard navigation
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        async function fetchAddressSuggestions(query) {
+            const dropdown = document.getElementById('suggestionsDropdown');
+            const spinner = document.getElementById('addressSearchSpinner');
+
+            if (activeSearchController) {
+                activeSearchController.abort();
+            }
+            activeSearchController = new AbortController();
+
+            try {
+                // Call dedicated backend geocode endpoint (powered by Nominatim India)
+                const url = `/api/geocode/search?q=${encodeURIComponent(query)}`;
+                const response = await fetch(url, { signal: activeSearchController.signal });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const results = data.results || [];
+                    renderDropdown(results, query);
+                } else {
+                    renderDropdown([], query);
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') return; // Cancelled by newer keystroke
+                console.warn('Geocode search error:', err);
+                renderDropdown([], query);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function renderDropdown(items, query) {
+            const dropdown = document.getElementById('suggestionsDropdown');
+            const addressInput = document.getElementById('completeAddress');
+            dropdown.innerHTML = '';
+
+            if (!items || !items.length) {
+                dropdown.innerHTML = `
+                    <div class="px-3 py-2.5 text-xs text-[var(--text-muted)] italic">
+                        No matching address found. Please verify spelling or try locality/city/PIN code.
+                    </div>
+                `;
+                dropdown.classList.remove('hidden');
+                return;
+            }
+
+            items.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = "flex items-start gap-3 px-3 py-2.5 hover:bg-sky-50 dark:hover:bg-slate-800 cursor-pointer transition-colors border-b border-[var(--border-color)] last:border-0";
+                
+                // Pin/type icon
+                let iconClass = "fa-solid fa-location-dot";
+                if (item.type === 'hospital' || item.type === 'clinic') iconClass = "fa-solid fa-hospital text-red-500";
+                else if (item.type === 'postcode') iconClass = "fa-solid fa-envelope text-amber-500";
+                else if (item.type === 'administrative' || item.type === 'city') iconClass = "fa-solid fa-city text-blue-500";
+                
+                const highlightedTitle = highlightMatch(item.title, query);
+                const subtitleHtml = item.subtitle ? `<div class="text-[11px] text-[var(--text-muted)] mt-0.5 line-clamp-1">${escapeHtml(item.subtitle)}</div>` : '';
+                
+                // PIN badge: only show verified PIN code; if unavailable show 'PIN code unavailable'
+                let pinBadge = '';
+                if (item.pincode) {
+                    pinBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono text-[10px] ml-1">PIN: ${escapeHtml(item.pincode)}</span>`;
+                } else {
+                    pinBadge = `<span class="px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 text-[10px] ml-1">PIN code unavailable</span>`;
+                }
+
+                el.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-blue-50 dark:bg-sky-950 text-[#003366] dark:text-sky-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                        <i class="${iconClass}" style="font-size:10px"></i>
+                    </span>
+                    <div class="flex-grow min-w-0">
+                        <div class="text-xs font-semibold text-[var(--text-primary)] leading-snug flex items-center flex-wrap gap-1">
+                            <span>${highlightedTitle}</span>
+                            ${pinBadge}
+                        </div>
+                        ${subtitleHtml}
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-[var(--text-muted)] text-[9px] flex-shrink-0 mt-1"></i>
+                `;
+
+                el.addEventListener('click', () => {
+                    selectAddressSuggestion(item);
+                });
+
+                dropdown.appendChild(el);
+            });
+
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectAddressSuggestion(item) {
+            const addressInput = document.getElementById('completeAddress');
+            const dropdown = document.getElementById('suggestionsDropdown');
+
+            // 1. Populate clean, verified full address
+            addressInput.value = item.full_address || item.title;
+            dropdown.classList.add('hidden');
+            highlightInputSuccess(addressInput);
+
+            // 2. Store exact coordinates for dispatch and routing
+            if (item.lat && item.lon) {
+                currentPickupCoords = { lat: item.lat, lon: item.lon };
+                // Remember which text these coordinates belong to, so the submit
+                // handler knows whether the field was edited afterwards.
+                lastGeocodedText = addressInput.value.trim();
+            }
+
+            // 3. Surface any PIN-code reconciliation warning from the backend
+            if (item.accuracy_warning) {
+                showLocationAlert('warning', item.accuracy_warning);
+            }
+        }
+
+        // Resolve a typed address to coordinates (used when the user types an
+        // address but never picks a suggestion — previously that silently kept
+        // the hardcoded AIIMS default).
+        async function geocodeTypedAddress(text) {
+            try {
+                const r = await fetch(`/api/geocode/search?q=${encodeURIComponent(text)}`);
+                if (!r.ok) return null;
+                const data = await r.json();
+                const first = (data.results || [])[0];
+                if (!first || first.lat == null || first.lon == null) return null;
+                return { lat: parseFloat(first.lat), lon: parseFloat(first.lon), label: first.full_address || first.title };
+            } catch (e) {
+                console.warn('Geocode on submit failed:', e);
+                return null;
+            }
+        }
+
+        function highlightMatch(text, query) {
+            if (!text || !query) return escapeHtml(text || '');
+            const safe = query.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+            const escapedText = escapeHtml(text);
+            return escapedText.replace(new RegExp(`(${safe})`, 'gi'), '<strong class="text-[#003366] dark:text-sky-400 font-bold">$1</strong>');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function highlightInputSuccess(input) {
+            input.classList.add('border-green-500');
+            setTimeout(() => input.classList.remove('border-green-500'), 2000);
+        }
+
+        /* ---- GPS: USE MY CURRENT LOCATION ---- */
+        function fetchCurrentLocation() {
+            const btn = document.getElementById('btnCurrentLocation');
+            const btnSpinner = document.getElementById('locBtnSpinner');
+            const btnIcon = document.getElementById('locBtnIcon');
+            const btnText = document.getElementById('locBtnText');
+            const statusAlert = document.getElementById('locationStatusAlert');
+            const addressInput = document.getElementById('completeAddress');
+            const landmarkInput = document.getElementById('landmark');
+
+            if (!navigator.geolocation) {
+                showLocationAlert('error', 'Location detection is not supported by your browser. Please type your pickup address.');
+                return;
+            }
+
+            btn.disabled = true;
+            btnSpinner.classList.remove('hidden');
+            btnIcon.classList.add('hidden');
+            btnText.textContent = window.govPortal ? window.govPortal.getText('btn_gps_loading') : 'Detecting...';
+            statusAlert.classList.remove('hidden');
+            statusAlert.className = "text-xs flex items-center gap-2 text-[var(--text-secondary)] pl-1";
+            statusAlert.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[#003366] dark:text-sky-400"></i> <span>Accessing location sensor — please allow permission if prompted.</span>`;
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const accuracy = Math.round(position.coords.accuracy || 10);
+                    currentPickupCoords = { lat, lon: lng };
+
+                    const accStatusText = accuracy > 300 
+                        ? `(Approx. ~${accuracy}m network estimate)`
+                        : `(High accuracy GPS ±${accuracy}m)`;
+
+                    statusAlert.innerHTML = `<i class="fa-solid fa-satellite-dish text-green-600"></i> <span>Coordinates locked: [${lat.toFixed(5)}, ${lng.toFixed(5)}] ${accStatusText} — Resolving address...</span>`;
+
+                    try {
+                        const url = `/api/geocode/reverse?lat=${lat}&lon=${lng}&accuracy=${accuracy}`;
+                        const resp = await fetch(url);
+                        let resolvedAddress = '';
+                        let isPoorAccuracy = accuracy > 300;
+                        let warningMsg = null;
+
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            if (data.full_address) {
+                                resolvedAddress = data.full_address;
+                            }
+                            if (data.accuracy_status === 'POOR_ACCURACY') {
+                                isPoorAccuracy = true;
+                                warningMsg = data.accuracy_warning;
+                            }
+                        }
+
+                        if (!resolvedAddress) {
+                            resolvedAddress = `GPS: Lat ${lat.toFixed(6)}, Lng ${lng.toFixed(6)} (±${accuracy}m)`;
+                        }
+
+                        addressInput.value = resolvedAddress;
+                        lastGeocodedText = resolvedAddress.trim();   // GPS coords match this text
+                        highlightInputSuccess(addressInput);
+
+                        if (!landmarkInput.value) {
+                            landmarkInput.value = accuracy > 300 
+                                ? `Approx. area (±${accuracy}m)` 
+                                : `GPS Fix (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                        }
+
+                        if (isPoorAccuracy) {
+                            showLocationAlert('warning', `Location detected (~${accuracy}m estimate). Since accuracy is approximate, PIN code was not auto-filled. Please verify your exact street and PIN code.`);
+                        } else {
+                            showLocationAlert('success', `Current location locked: [Lat ${lat.toFixed(5)}, Lon ${lng.toFixed(5)}] (±${accuracy}m accuracy). Address populated.`);
+                        }
+
+                        // PRODUCTION REQUIREMENT: Store latitude and longitude accurately in backend state & trigger background discovery
+                        // Also cache nearby hospitals in sessionStorage so subsequent pages load instantly without wait
+                        fetch('/api/hospitals/nearby', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                latitude: lat,
+                                longitude: lng,
+                                address: resolvedAddress,
+                                radius_km: 15.0
+                            })
+                        })
+                        .then(r => r.ok ? r.json() : null)
+                        .then(preloaded => {
+                            if (preloaded && preloaded.hospitals) {
+                                try {
+                                    // Strip un-triaged default priority so it doesn't taint subsequent triage assessment
+                                    const cleanPreload = { ...preloaded };
+                                    delete cleanPreload.patient_priority;
+                                    delete cleanPreload.chief_complaint;
+                                    sessionStorage.setItem('preloadedHospitalsData', JSON.stringify(cleanPreload));
+                                } catch(e) {}
+                            }
+                        })
+                        .catch(() => {});
+                    } catch (err) {
+                        addressInput.value = `Coordinates: Lat ${lat.toFixed(6)}, Lng ${lng.toFixed(6)}`;
+                        showLocationAlert('warning', `Coordinates detected (${lat.toFixed(5)}, ${lng.toFixed(5)}). Network reverse geocoding unavailable; please type your street and PIN code.`);
+                    } finally {
+                        btn.disabled = false;
+                        btnSpinner.classList.add('hidden');
+                        btnIcon.classList.remove('hidden');
+                        btnText.textContent = window.govPortal ? window.govPortal.getText('btn_gps') : 'Detect My Location';
+                    }
+                },
+                (error) => {
+                    // On timeout/unavailable, retry once with low-accuracy network-based location
+                    if ((error.code === error.TIMEOUT || error.code === error.POSITION_UNAVAILABLE) && !window._gpsLowAccuracyTried) {
+                        window._gpsLowAccuracyTried = true;
+                        statusAlert.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i> <span>High-accuracy GPS timed out — trying network location...</span>';
+                        navigator.geolocation.getCurrentPosition(
+                            async (pos) => {
+                                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                                const acc = Math.round(pos.coords.accuracy || 100);
+                                currentPickupCoords = { lat, lon: lng };
+                                try {
+                                    const r = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}&accuracy=${acc}`);
+                                    let addr = '';
+                                    if (r.ok) { const d = await r.json(); addr = d.full_address || ''; }
+                                    if (!addr) addr = 'GPS: Lat ' + lat.toFixed(6) + ', Lng ' + lng.toFixed(6) + ' (approx ' + acc + 'm)';
+                                    addressInput.value = addr;
+                                    highlightInputSuccess(addressInput);
+                                    if (!landmarkInput.value) landmarkInput.value = 'Network location (~' + acc + 'm)';
+                                    showLocationAlert('warning', 'Network location detected (~' + acc + 'm approximate accuracy). Please verify your street number and PIN code.');
+
+                                    // Store and trigger discovery + instant sessionStorage cache
+                                    fetch('/api/hospitals/nearby', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            latitude: lat,
+                                            longitude: lng,
+                                            address: addr,
+                                            radius_km: 15.0
+                                        })
+                                    })
+                                    .then(r => r.ok ? r.json() : null)
+                                    .then(preloaded => {
+                                        if (preloaded && preloaded.hospitals) {
+                                            try {
+                                                const cleanPreload = { ...preloaded };
+                                                delete cleanPreload.patient_priority;
+                                                delete cleanPreload.chief_complaint;
+                                                sessionStorage.setItem('preloadedHospitalsData', JSON.stringify(cleanPreload));
+                                            } catch(e) {}
+                                        }
+                                    })
+                                    .catch(() => {});
+                                } catch(e) {
+                                    addressInput.value = 'Lat ' + lat.toFixed(6) + ', Lng ' + lng.toFixed(6);
+                                    showLocationAlert('warning', 'Location detected. Please verify your address and PIN code.');
+                                } finally {
+                                    btn.disabled = false;
+                                    btnSpinner.classList.add('hidden');
+                                    btnIcon.classList.remove('hidden');
+                                    btnText.textContent = window.govPortal ? window.govPortal.getText('btn_gps') : 'Detect My Location';
+                                }
+                            },
+                            () => {
+                                btn.disabled = false;
+                                btnSpinner.classList.add('hidden');
+                                btnIcon.classList.remove('hidden');
+                                btnText.textContent = window.govPortal ? window.govPortal.getText('btn_gps') : 'Detect My Location';
+                                showLocationAlert('error', 'Location sensor unavailable. Please type your pickup address manually.');
+                            },
+                            { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+                        );
+                        return;
+                    }
+                    btn.disabled = false;
+                    btnSpinner.classList.add('hidden');
+                    btnIcon.classList.remove('hidden');
+                    btnText.textContent = window.govPortal ? window.govPortal.getText('btn_gps') : 'Detect My Location';
+                    let msg = 'Could not detect location.';
+                    if (error.code === error.PERMISSION_DENIED)
+                        msg = 'Location permission was denied. Click the lock icon in your browser address bar, allow Location access, then try again.';
+                    else if (error.code === error.POSITION_UNAVAILABLE)
+                        msg = 'GPS position unavailable. Please type your address manually.';
+                    else if (error.code === error.TIMEOUT)
+                        msg = 'Location detection timed out. Please type your address manually.';
+                    showLocationAlert('error', msg);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        }
+
+        function showLocationAlert(type, message) {
+            const statusAlert = document.getElementById('locationStatusAlert');
+            statusAlert.classList.remove('hidden');
+            if (type === 'success') {
+                statusAlert.className = "text-xs flex items-center gap-2 text-green-800 dark:text-green-300 font-medium pl-1";
+                statusAlert.innerHTML = `<i class="fa-solid fa-circle-check text-green-600"></i> <span>${message}</span>`;
+            } else if (type === 'warning') {
+                statusAlert.className = "text-xs flex items-center gap-2 text-amber-800 dark:text-amber-300 font-medium pl-1 bg-amber-50 dark:bg-amber-950/40 p-1.5 rounded border border-amber-200 dark:border-amber-800";
+                statusAlert.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> <span>${message}</span>`;
+            } else {
+                statusAlert.className = "text-xs flex items-center gap-2 text-red-800 dark:text-red-300 font-medium pl-1";
+                statusAlert.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600"></i> <span>${message}</span>`;
+            }
+        }
+
+        /* ---- Form Submit (Preserves exact coordinates for triage & dispatch) ---- */
+        async function handleRegistrationSubmit() {
+            const form = document.getElementById('ambulanceRegistrationForm');
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+
+            const pName = document.getElementById('patientName').value.trim();
+            const pAge  = document.getElementById('patientAge').value.trim();
+            const pGender = document.getElementById('patientGender').value;
+            const mobile  = document.getElementById('mobileNumber').value.trim();
+            const altMobile = document.getElementById('alternateMobile').value.trim();
+            const address = document.getElementById('completeAddress').value.trim();
+            const landmark = document.getElementById('landmark').value.trim();
+            const requestor = document.getElementById('requestingPerson').value.trim();
+            const relationship = document.getElementById('relationship').value;
+
+            // If the user typed an address instead of picking a suggestion, the
+            // coordinates are still the hardcoded default — geocode the typed
+            // text now so the hospital search uses the right area.
+            if (address && lastGeocodedText !== address) {
+                const geo = await geocodeTypedAddress(address);
+                if (geo) {
+                    currentPickupCoords = { lat: geo.lat, lon: geo.lon };
+                    lastGeocodedText = address;
+                    if (geo.label) {
+                        document.getElementById('completeAddress').value = geo.label;
+                    }
+                } else {
+                    showLocationAlert('warning',
+                        'Address location could not be verified — hospitals may be shown around a default area. Please pick a suggestion from the dropdown.');
+                }
+            }
+
+            const ackId = 'NAS-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000);
+
+            document.getElementById('regAckId').textContent = ackId;
+            document.getElementById('ackPatientName').textContent = `${pName} (${pAge}y / ${pGender})`;
+            document.getElementById('ackPhone').textContent = '+91 ' + mobile;
+            document.getElementById('ackRequestor').textContent = `${requestor} (${relationship})`;
+
+            const card = document.getElementById('registrationSuccessCard');
+            card.classList.remove('hidden');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Store accurate coordinates with lastRegistration
+            sessionStorage.setItem('lastRegistration', JSON.stringify({
+                ackId, pName, pAge, pGender, mobile, altMobile, address, landmark, requestor, relationship,
+                lat: currentPickupCoords.lat,
+                lon: currentPickupCoords.lon,
+                registeredAt: new Date().toISOString()
+            }));
+
+            const submitBtn = document.getElementById('btnSubmitRegistration');
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> <span>Registration Saved</span>';
+            submitBtn.style.backgroundColor = '#16a34a';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.disabled = false;
+            }, 4000);
+        }
+
+        function resetRegistrationForm() {
+            document.getElementById('ambulanceRegistrationForm').reset();
+            document.getElementById('registrationSuccessCard').classList.add('hidden');
+            document.getElementById('locationStatusAlert').classList.add('hidden');
+            document.getElementById('suggestionsDropdown').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initAddressAutocomplete();
+
+            // Auto-scroll to Patient & Caller Registration Form if accessed via direct registration link
+            if (window.location.hash.includes('RegistrationForm') || window.location.hash.includes('register') || window.location.hash.includes('registrationFormCard')) {
+                const target = document.getElementById('registrationFormCard') || document.getElementById('ambulanceRegistrationForm');
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const firstField = document.getElementById('patientName');
+                        if (firstField && !firstField.value) firstField.focus();
+                    }, 250);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nearby Hospital Discovery, Ambulance Compatibility, Cost & Condition-Based Recommendations | AmbuPriority National Portal">
+    <title>Nearby Hospitals, Cost & Recommendations | AmbuPriority</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+    <style>
+        .hosp-nav-bar { background: linear-gradient(180deg, #1a3a5c 0%, #0d2137 100%); }
+        .hosp-nav-bar a {
+            color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 500;
+            padding: 10px 16px; display: inline-flex; align-items: center; gap: 6px;
+            transition: background-color 0.15s; white-space: nowrap;
+        }
+        .hosp-nav-bar a:hover, .hosp-nav-bar a.active { background-color: rgba(255,255,255,0.12); color: #ffffff; }
+        .hosp-header-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .priority-badge-red {
+            background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171;
+        }
+        .priority-badge-yellow {
+            background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d;
+        }
+        .priority-badge-green {
+            background-color: #dcfce7; color: #166534; border: 1px solid #86efac;
+        }
+        .priority-badge-review {
+            background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+        }
+        .status-available {
+            color: #166534; font-weight: 700; font-size: 11px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .status-not-available {
+            color: #991b1b; font-weight: 700; font-size: 11px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        /* Cost badges */
+        .cost-badge-free {
+            background-color: #ecfdf5; color: #047857; border: 1px solid #6ee7b7;
+            font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        html.dark .cost-badge-free {
+            background-color: rgba(6, 78, 59, 0.4); color: #a7f3d0; border-color: #047857;
+        }
+        .cost-badge-subsidised {
+            background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+            font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        html.dark .cost-badge-subsidised {
+            background-color: rgba(30, 58, 138, 0.4); color: #93c5fd; border-color: #1d4ed8;
+        }
+        .cost-badge-charges {
+            background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a;
+            font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        html.dark .cost-badge-charges {
+            background-color: rgba(120, 53, 15, 0.4); color: #fde047; border-color: #b45309;
+        }
+        .cost-badge-unverified {
+            background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db;
+            font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        html.dark .cost-badge-unverified {
+            background-color: rgba(55, 65, 81, 0.4); color: #9ca3af; border-color: #4b5563;
+        }
+        /* Empanelment pills */
+        .panel-pill-empanelled {
+            background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;
+            font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 3px;
+        }
+        html.dark .panel-pill-empanelled {
+            background-color: rgba(6, 78, 59, 0.4); color: #6ee7b7; border-color: #047857;
+        }
+        .panel-pill-unverified {
+            background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db;
+            font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 3px;
+        }
+        html.dark .panel-pill-unverified {
+            background-color: rgba(55, 65, 81, 0.4); color: #9ca3af; border-color: #4b5563;
+        }
+        .panel-filter-btn {
+            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: all 0.15s ease; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-secondary);
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .panel-filter-btn:hover {
+            border-color: #003366; color: #003366;
+        }
+        html.dark .panel-filter-btn:hover {
+            border-color: #38bdf8; color: #38bdf8;
+        }
+        .panel-filter-btn.active {
+            background-color: #003366; color: #ffffff; border-color: #003366;
+            box-shadow: 0 1px 3px rgba(0, 51, 102, 0.25);
+        }
+        html.dark .panel-filter-btn.active {
+            background-color: #0284c7; color: #ffffff; border-color: #0284c7;
+        }
+        .gov-table th {
+            background-color: #003366;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 14px;
+            text-align: left;
+        }
+        html.dark .gov-table th {
+            background-color: #162a45;
+            color: #e2e8f0;
+        }
+        .gov-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        .hospital-row-clickable {
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .hospital-row-clickable:hover {
+            background-color: #f0f7ff !important;
+        }
+        html.dark .hospital-row-clickable:hover {
+            background-color: rgba(14, 165, 233, 0.08) !important;
+        }
+        .gov-search-input {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            font-size: 13px;
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        .gov-search-input:focus {
+            outline: none;
+            border-color: #003366;
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+        html.dark .gov-search-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+        /* Autocomplete Dropdown */
+        #hospitalAutocompleteDrop {
+            position: absolute;
+            top: calc(100% + 3px);
+            left: 0; right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+            z-index: 9999;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .ac-item {
+            padding: 9px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.1s;
+        }
+        .ac-item:last-child { border-bottom: none; }
+        .ac-item:hover, .ac-item.ac-active {
+            background-color: #e8f0fb;
+        }
+        html.dark .ac-item:hover, html.dark .ac-item.ac-active {
+            background-color: rgba(56,189,248,0.1);
+        }
+        .ac-item-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        .ac-item-addr {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ac-loading {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ac-no-results {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        /* Modal Backdrop */
+        .hosp-modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(2px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--bg-main)]">
+
+    <!-- Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar (GIGW 3.0 Standard) -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Hindi label + Government authority -->
+            <div class="flex items-center gap-3 text-[11px] text-white/90">
+                <span class="font-bold" data-i18n="gov_authority_hindi">भारत सरकार</span>
+                <span class="text-white/40">|</span>
+                <span data-i18n="gov_authority">Government of India</span>
+                <span class="hidden md:inline text-white/40">•</span>
+                <span class="hidden md:inline">Ministry of Health and Family Welfare</span>
+            </div>
+            <!-- Right: Controls -->
+            <div class="flex items-center gap-2 text-[11px]">
+                <a href="#main-content" class="skip-link text-white">Skip to main content</a>
+                <!-- Text Size -->
+                <div class="flex items-center gap-0.5">
+                    <button type="button" onclick="adjustPortalZoom(-1)" class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"  class="text-white hover:text-yellow-300 px-1.5 font-bold transition border border-white/30 rounded" title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"  class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Increase text">A+</button>
+                </div>
+                <span class="text-white/30">|</span>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="text-white/80 hover:text-white transition cursor-pointer flex items-center gap-1">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" class="hidden sm:inline" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <!-- Language -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="text-yellow-300 hover:text-yellow-200 font-bold transition cursor-pointer">
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/70 hidden sm:inline">English</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header (Unified Standard Government Header) -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight" style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center" data-i18n="portal_subtitle">National Ambulance Priority Routing &amp; Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="register.html" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar — dark navy, matching register.html -->
+    <nav class="hosp-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="detail.html#standards" class="hidden lg:inline-flex" data-i18n="nav_reports"><i class="fa-solid fa-chart-column"></i> Reports &amp; Statistics</a>
+        </div>
+    </nav>
+
+    <!-- Page Title Bar -->
+    <div class="bg-[#f0f4f8] dark:bg-[#152030] border-b border-[var(--border-color)] py-4">
+        <div class="container mx-auto px-4">
+            <h2 class="text-xl sm:text-2xl font-bold text-[#003366] dark:text-sky-400 mb-1" style="font-family: 'Merriweather', serif;">
+                Hospital Directory, Compatibility, Cost &amp; Recommendations
+            </h2>
+            <nav class="breadcrumb-nav text-xs text-[var(--text-muted)]" aria-label="Breadcrumb">
+                <i class="fa-solid fa-house text-[10px] mr-1"></i>
+                <a href="index.html" data-i18n="nav_home">Home</a>
+                <span class="mx-1.5">&gt;</span>
+                <a href="register.html">Emergency Registry</a>
+                <span class="mx-1.5">&gt;</span>
+                <span class="font-semibold text-[var(--text-secondary)]">Hospital Details &amp; Cost</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-6">
+        <div class="container mx-auto px-4 max-w-6xl space-y-6">
+
+            <!-- 1. PATIENT INCIDENT & TRIAGE REFERENCE CARD -->
+            <div class="hosp-header-card p-4 sm:p-5">
+                <div class="text-xs font-bold uppercase tracking-wider text-[#003366] dark:text-sky-400 mb-3 pb-2 border-b border-[var(--border-color)] flex items-center justify-between">
+                    <span>Incident &amp; Triage Reference</span>
+                    <span class="text-[11px] font-normal normal-case text-[var(--text-muted)]">Verified from central emergency registry</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <span class="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Patient Request ID</span>
+                        <span id="displayPatientReqId" class="text-sm font-mono font-bold text-[#003366] dark:text-sky-300">
+                            Loading...
+                        </span>
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Triage Priority</span>
+                        <div class="mt-1">
+                            <span id="displayPatientPriority" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide priority-badge-yellow">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> YELLOW PRIORITY
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Recorded Condition</span>
+                        <span id="displayPatientCondition" class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-1 block">
+                            General Emergency
+                        </span>
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-[var(--text-muted)] block uppercase font-medium">Pickup Incident Location</span>
+                        <span id="displayIncidentLocation" class="text-xs font-medium text-[var(--text-primary)] leading-snug line-clamp-2 mt-1 block">
+                            Loading pickup location...
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. CONDITION-BASED RECOMMENDATIONS SECTION (NEW SECTION) -->
+            <div id="recommendationsSection" class="hosp-header-card p-4 border-l-4 border-l-[#003366] dark:border-l-sky-400">
+                <div class="flex items-center justify-between pb-2 mb-3 border-b border-[var(--border-color)]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-award text-amber-500 text-sm"></i>
+                        <h3 class="text-sm font-bold text-[#003366] dark:text-sky-300">Recommended Hospitals (Condition &amp; Capability Matched)</h3>
+                    </div>
+                    <span class="text-[11px] text-[var(--text-muted)]">Ranked by emergency facilities, ICU, travel-time &amp; ambulance match</span>
+                </div>
+                <div id="recommendationCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Populated dynamically with top 2 recommended hospitals -->
+                </div>
+            </div>
+
+            <!-- 3. SEARCH, SORT & PANEL FILTERS -->
+            <div class="hosp-header-card p-4 space-y-3">
+                <form id="hospitalSearchForm" class="flex flex-col sm:flex-row items-center gap-3" onsubmit="event.preventDefault(); handleHospitalSearch();">
+                    <div class="relative flex-grow w-full">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[var(--text-muted)] pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="hospitalSearchQuery"
+                               placeholder="Search hospital by name, area, locality, or city across India..."
+                               class="gov-search-input"
+                               autocomplete="off"
+                               aria-label="Search hospitals"
+                               aria-autocomplete="list"
+                               aria-controls="hospitalAutocompleteDrop">
+                        <!-- Live Autocomplete Dropdown -->
+                        <div id="hospitalAutocompleteDrop" class="hidden" role="listbox" aria-label="Hospital suggestions"></div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button type="submit" id="btnSearchHospitals" class="btn-primary px-4 py-2.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap w-full sm:w-auto justify-center">
+                            <i class="fa-solid fa-search"></i>
+                            <span>Search</span>
+                        </button>
+                        <button type="button" onclick="loadInitialNearbyHospitals()" class="btn-secondary px-3 py-2.5 text-xs font-semibold whitespace-nowrap" title="Reset to nearby hospitals">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset Nearby</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Comparison / Sorting & Panel Filters -->
+                <div class="pt-2 border-t border-[var(--border-color)] flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-[11px] font-bold uppercase text-[var(--text-muted)] flex items-center gap-1.5 mr-1">
+                            <i class="fa-solid fa-filter text-[#003366] dark:text-sky-400"></i>
+                            <span>Panel:</span>
+                        </span>
+                        <button type="button" class="panel-filter-btn active" data-panel="all" onclick="setPanelFilter('all')">All</button>
+                        <button type="button" class="panel-filter-btn" data-panel="pmjay" onclick="setPanelFilter('pmjay')">PM-JAY</button>
+                        <button type="button" class="panel-filter-btn" data-panel="cghs" onclick="setPanelFilter('cghs')">CGHS</button>
+                        <button type="button" class="panel-filter-btn" data-panel="echs" onclick="setPanelFilter('echs')">ECHS</button>
+                        <button type="button" class="panel-filter-btn" data-panel="esic" onclick="setPanelFilter('esic')">ESIC</button>
+                        <button type="button" class="panel-filter-btn" data-panel="state_govt" onclick="setPanelFilter('state_govt')">State</button>
+                        <button type="button" class="panel-filter-btn" data-panel="tpa_insurance" onclick="setPanelFilter('tpa_insurance')">Insurance/TPA</button>
+                    </div>
+
+                    <!-- Sort / Compare Controls -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-bold text-[var(--text-muted)]">Sort by:</span>
+                        <select id="sortHospitalSelect" onchange="handleSortChange()" class="text-xs bg-[var(--bg-card)] border border-[var(--border-color)] rounded px-2 py-1 text-[var(--text-primary)]">
+                            <option value="recommendation" selected>Suitability &amp; Recommendation (Best Match)</option>
+                            <option value="distance">Distance (Nearest First)</option>
+                            <option value="travel_time">Estimated Travel Time</option>
+                            <option value="cost">Verified Cost (Free / Subsidised First)</option>
+                            <option value="type">Government First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. HOSPITAL DIRECTORY LISTING TABLE (EVERY ROW IS CLICKABLE) -->
+            <div class="hosp-header-card overflow-hidden">
+                <div class="bg-[#003366] dark:bg-[#162a45] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-white">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-hospital-user text-yellow-400"></i>
+                        <h3 class="text-sm font-bold">Hospital Facilities Directory &amp; Tariff</h3>
+                        <span class="text-[11px] bg-white/10 px-2 py-0.5 rounded text-blue-100 font-normal">Click any hospital for full detail &amp; booking</span>
+                    </div>
+                    <div class="text-xs text-blue-200">
+                        <span id="totalHospitalsFound">Searching...</span>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="hospitalsLoading" class="p-12 text-center text-sm text-[var(--text-secondary)] space-y-2">
+                    <i class="fa-solid fa-circle-notch fa-spin text-2xl text-[#003366] dark:text-sky-400"></i>
+                    <p class="font-medium" id="loadingText">Loading verified hospital facilities...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="hospitalsError" class="hidden p-8 text-center text-sm text-red-800 dark:text-red-300 space-y-3">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl text-red-600"></i>
+                    <p class="font-medium" id="errorText">Hospital information is temporarily unavailable. Please try again.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto" id="errorDetail"></p>
+                    <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                        <button type="button" onclick="loadInitialNearbyHospitals()" class="btn-primary px-4 py-2 text-xs font-bold">
+                            <i class="fa-solid fa-rotate-right"></i> <span>Try Again</span>
+                        </button>
+                        <button type="button" onclick="retryWithDefaultLocation()" class="btn-secondary px-4 py-2 text-xs font-semibold">
+                            <i class="fa-solid fa-map-pin"></i> <span>Use Default Location (Delhi)</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Make sure you are opening this page from <strong>http://localhost:5001/hospitals.html</strong></p>
+                </div>
+
+                <!-- Empty Result State -->
+                <div id="hospitalsEmpty" class="hidden p-8 text-center text-sm text-[var(--text-secondary)] space-y-2">
+                    <i class="fa-solid fa-folder-open text-3xl text-[var(--text-muted)]"></i>
+                    <p class="font-medium">No hospitals found matching your criteria.</p>
+                    <p class="text-xs text-[var(--text-muted)]">Try expanding your search term or selecting All Panels.</p>
+                </div>
+
+                <!-- Data Table Container -->
+                <div id="hospitalsTableContainer" class="hidden overflow-x-auto">
+                    <table class="w-full gov-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 24%;">Hospital Name &amp; Classification</th>
+                                <th style="width: 15%;">Distance &amp; Time</th>
+                                <th style="width: 18%;">Ambulance Transport Fare</th>
+                                <th style="width: 19%;">Hospital Treatment Cost</th>
+                                <th style="width: 12%;">Panel / Schemes</th>
+                                <th style="width: 12%;">Action / Dispatch</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hospitalsTableBody">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer Advisory -->
+                <div class="p-3 bg-gray-50 dark:bg-gray-800/40 border-t border-[var(--border-color)] text-[11px] text-[var(--text-muted)] flex flex-col sm:flex-row justify-between items-center gap-2">
+                    <span>
+                        <i class="fa-solid fa-shield-halved text-[#003366] dark:text-sky-400 mr-1"></i>
+                        <span>Distances calculated along road transit path from original patient coordinates. Travel time is estimated for urban traffic conditions.</span>
+                    </span>
+                    <span class="italic text-gray-500">
+                        * NO MAP DISPLAY — Click hospital name to inspect complete facilities &amp; verified tariffs.
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 5. HOSPITAL DETAIL MODAL (OPENS ON CLICKING ANY HOSPITAL) -->
+    <div id="hospitalDetailModal" class="fixed inset-0 z-50 hosp-modal-backdrop hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#161b27] border border-[var(--border-color)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="bg-[#003366] dark:bg-[#162a45] text-white px-5 py-4 flex items-start justify-between">
+                <div>
+                    <h3 id="modalHospitalName" class="text-base font-bold leading-tight">Hospital Name</h3>
+                    <div id="modalHospitalType" class="text-xs text-sky-200 mt-0.5">Government Hospital</div>
+                </div>
+                <button type="button" onclick="closeHospitalDetailModal()" class="text-white/80 hover:text-white p-1 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div id="modalHospitalBody" class="p-5 overflow-y-auto space-y-4 text-xs text-[var(--text-primary)]">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Modal Footer (Booking & Close) -->
+            <div id="modalHospitalFooter" class="p-4 bg-gray-50 dark:bg-gray-800/60 border-t border-[var(--border-color)] flex items-center justify-between">
+                <button type="button" onclick="closeHospitalDetailModal()" class="btn-secondary px-4 py-2 text-xs font-semibold">
+                    Close
+                </button>
+                <div id="modalBookingButtonContainer">
+                    <!-- Populated based on availability rule -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Confirmation Toast / Banner -->
+    <div id="bookingConfirmationBanner" class="fixed bottom-6 right-6 z-50 hidden max-w-md bg-emerald-900 text-white p-4 rounded-lg shadow-xl border border-emerald-400 space-y-2">
+        <div class="flex items-center gap-2 font-bold text-sm text-emerald-200">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+            <span>Ambulance Dispatch Confirmed</span>
+        </div>
+        <p id="bookingConfirmationText" class="text-xs text-emerald-100">
+            Hospital selected. Central ambulance fleet unit has been locked for this facility.
+        </p>
+        <button type="button" onclick="document.getElementById('bookingConfirmationBanner').classList.add('hidden')" class="text-[11px] underline text-emerald-300 font-semibold">
+            Dismiss
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="reg-footer mt-auto py-6 bg-[#0f1b2d] text-white">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+            <div>© 2026 National Health Authority, Government of India. Emergency Numbers: 112 / 108 / 102</div>
+            <div class="flex gap-4">
+                <a href="index.html" class="hover:underline">Home</a>
+                <a href="register.html" class="hover:underline">Call for Ambulance</a>
+                <a href="assessment.html" class="hover:underline">Clinical Assessment</a>
+                <a href="detail.html" class="hover:underline">Documentation</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portal Controller -->
+    <script src="gov-portal.js"></script>
+    <!-- ARIA Virtual Assistant -->
+    <script src="assistant.js"></script>
+    <script>
+        // State variables
+        let patientData = {
+            ackId: "NAS-2026-UNSPECIFIED",
+            address: "",
+            lat: null,
+            lon: null,
+            priority: null,
+            chiefComplaint: null
+        };
+
+        let rawHospitalsList = [];
+        let currentPanelFilter = 'all';
+        let currentSortMode = 'recommendation';
+
+        function initPatientContext() {
+            try {
+                const rawReg = sessionStorage.getItem('lastRegistration');
+                if (rawReg) {
+                    const reg = JSON.parse(rawReg);
+                    if (reg.ackId) patientData.ackId = reg.ackId;
+                    if (reg.address) patientData.address = reg.address;
+                    if (reg.lat) patientData.lat = parseFloat(reg.lat);
+                    if (reg.lon) patientData.lon = parseFloat(reg.lon);
+                    if (reg.patient_priority) patientData.priority = reg.patient_priority;
+                    if (reg.chief_complaint) {
+                        patientData.chiefComplaint = reg.chief_complaint;
+                    }
+                }
+                // Also check explicit standalone session keys
+                const prio = sessionStorage.getItem('patientPriority');
+                if (prio) patientData.priority = prio;
+                const cc = sessionStorage.getItem('patientChiefComplaint');
+                if (cc) patientData.chiefComplaint = cc;
+                const reqId = sessionStorage.getItem('patientRequestId');
+                if (reqId) patientData.ackId = reqId;
+
+                if (patientData.chiefComplaint) {
+                    document.getElementById('displayPatientCondition').textContent = formatComplaintName(patientData.chiefComplaint);
+                }
+            } catch (e) {
+                console.warn("Context read error:", e);
+            }
+
+            // If no GPS coords from registration, try browser geolocation
+            const hasCoords = patientData.lat && patientData.lon;
+            if (!hasCoords && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        patientData.lat = pos.coords.latitude;
+                        patientData.lon = pos.coords.longitude;
+                        // Update address via reverse geocode
+                        fetch('/api/geocode/reverse?lat=' + patientData.lat + '&lon=' + patientData.lon)
+                            .then(r => r.ok ? r.json() : null)
+                            .then(d => {
+                                if (d && d.full_address) {
+                                    patientData.address = d.full_address;
+                                    document.getElementById('displayIncidentLocation').textContent = d.full_address;
+                                }
+                                // Reload hospitals with accurate GPS coordinates
+                                loadInitialNearbyHospitals();
+                            })
+                            .catch(() => loadInitialNearbyHospitals());
+                    },
+                    () => { /* GPS denied/failed — keep default */ },
+                    { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+                );
+            }
+
+            if (!patientData.address) {
+                // No GPS / no registered address: fall back to a clearly-labelled
+                // default rather than silently pretending this is the user's area.
+                patientData.address = "Central Delhi (default location — type your area above for accurate results)";
+                patientData.lat = 28.5672;
+                patientData.lon = 77.2100;
+                patientData.isDefaultLocation = true;
+            }
+
+            document.getElementById('displayPatientReqId').textContent = patientData.ackId;
+            document.getElementById('displayIncidentLocation').textContent = patientData.address;
+            if (patientData.priority) {
+                renderPriorityBadge(patientData.priority);
+            }
+        }
+
+        function renderPriorityBadge(priority, complaintReason) {
+            const badge = document.getElementById('displayPatientPriority');
+            badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide";
+            
+            const p = (priority || "YELLOW").toUpperCase();
+            if (p === "RED") {
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide priority-badge-red";
+                badge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-600"></i> RED PRIORITY (IMMEDIATE LIFE THREAT)';
+            } else if (p === "GREEN") {
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide priority-badge-green";
+                badge.innerHTML = '<i class="fa-solid fa-circle-check text-green-600"></i> GREEN PRIORITY (NON-URGENT)';
+            } else if (p === "REVIEW_REQUIRED" || p.includes("REVIEW")) {
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide priority-badge-review";
+                badge.innerHTML = '<i class="fa-solid fa-user-doctor text-indigo-600"></i> CLINICAL REVIEW REQUIRED';
+            } else {
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide priority-badge-yellow";
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> YELLOW PRIORITY (URGENT)';
+            }
+        }
+
+        // Fallback: load hospitals around central Delhi (explicitly labelled)
+        function retryWithDefaultLocation() {
+            patientData.lat = 28.5672;
+            patientData.lon = 77.2100;
+            patientData.address = "Central Delhi (default location)";
+            patientData.isDefaultLocation = true;
+            document.getElementById('displayIncidentLocation').textContent = patientData.address;
+            loadInitialNearbyHospitals();
+        }
+
+        async function loadInitialNearbyHospitals() {
+            const loading = document.getElementById('hospitalsLoading');
+            const error = document.getElementById('hospitalsError');
+            const empty = document.getElementById('hospitalsEmpty');
+            const container = document.getElementById('hospitalsTableContainer');
+            const countText = document.getElementById('totalHospitalsFound');
+            const searchInput = document.getElementById('hospitalSearchQuery');
+            
+            searchInput.value = '';
+
+            // Check if hospitals were already preloaded in background immediately upon location detection
+            try {
+                const preloadedRaw = sessionStorage.getItem('preloadedHospitalsData');
+                if (preloadedRaw) {
+                    const preloaded = JSON.parse(preloadedRaw);
+                    if (preloaded && preloaded.hospitals && preloaded.hospitals.length > 0) {
+                        loading.classList.add('hidden');
+                        error.classList.add('hidden');
+                        empty.classList.add('hidden');
+                        container.classList.remove('hidden');
+
+                        // Respect user's submitted triage priority over preloaded background search
+                        if (patientData.priority) {
+                            renderPriorityBadge(patientData.priority);
+                        } else if (preloaded.patient_priority) {
+                            patientData.priority = preloaded.patient_priority;
+                            renderPriorityBadge(preloaded.patient_priority);
+                        }
+
+                        if (patientData.chiefComplaint && patientData.chiefComplaint !== 'general') {
+                            document.getElementById('displayPatientCondition').textContent = formatComplaintName(patientData.chiefComplaint);
+                        } else if (preloaded.chief_complaint) {
+                            patientData.chiefComplaint = preloaded.chief_complaint;
+                            document.getElementById('displayPatientCondition').textContent = formatComplaintName(preloaded.chief_complaint);
+                        }
+                        if (preloaded.incident_location && preloaded.incident_location !== 'Identified Incident Coordinates') {
+                            document.getElementById('displayIncidentLocation').textContent = preloaded.incident_location;
+                        }
+
+                        rawHospitalsList = preloaded.hospitals;
+                        renderTopRecommendations(rawHospitalsList);
+                        applyHospitalFiltersAndRender();
+                        startIncrementalHospitalResearch(rawHospitalsList);
+                        return; // Instant render without user having to wait!
+                    }
+                }
+            } catch(e) {
+                console.warn("Preload read error:", e);
+            }
+
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            empty.classList.add('hidden');
+            container.classList.add('hidden');
+            countText.textContent = "Loading nearby hospitals...";
+
+            try {
+                // Add AbortController for timeout (45 seconds for slow OSM queries)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+                const resp = await fetch('/api/hospitals/nearby', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                        request_id: patientData.ackId,
+                        address: patientData.address,
+                        latitude: patientData.lat,
+                        longitude: patientData.lon,
+                        radius_km: 12.0
+                    })
+                });
+                clearTimeout(timeoutId);
+
+                if (!resp.ok) {
+                    let errBody = '';
+                    try { errBody = (await resp.json()).error || ''; } catch(e) {}
+                    throw new Error(errBody || ("Server error: HTTP " + resp.status));
+                }
+
+                const data = await resp.json();
+                
+                // If patient came from clinical assessment, retain their specific evaluated priority
+                if (patientData.priority) {
+                    renderPriorityBadge(patientData.priority);
+                } else if (data.patient_priority) {
+                    patientData.priority = data.patient_priority;
+                    renderPriorityBadge(data.patient_priority);
+                } else {
+                    renderPriorityBadge("YELLOW");
+                }
+                
+                if (patientData.chiefComplaint && patientData.chiefComplaint !== 'general') {
+                    document.getElementById('displayPatientCondition').textContent = formatComplaintName(patientData.chiefComplaint);
+                } else if (data.chief_complaint) {
+                    patientData.chiefComplaint = data.chief_complaint;
+                    document.getElementById('displayPatientCondition').textContent = formatComplaintName(data.chief_complaint);
+                }
+
+                // Never overwrite the user's registered pickup address with a backend fallback address
+                if (!patientData.address || patientData.isDefaultLocation) {
+                    if (data.incident_location &&
+                        data.incident_location !== 'Identified Incident Coordinates') {
+                        document.getElementById('displayIncidentLocation').textContent = data.incident_location;
+                    }
+                } else {
+                    document.getElementById('displayIncidentLocation').textContent = patientData.address;
+                }
+
+                rawHospitalsList = data.hospitals || [];
+                renderTopRecommendations(rawHospitalsList);
+                applyHospitalFiltersAndRender();
+                // Trigger fast background Gemini panel research non-blockingly
+                startIncrementalHospitalResearch(rawHospitalsList);
+
+            } catch (err) {
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+                if (err.name === 'AbortError') {
+                    document.getElementById('errorText').textContent = "Request timed out — hospital map data is loading slowly.";
+                    document.getElementById('errorDetail').textContent = "OpenStreetMap API may be slow. Click 'Try Again' or use the default location button.";
+                } else if (err.message && err.message.includes('fetch')) {
+                    document.getElementById('errorText').textContent = "Cannot connect to hospital server.";
+                    document.getElementById('errorDetail').textContent = "Please open this page from http://localhost:5001/hospitals.html (not port 8000 or file://).";
+                } else {
+                    document.getElementById('errorText').textContent = "Hospital data could not be loaded.";
+                    document.getElementById('errorDetail').textContent = err.message || "Please try again.";
+                }
+            }
+        }
+
+        let _searchAbort = null;
+        async function handleHospitalSearch() {
+            // Close autocomplete when full search is triggered
+            closeAutocomplete();
+
+            const q = document.getElementById('hospitalSearchQuery').value.trim();
+            if (!q) {
+                loadInitialNearbyHospitals();
+                return;
+            }
+
+            // If the user typed a place (e.g. "Delhi Cantt") and pressed search
+            // without picking a suggestion, resolve it now. Otherwise the stale /
+            // default coordinates are used and hospitals from the wrong area show.
+            if (q !== (patientData.address || '').trim()) {
+                try {
+                    const g = await fetch(`/api/geocode/search?q=${encodeURIComponent(q)}`);
+                    if (g.ok) {
+                        const gd = await g.json();
+                        const hit = (gd.results || [])[0];
+                        if (hit && hit.lat != null && hit.lon != null) {
+                            patientData.lat = parseFloat(hit.lat);
+                            patientData.lon = parseFloat(hit.lon);
+                            patientData.address = hit.full_address || q;
+                            patientData.isDefaultLocation = false;
+                            const locEl = document.getElementById('displayIncidentLocation');
+                            if (locEl) locEl.textContent = patientData.address;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Location geocode on search failed:', e);
+                }
+            }
+
+            const loading = document.getElementById('hospitalsLoading');
+            const error = document.getElementById('hospitalsError');
+            const empty = document.getElementById('hospitalsEmpty');
+            const container = document.getElementById('hospitalsTableContainer');
+            const countText = document.getElementById('totalHospitalsFound');
+
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            empty.classList.add('hidden');
+            container.classList.add('hidden');
+            countText.textContent = "Searching hospitals across India...";
+
+            if (_searchAbort) _searchAbort.abort();
+            _searchAbort = new AbortController();
+
+            try {
+                const url = `/api/hospitals/search?q=${encodeURIComponent(q)}&request_id=${encodeURIComponent(patientData.ackId)}&lat=${patientData.lat || 28.5672}&lon=${patientData.lon || 77.2100}&address=${encodeURIComponent(patientData.address || '')}`;
+                const resp = await fetch(url, { signal: _searchAbort.signal });
+
+                if (!resp.ok) throw new Error("HTTP error " + resp.status);
+
+                const data = await resp.json();
+                if (data.patient_priority) {
+                    patientData.priority = data.patient_priority;
+                    renderPriorityBadge(data.patient_priority);
+                }
+                if (data.chief_complaint) {
+                    patientData.chiefComplaint = data.chief_complaint;
+                    document.getElementById('displayPatientCondition').textContent = formatComplaintName(data.chief_complaint);
+                }
+
+                rawHospitalsList = data.hospitals || [];
+                renderTopRecommendations(rawHospitalsList);
+                applyHospitalFiltersAndRender();
+                // Trigger fast background Gemini panel research non-blockingly
+                startIncrementalHospitalResearch(rawHospitalsList);
+
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        // ════════════════════════════════════════
+        // BACKGROUND GEMINI INTELLIGENCE WORKER FOR PANELS & SCHEMES
+        // ════════════════════════════════════════
+        // ────────────────────────────────────────
+        // Before: one Gemini call per hospital, 3 at a time (~4.4s each) → 10
+        // hospitals took ~15-18s. Now: a single round trip, and hospitals already
+        // in the persistent cache resolve in ~0ms.
+        let _batchResearchInFlight = false;
+
+        // ────────────────────────────────────────
+        // As soon as we know the location, ask the server to warm this area's
+        // panels: the ~30 nearest hospitals first (Phase 1), then the rest of
+        // the city (Phase 2). Changing location cancels the previous scan.
+        let _scanJobId = null;
+        let _scanTimer = null;
+
+        function startAreaPanelScan(lat, lon, label) {
+            if (lat == null || lon == null) return;
+            clearTimeout(_scanTimer);
+            _scanTimer = setTimeout(async () => {
+                // Cancel the previous scan before starting a new one.
+                if (_scanJobId) {
+                    try {
+                        await fetch('/api/panel/scan/cancel', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ job_id: _scanJobId })
+                        });
+                    } catch (e) { /* background only */ }
+                }
+
+                _scanJobId = 'scan-' + Date.now().toString(36) +
+                             Math.random().toString(36).slice(2, 6);
+
+                try {
+                    await fetch('/api/panel/scan', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lat, lon,
+                            label: label || '',
+                            job_id: _scanJobId
+                        })
+                    });
+                } catch (e) { /* background only */ }
+            }, 500);   // debounce: rapid location changes = only the last scan runs
+        }
+
+        function startIncrementalHospitalResearch(hospitals) {
+            if (!hospitals || !hospitals.length) return;
+            // Warm the whole area in the background (cancels any previous scan).
+            startAreaPanelScan(patientData.lat, patientData.lon, patientData.address);
+            const pending = hospitals.filter(h => !h.gemini_research);
+            if (!pending.length) return;
+            fetchBatchHospitalResearch(pending);
+        }
+
+        async function fetchBatchHospitalResearch(pending) {
+            if (!pending.length) return;
+
+            // ────────────────────────────────────────
+            // If the answer has not arrived within 5 s, stop pretending we are
+            // still checking: show the honest fallback. Any data that arrives
+            // later still upgrades the row.
+            const deadline = setTimeout(() => {
+                pending.forEach(h => {
+                    if (!h.gemini_research) {
+                        h._panelResearchDone = true;
+                        updateHospitalRowPanelCell(h);
+                    }
+                });
+            }, 5000);
+
+            // Two waves so the hospitals at the top of the table resolve first.
+            const wave1 = pending.slice(0, 12);
+            const wave2 = pending.slice(12);
+
+            const requestWave = async (items) => {
+                const names = items.map(h => h.name).filter(Boolean);
+                if (!names.length) return;
+                try {
+                    const resp = await fetch('/api/hospitals/research/batch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ names })
+                    });
+
+                    const data = resp.ok ? await resp.json() : {};
+                    const results = (data && data.results) || {};
+
+                    for (const h of items) {
+                        const gr = results[h.name];
+                        if (gr) {
+                            applyGeminiResearchToLocalHospital(h, gr);
+                            h._panelResearchDone = false;
+                        } else {
+                            h._panelResearchDone = true;
+                            updateHospitalRowPanelCell(h);
+                        }
+                    }
+                } catch (err) {
+                    items.forEach(h => {
+                        h._panelResearchDone = true;
+                        updateHospitalRowPanelCell(h);
+                    });
+                }
+            };
+
+            try {
+                await Promise.all([requestWave(wave1), requestWave(wave2)]);
+            } finally {
+                clearTimeout(deadline);
+            }
+        }
+
+        function applyGeminiResearchToLocalHospital(h, gr) {
+            h.gemini_research = gr;
+            const schemes = gr.schemes || [];
+            const panelsList = gr.panels || [];
+            
+            if (!h.panel_info) h.panel_info = { panels: {} };
+            if (!h.panel_info.panels) h.panel_info.panels = {};
+            const panels = h.panel_info.panels;
+
+            const hasPmjay = schemes.some(s => s.toLowerCase().includes('pmjay') || s.toLowerCase().includes('ayushman'));
+            const hasCghs = schemes.some(s => s.toLowerCase().includes('cghs'));
+            const hasEchs = schemes.some(s => s.toLowerCase().includes('echs'));
+            const hasEsic = schemes.some(s => s.toLowerCase().includes('esic'));
+            const hasState = schemes.some(s => s.toLowerCase().includes('state') || s.toLowerCase().includes('dghs') || s.toLowerCase().includes('rghs') || s.toLowerCase().includes('aarogya'));
+
+            if (hasPmjay) panels.pmjay = { name: "Ayushman Bharat – PM-JAY", status: "Empanelled", badge: "empanelled", details: "Empanelled for Ayushman Bharat PM-JAY cashless treatment" };
+            if (hasCghs) panels.cghs = { name: "CGHS", status: "Empanelled", badge: "empanelled", details: "Empanelled for CGHS beneficiaries" };
+            if (hasEchs) panels.echs = { name: "ECHS", status: "Empanelled", badge: "empanelled", details: "Empanelled for Ex-Servicemen Contributory Health Scheme" };
+            if (hasEsic) panels.esic = { name: "ESIC", status: "Empanelled", badge: "empanelled", details: "Tie-up for ESIC beneficiaries" };
+            if (hasState) panels.state_govt = { name: "State Govt Health Schemes", status: "Empanelled", badge: "empanelled", details: "Empanelled for state employee & public health schemes" };
+
+            if (panelsList.length || gr.cashless_available) {
+                const tpaStr = panelsList.slice(0, 4).join(', ') || "All Major TPAs";
+                panels.tpa_insurance = { name: "Private Insurance / TPA Networks", status: "Empanelled", badge: "empanelled", details: `Cashless desk operational for: ${tpaStr}` };
+            }
+
+            // Dynamically update the specific row's Panel/Schemes cell in the UI
+            updateHospitalRowPanelCell(h);
+
+            // Re-apply filter if user is currently filtering by a specific panel
+            if (currentPanelFilter !== 'all') {
+                applyHospitalFiltersAndRender();
+            }
+
+            // If the modal for this hospital is currently open, refresh it in place!
+            const modal = document.getElementById('hospitalDetailModal');
+            const modalNameEl = document.getElementById('modalHospitalName');
+            if (modal && !modal.classList.contains('hidden') && modalNameEl && modalNameEl.textContent === h.name) {
+                openHospitalDetailModal(h);
+            }
+        }
+
+        function updateHospitalRowPanelStatus(hId, isResearching) {
+            const cell = document.querySelector(`[data-panel-cell-id="${hId}"]`);
+            if (cell) {
+                const badge = cell.querySelector('.researching-indicator');
+                if (badge) badge.remove();
+            }
+        }
+
+        // Instant, honest placeholder shown while AI verification is in flight.
+        // Never claims a specific insurer before it is verified — just tells the
+        // user what is being checked, so the column is never a dead "Pending".
+        function pendingPanelPill(h) {
+            const n = (h.name || '').toLowerCase();
+
+            // Facility classed as not offering cashless (clinic / diagnostic /
+            // nursing home): definite answer, never "verifying…".
+            if (h.panel_info && (h.panel_info.cashless === 'not_applicable' ||
+                                 h.panel_info.matched_category === 'no_cashless')) {
+                const note = (h.panel_info.cashless_note || 'Clinic / nursing home — cashless tie-ups are generally not offered here.');
+                return `<span class="panel-pill-unverified" title="${escapeHtml(note)}">No cashless · clinic / nursing home</span>`;
+            }
+
+            // Verification already finished but nothing authoritative was found:
+            // show a definite state instead of an endless "verifying…".
+            if (h._panelResearchDone) {
+                return `<span class="panel-pill-unverified" title="No verified cashless/insurance record found. Please confirm at the hospital billing desk.">Not verified · check at desk</span>`;
+            }
+
+            const govtKeys = ['government', 'govt', 'civil', 'district', 'municipal', 'railway',
+                'esic', 'phc', 'chc', 'mcw', 'mcd', 'aiims', 'safdarjung', 'vmmc',
+                'dispensary', 'maternity', 'trauma'];
+            const chainKeys = ['apollo', 'fortis', 'max ', 'medanta', 'manipal', 'blk',
+                'artemis', 'narayana', 'ganga ram', 'medeor', 'kailash', 'moolchand',
+                'paras', 'jaypee', 'sharda', 'sarvodaya', 'asian institute',
+                'venkateshwar', 'primus', 'batra', 'pushpawati', 'dharamshila'];
+
+            if (govtKeys.some(k => n.includes(k))) {
+                return `<span class="panel-pill-unverified" title="Government facility — state and central schemes usually apply. Confirming which ones.">Govt schemes · checking…</span>`;
+            }
+            if (chainKeys.some(k => n.includes(k))) {
+                return `<span class="panel-pill-unverified" title="Major private chain — cashless TPAs are usually available. Confirming the exact insurers.">Cashless likely · checking…</span>`;
+            }
+            return `<span class="panel-pill-unverified" title="Verifying accepted insurance panels and government schemes.">TPA check · verifying…</span>`;
+        }
+
+        function updateHospitalRowPanelCell(h) {
+            const cell = document.querySelector(`[data-panel-cell-id="${h.hospital_id}"]`);
+            if (!cell) return;
+
+            const panels = h.panel_info?.panels || {};
+            const schemePills = [];
+            if (panels.pmjay && (panels.pmjay.status === 'Empanelled' || panels.pmjay.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.pmjay.details || 'PM-JAY')}">PM-JAY</span>`);
+            }
+            if (panels.cghs && (panels.cghs.status === 'Empanelled' || panels.cghs.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.cghs.details || 'CGHS')}">CGHS</span>`);
+            }
+            if (panels.echs && (panels.echs.status === 'Empanelled' || panels.echs.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.echs.details || 'ECHS')}">ECHS</span>`);
+            }
+            if (panels.esic && (panels.esic.status === 'Empanelled' || panels.esic.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.esic.details || 'ESIC')}">ESIC</span>`);
+            }
+            if (panels.state_govt && (panels.state_govt.status === 'Empanelled' || panels.state_govt.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.state_govt.details || 'State Schemes')}">State Govt</span>`);
+            }
+            if (panels.tpa_insurance && (panels.tpa_insurance.status === 'Empanelled' || panels.tpa_insurance.badge === 'empanelled')) {
+                schemePills.push(`<span class="panel-pill-empanelled bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300" title="${escapeHtml(panels.tpa_insurance.details || 'TPA Cashless')}">TPA / Cashless</span>`);
+            }
+
+            if (h.gemini_research?.panels && h.gemini_research.panels.length > 0) {
+                h.gemini_research.panels.slice(0, 2).forEach(p => {
+                    schemePills.push(`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 animate-pulse">${escapeHtml(p)}</span>`);
+                });
+            }
+
+            if (!schemePills.length) {
+                schemePills.push(pendingPanelPill(h));
+            }
+
+            const fac = h.facilities || {};
+            cell.innerHTML = `
+                <div class="flex flex-wrap gap-1">
+                    ${schemePills.join(' ')}
+                </div>
+                <div class="text-[10px] text-[var(--text-muted)] mt-1">${escapeHtml(fac.emergency_dept || '24x7 Emergency')}</div>
+            `;
+        }
+
+        (function initHospitalAutocomplete() {
+            const input  = document.getElementById('hospitalSearchQuery');
+            const drop   = document.getElementById('hospitalAutocompleteDrop');
+            if (!input || !drop) return;
+
+            let _acTimer   = null;   // debounce timer
+            let _acAbort   = null;   // AbortController for in-flight fetch
+            let _acIndex   = -1;    // keyboard-selected item index
+            let _acItems   = [];    // current suggestion elements
+
+            // ────────────────────────────────────────
+            function openDrop()  { drop.classList.remove('hidden'); }
+            function closeDrop() { drop.classList.add('hidden'); _acIndex = -1; _acItems = []; }
+
+            function highlightItem(idx) {
+                _acItems.forEach((el, i) => {
+                    el.classList.toggle('ac-active', i === idx);
+                });
+                _acIndex = idx;
+            }
+
+            function renderLoading() {
+                drop.innerHTML =
+                    `<div class="ac-loading">
+                        <i class="fa-solid fa-circle-notch fa-spin text-[#003366]"></i>
+                        <span>Searching hospitals…</span>
+                    </div>`;
+                openDrop();
+                _acItems = [];
+            }
+
+            function renderNoResults() {
+                drop.innerHTML = `<div class="ac-no-results">No matching hospitals found.</div>`;
+                openDrop();
+                _acItems = [];
+            }
+
+            function renderSuggestions(suggestions) {
+                if (!suggestions || suggestions.length === 0) {
+                    renderNoResults();
+                    return;
+                }
+                drop.innerHTML = '';
+                _acItems = suggestions.map((s, idx) => {
+                    const el = document.createElement('div');
+                    el.className = 'ac-item';
+                    el.setAttribute('role', 'option');
+                    el.setAttribute('aria-selected', 'false');
+                    el.innerHTML =
+                        `<div class="ac-item-name">${escapeHtml(s.name)}</div>` +
+                        (s.address ? `<div class="ac-item-addr">${escapeHtml(s.address)}</div>` : '');
+                    el.addEventListener('mousedown', (e) => {
+                        // mousedown fires before blur — prevent dropdown close
+                        e.preventDefault();
+                        selectSuggestion(s);
+                    });
+                    el.addEventListener('mouseover', () => highlightItem(idx));
+                    drop.appendChild(el);
+                    return el;
+                });
+                openDrop();
+            }
+
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            function selectSuggestion(s) {
+                input.value = s.name;
+                closeDrop();
+
+                // Selecting a suggestion must update the patient's coordinates.
+                // Previously only the text was used, so the search silently ran
+                // against a hardcoded Delhi centre and showed the wrong area.
+                if (s.latitude != null && s.longitude != null) {
+                    patientData.lat = parseFloat(s.latitude);
+                    patientData.lon = parseFloat(s.longitude);
+                    patientData.isDefaultLocation = false;
+                }
+                if (s.address) patientData.address = s.address;
+
+                if (s.kind === 'place') {
+                    // A searched area / locality / city: show hospitals around it.
+                    const locEl = document.getElementById('displayIncidentLocation');
+                    if (locEl) locEl.textContent = s.address || s.name;
+                    loadInitialNearbyHospitals();
+                } else {
+                    handleHospitalSearch();
+                }
+            }
+
+            // ────────────────────────────────────────
+            async function fetchSuggestions(q) {
+                if (_acAbort) _acAbort.abort();
+                _acAbort = new AbortController();
+
+                try {
+                    const lat = (typeof patientData !== 'undefined' && patientData.lat) || 28.6139;
+                    const lon = (typeof patientData !== 'undefined' && patientData.lon) || 77.2090;
+                    const url = `/api/hospitals/autocomplete?q=${encodeURIComponent(q)}&lat=${lat}&lon=${lon}`;
+                    const resp = await fetch(url, { signal: _acAbort.signal });
+                    if (!resp.ok) return;
+                    const data = await resp.json();
+                    renderSuggestions(data.suggestions || []);
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                    closeDrop(); // silently hide on network error
+                }
+            }
+
+            // ────────────────────────────────────────
+            input.addEventListener('input', () => {
+                const q = input.value.trim();
+                clearTimeout(_acTimer);
+                if (q.length < 2) { closeDrop(); return; }
+                renderLoading();
+                _acTimer = setTimeout(() => fetchSuggestions(q), 280);
+            });
+
+            // ────────────────────────────────────────
+            input.addEventListener('keydown', (e) => {
+                if (drop.classList.contains('hidden')) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    highlightItem(Math.min(_acIndex + 1, _acItems.length - 1));
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    highlightItem(Math.max(_acIndex - 1, 0));
+                } else if (e.key === 'Enter') {
+                    if (_acIndex >= 0 && _acItems[_acIndex]) {
+                        e.preventDefault();
+                        _acItems[_acIndex].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                    } else {
+                        closeDrop();
+                    }
+                } else if (e.key === 'Escape') {
+                    closeDrop();
+                }
+            });
+
+            // ────────────────────────────────────────
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !drop.contains(e.target)) {
+                    closeDrop();
+                }
+            });
+
+            // ────────────────────────────────────────
+            window.closeAutocomplete = closeDrop;
+        })();
+
+        function formatComplaintName(cc) {
+            if (!cc || cc === 'general') return 'General Emergency';
+            if (cc === 'cardiac_chest') return 'Cardiac / Severe Chest Pain';
+            if (cc === 'trauma') return 'Accident / Severe Trauma / Fracture';
+            if (cc === 'breathing') return 'Acute Respiratory Distress';
+            if (cc === 'seizures') return 'Seizure / Stroke Emergency';
+            if (cc === 'poisoning') return 'Toxicological / Poisoning Ingestion';
+            if (cc === 'pregnancy') return 'Obstetric / Maternal Emergency';
+            return cc.charAt(0).toUpperCase() + cc.slice(1);
+        }
+
+        function setPanelFilter(panelKey) {
+            currentPanelFilter = panelKey;
+            document.querySelectorAll('.panel-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-panel') === panelKey) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            applyHospitalFiltersAndRender();
+        }
+
+        function handleSortChange() {
+            const sel = document.getElementById('sortHospitalSelect');
+            if (sel) {
+                currentSortMode = sel.value;
+            }
+            applyHospitalFiltersAndRender();
+        }
+
+        function applyHospitalFiltersAndRender() {
+            if (!rawHospitalsList || !Array.isArray(rawHospitalsList)) return;
+            
+            let list = [...rawHospitalsList];
+
+            // 1. Panel filtering
+            if (currentPanelFilter !== 'all') {
+                const targetKey = currentPanelFilter.toLowerCase();
+                list = list.filter(h => {
+                    // Check direct panels object
+                    const panels = h.panel_info?.panels || {};
+                    const directPanel = panels[targetKey];
+                    if (directPanel) {
+                        const st = (directPanel.status || '').toLowerCase();
+                        const bd = (directPanel.badge || '').toLowerCase();
+                        if (st === 'empanelled' || bd === 'empanelled' || st === 'active') return true;
+                    }
+
+                    // Check gemini research schemes & panels
+                    const grSchemes = (h.gemini_research?.schemes || []).map(s => String(s).toLowerCase());
+                    const grPanels = (h.gemini_research?.panels || []).map(p => String(p).toLowerCase());
+
+                    if (targetKey === 'pmjay') {
+                        if (grSchemes.some(s => s.includes('pmjay') || s.includes('ayushman') || s.includes('pm-jay') || s.includes('ab-pmjay'))) return true;
+                    } else if (targetKey === 'cghs') {
+                        if (grSchemes.some(s => s.includes('cghs'))) return true;
+                    } else if (targetKey === 'echs') {
+                        if (grSchemes.some(s => s.includes('echs'))) return true;
+                    } else if (targetKey === 'esic') {
+                        if (grSchemes.some(s => s.includes('esic'))) return true;
+                    } else if (targetKey === 'state_govt') {
+                        if (grSchemes.some(s => s.includes('state') || s.includes('dghs') || s.includes('rghs') || s.includes('aarogya') || s.includes('mjpjay') || s.includes('bhamashah'))) return true;
+                    } else if (targetKey === 'tpa_insurance') {
+                        if (grPanels.length > 0 || h.gemini_research?.cashless_available) return true;
+                        if (panels.tpa_insurance && (panels.tpa_insurance.status === 'Empanelled' || panels.tpa_insurance.badge === 'empanelled')) return true;
+                    }
+
+                    return false;
+                });
+            }
+
+            // 2. Sorting
+            if (currentSortMode === 'distance') {
+                list.sort((a, b) => {
+                    const distA = parseFloat(a.distance_km) || 0;
+                    const distB = parseFloat(b.distance_km) || 0;
+                    return distA - distB;
+                });
+            } else if (currentSortMode === 'recommendation') {
+                list.sort((a, b) => {
+                    const scoreA = parseFloat(a.recommendation?.suitability_score) || 0;
+                    const scoreB = parseFloat(b.recommendation?.suitability_score) || 0;
+                    if (scoreB !== scoreA) return scoreB - scoreA;
+                    const distA = parseFloat(a.distance_km) || 0;
+                    const distB = parseFloat(b.distance_km) || 0;
+                    return distA - distB;
+                });
+            } else if (currentSortMode === 'travel_time') {
+                list.sort((a, b) => {
+                    const timeA = parseFloat(a.travel_time_minutes) || 999;
+                    const timeB = parseFloat(b.travel_time_minutes) || 999;
+                    if (timeA !== timeB) return timeA - timeB;
+                    return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+                });
+            } else if (currentSortMode === 'cost') {
+                // Free/Subsidised first
+                const getCostPriority = (h) => {
+                    const badge = (h.facilities?.cost_model?.summary_badge || "").toLowerCase();
+                    const isAmbFree = Boolean(h.ambulance_fare?.is_free);
+                    if (badge.includes("free") || isAmbFree) return 1;
+                    if (badge.includes("subsidised") || badge.includes("subsidized")) return 2;
+                    if (badge.includes("charges") || badge.includes("fee")) return 3;
+                    return 4; // Unverified / other
+                };
+                list.sort((a, b) => {
+                    const prioA = getCostPriority(a);
+                    const prioB = getCostPriority(b);
+                    if (prioA !== prioB) return prioA - prioB;
+                    return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+                });
+            } else if (currentSortMode === 'type') {
+                // Government First — priority: 0=Govt, 1=Private
+                // Checks multiple signals because many govt hospitals come with
+                // classification="Private / Non-Government (Facility Type Not Verified)"
+                // when the OSM/NHM registry is incomplete.
+                const isGovFacility = (h) => {
+                    // Signal 1: ambulance fleet ownership (most reliable — CATS always govt)
+                    if (h.ambulance_fare?.is_government === true) return 0;
+
+                    // Signal 2: panel_info matched_category (curated data)
+                    const cat = (h.panel_info?.matched_category || "").toLowerCase();
+                    if (cat && !['unverified', 'no_cashless', 'private'].includes(cat)) return 0;
+                    // e.g. 'aiims', 'safdarjung', 'rml', 'public_hospital', 'mcd', 'general_civil_hospital'
+
+                    // Signal 3: classification field (but only if it doesn't also say non-govt/private)
+                    const cls = (h.facilities?.classification || "").toLowerCase();
+                    if (cls.includes("government") && !cls.includes("non-government") && !cls.includes("private")) return 0;
+                    if (cls.includes("autonomous") || cls.includes("municipal") || cls.includes("ministry")) return 0;
+
+                    // Signal 4: ownership field
+                    const own = (h.facilities?.ownership || "").toLowerCase();
+                    if (own.includes("government") && !own.includes("non-government") && !own.includes("private")) return 0;
+                    if (own.includes("ministry") || own.includes("municipal") || own.includes("state dept")) return 0;
+
+                    // Signal 5: free cost badge (govt hospitals are almost always free)
+                    const costBadge = (h.facilities?.cost_model?.summary_badge || "").toLowerCase();
+                    if (costBadge.includes("free – verified")) return 0;
+
+                    // Signal 6: verified PM-JAY/CGHS/ECHS/ESIC empanelment (govt schemes)
+                    const panels = h.panel_info?.panels || {};
+                    const empanelledGovtSchemes = ['pmjay', 'cghs', 'echs', 'esic', 'state_govt'];
+                    const isEmpanelledInGovtScheme = empanelledGovtSchemes.some(key => {
+                        const p = panels[key];
+                        return p && (p.status === 'Empanelled' || p.badge === 'empanelled');
+                    });
+                    if (isEmpanelledInGovtScheme) return 0;
+
+                    // Signal 7: name contains common government hospital keywords
+                    const name = (h.name || "").toLowerCase();
+                    const govtNameTokens = ['aiims', 'safdarjung', 'civil hospital', 'district hospital',
+                        'government hospital', 'govt hospital', 'cantonment board', 'mcd hospital',
+                        'railway hospital', 'cghs', 'esic hospital', 'municipal hospital',
+                        'lady hardinge', 'lok nayak', 'gtb hospital', 'ddu hospital',
+                        'babu jagjivan', 'sanjay gandhi', 'rml hospital'];
+                    if (govtNameTokens.some(tok => name.includes(tok))) return 0;
+
+                    return 1; // Private / unverified
+                };
+                list.sort((a, b) => {
+                    const govA = isGovFacility(a);
+                    const govB = isGovFacility(b);
+                    if (govA !== govB) return govA - govB;
+                    return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+                });
+            } else {
+                // Fallback default: Recommendation & Suitability score descending, then distance ascending
+                list.sort((a, b) => {
+                    const scoreA = parseFloat(a.recommendation?.suitability_score) || 0;
+                    const scoreB = parseFloat(b.recommendation?.suitability_score) || 0;
+                    if (scoreB !== scoreA) return scoreB - scoreA;
+                    return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+                });
+            }
+
+            renderHospitalTable(list);
+        }
+
+        // Render Condition-based Recommendations Top Section
+        function renderTopRecommendations(hospitals) {
+            const container = document.getElementById('recommendationCardsContainer');
+            container.innerHTML = '';
+            
+            // Filter strictly by condition compatibility and recommendation
+            const recommended = hospitals.filter(h => h.recommendation && h.recommendation.is_recommended && h.recommendation.is_compatible);
+            
+            // Sort recommended hospitals by highest suitability_score descending, then nearest distance
+            recommended.sort((a, b) => {
+                const scoreA = parseFloat(a.recommendation?.suitability_score) || 0;
+                const scoreB = parseFloat(b.recommendation?.suitability_score) || 0;
+                if (scoreB !== scoreA) return scoreB - scoreA;
+                return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+            });
+
+            // If no hospital meets full criteria, show compatible facilities sorted by score
+            const compatible = hospitals.filter(h => h.recommendation && h.recommendation.is_compatible);
+            compatible.sort((a, b) => {
+                const scoreA = parseFloat(a.recommendation?.suitability_score) || 0;
+                const scoreB = parseFloat(b.recommendation?.suitability_score) || 0;
+                if (scoreB !== scoreA) return scoreB - scoreA;
+                return (parseFloat(a.distance_km) || 0) - (parseFloat(b.distance_km) || 0);
+            });
+
+            const topTwo = (recommended.length > 0 ? recommended : compatible).slice(0, 2);
+
+            if (!topTwo.length) {
+                container.innerHTML = `<div class="text-xs text-[var(--text-muted)] italic">No specific capability-matched recommendation available for this location.</div>`;
+                return;
+            }
+
+            topTwo.forEach(h => {
+                const fac = h.facilities || {};
+                const costModel = fac.cost_model || {};
+                const rec = h.recommendation || {};
+                const travelTime = h.travel_time_minutes || 10;
+                const ambFare = h.ambulance_fare || {};
+                
+                let recFareHtml = '';
+                if (ambFare.is_free) {
+                    recFareHtml = `<span class="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold"><i class="fa-solid fa-check-double"></i> Free (CATS 102)</span>`;
+                } else if (ambFare.formatted_total) {
+                    recFareHtml = `<span class="text-[10px] text-[var(--text-secondary)] font-medium">Amb: <strong class="font-mono text-[var(--text-primary)]">${ambFare.formatted_total}</strong> (${ambFare.ambulance_type} @ ₹${ambFare.rate_per_km}/km - Project Estimate)</span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "p-3 rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-slate-800/60 flex flex-col justify-between hospital-row-clickable";
+                // onclick set AFTER innerHTML below — setting innerHTML wipes event handlers
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-[#003366] dark:text-sky-400 bg-white dark:bg-slate-900 px-1.5 py-0.5 rounded border border-blue-200">
+                                    ${escapeHtml(fac.classification || 'Hospital Facility')}
+                                </span>
+                                <h4 class="text-xs font-bold text-[var(--text-primary)] mt-1.5 leading-snug">
+                                    ${escapeHtml(h.name)}
+                                </h4>
+                            </div>
+                            <span class="text-xs font-mono font-bold text-[#003366] dark:text-sky-300 whitespace-nowrap">
+                                ${h.distance_km} km • ~${travelTime} min
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-emerald-800 dark:text-emerald-300 font-medium mt-1.5 flex items-start gap-1.5 leading-relaxed">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                            <span>${escapeHtml(rec.primary_recommendation_reason || 'Verified capabilities match recorded intake')}</span>
+                        </p>
+                        ${recFareHtml ? `<div class="mt-1">${recFareHtml}</div>` : ''}
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-blue-100 dark:border-slate-700 flex items-center justify-between text-[11px]">
+                        <span class="font-semibold text-slate-700 dark:text-slate-300">
+                            ${renderCostBadgeHtml(costModel.summary_badge)}
+                        </span>
+                        <span class="text-[#003366] dark:text-sky-400 font-bold flex items-center gap-1">
+                            Inspect Facilities <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </div>
+                `;
+                // Assign onclick AFTER innerHTML to prevent it being wiped by innerHTML assignment
+                card.onclick = () => openHospitalDetailModal(h);
+                container.appendChild(card);
+            });
+        }
+
+        function renderHospitalTable(hospitals) {
+            const loading = document.getElementById('hospitalsLoading');
+            const empty = document.getElementById('hospitalsEmpty');
+            const container = document.getElementById('hospitalsTableContainer');
+            const tbody = document.getElementById('hospitalsTableBody');
+            const countText = document.getElementById('totalHospitalsFound');
+
+            if (loading) loading.classList.add('hidden');
+            if (tbody) tbody.innerHTML = '';
+
+            if (!hospitals || hospitals.length === 0) {
+                if (empty) empty.classList.remove('hidden');
+                if (container) container.classList.add('hidden');
+                if (countText) countText.textContent = "0 hospitals found";
+                return;
+            }
+
+            if (empty) empty.classList.add('hidden');
+            if (container) container.classList.remove('hidden');
+            if (countText) countText.textContent = `${hospitals.length} verified hospital facilities identified`;
+
+            hospitals.forEach(h => {
+                const tr = document.createElement('tr');
+                tr.className = "hospital-row-clickable";
+                // NOTE: onclick is assigned AFTER tr.innerHTML below,
+                // because setting innerHTML wipes any previously attached event handlers.
+
+                const fac = h.facilities || {};
+                const cost = fac.cost_model || {};
+                const rec = h.recommendation || {};
+
+                // Ambulance status
+                const isAvail = (h.availability === 'AVAILABLE');
+                const availHtml = isAvail
+                    ? `<span class="status-available"><i class="fa-solid fa-circle-check"></i> AVAILABLE</span>`
+                    : `<span class="status-not-available"><i class="fa-solid fa-circle-xmark"></i> NOT AVAILABLE</span>`;
+
+                // Travel time
+                const estTime = h.travel_time_minutes ? `${h.travel_time_minutes} min` : 'Estimated en route';
+
+                // Cost Badge
+                const costBadgeHtml = renderCostBadgeHtml(cost.summary_badge);
+
+                // Ambulance Transport Fare
+                const ambFare = h.ambulance_fare || {};
+                let fareDisplayHtml = '';
+                if (ambFare.is_free) {
+                    fareDisplayHtml = `
+                        <div>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                <i class="fa-solid fa-check-double"></i> ₹0 (Free CATS/Govt)
+                            </span>
+                            <div class="text-[10px] text-[var(--text-muted)] mt-0.5">${escapeHtml(ambFare.ambulance_type || 'Ambulance')} (Toll-Free 102)</div>
+                        </div>
+                    `;
+                } else {
+                    fareDisplayHtml = `
+                        <div>
+                            <span class="font-mono font-bold text-xs text-[var(--text-primary)]">${ambFare.formatted_total || '₹' + ambFare.total_fare}</span>
+                            <span class="text-[10px] text-[var(--text-muted)] block mt-0.5">
+                                ${ambFare.fare_status || 'Project Estimate'} (${escapeHtml(ambFare.ambulance_type)} @ ₹${ambFare.rate_per_km}/km)
+                            </span>
+                        </div>
+                    `;
+                }
+
+                // Build Schemes & Insurance Panels Pills (Enriched with Gemini AI Research)
+                const panels = h.panel_info?.panels || {};
+                const schemePills = [];
+                if (panels.pmjay && (panels.pmjay.status === 'Empanelled' || panels.pmjay.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.pmjay.details || 'PM-JAY')}">PM-JAY</span>`);
+                }
+                if (panels.cghs && (panels.cghs.status === 'Empanelled' || panels.cghs.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.cghs.details || 'CGHS')}">CGHS</span>`);
+                }
+                if (panels.echs && (panels.echs.status === 'Empanelled' || panels.echs.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.echs.details || 'ECHS')}">ECHS</span>`);
+                }
+                if (panels.esic && (panels.esic.status === 'Empanelled' || panels.esic.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.esic.details || 'ESIC')}">ESIC</span>`);
+                }
+                if (panels.state_govt && (panels.state_govt.status === 'Empanelled' || panels.state_govt.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled" title="${escapeHtml(panels.state_govt.details || 'State Schemes')}">State Govt</span>`);
+                }
+                if (panels.tpa_insurance && (panels.tpa_insurance.status === 'Empanelled' || panels.tpa_insurance.badge === 'empanelled')) {
+                    schemePills.push(`<span class="panel-pill-empanelled bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300" title="${escapeHtml(panels.tpa_insurance.details || 'TPA Cashless')}">TPA / Cashless</span>`);
+                }
+                
+                // Show specific top private panels researched by Gemini
+                if (h.gemini_research?.panels && h.gemini_research.panels.length > 0) {
+                    h.gemini_research.panels.slice(0, 2).forEach(p => {
+                        schemePills.push(`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300">${escapeHtml(p)}</span>`);
+                    });
+                }
+
+                if (!schemePills.length) {
+                    schemePills.push(pendingPanelPill(h));
+                }
+
+                // Booking button or strict status
+                let actionHtml = '';
+                if (h.can_book) {
+                    actionHtml = `
+                        <button type="button"
+                                class="row-action-btn bg-[#003366] hover:bg-[#002244] text-white px-2.5 py-1 rounded text-[11px] font-bold tracking-wide w-full flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-truck-medical"></i> View &amp; Select
+                        </button>
+                    `;
+                } else if (!isAvail) {
+                    actionHtml = `
+                        <span class="text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/40 border border-red-200 px-2 py-1 rounded block text-center">
+                            Currently Unavailable
+                        </span>
+                    `;
+                } else {
+                    const isRedCase = (patientData.priority || "").toUpperCase() === "RED";
+                    const mismatchLabel = isRedCase ? "Requires Level-3 Trauma/ICU" : "Specialty Referral Needed";
+                    const mismatchTooltip = isRedCase 
+                        ? "RED Life Threat: Emergency protocol requires tertiary Level-1/3 ICU & Trauma resuscitation facility." 
+                        : "Specialized clinical facilities for this condition not verified at this center.";
+                    actionHtml = `
+                        <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 px-2 py-1 rounded block text-center leading-tight" title="${mismatchTooltip}">
+                            ${mismatchLabel}
+                        </span>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td class="align-top">
+                        <div class="font-bold text-[#003366] dark:text-sky-300 text-xs sm:text-sm flex items-center gap-1.5">
+                            <span class="text-left font-bold text-[#003366] dark:text-sky-300 hover:underline flex items-center gap-1.5 cursor-pointer">
+                                <span>${escapeHtml(h.name)}</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-[#003366] dark:text-sky-400"></i>
+                            </span>
+                        </div>
+                        <div class="text-[10px] text-[var(--text-muted)] mt-0.5">${escapeHtml(fac.classification || 'General Facility')}</div>
+                        <div class="text-[11px] text-[var(--text-secondary)] mt-1 line-clamp-1">${escapeHtml(h.address || 'Address provided on dispatch')}</div>
+                    </td>
+                    <td class="align-top whitespace-nowrap">
+                        <div class="font-mono font-bold text-xs text-[var(--text-primary)]">${h.distance_km} km</div>
+                        <div class="text-[11px] text-[var(--text-muted)] mt-0.5"><i class="fa-solid fa-clock text-[10px]"></i> ~${estTime}</div>
+                    </td>
+                    <td class="align-top">
+                        ${fareDisplayHtml}
+                    </td>
+                    <td class="align-top">
+                        <div>${costBadgeHtml}</div>
+                        <div class="text-[10px] text-[var(--text-secondary)] mt-1 leading-tight line-clamp-2">${escapeHtml(cost.emergency_treatment || 'Standard tariff applicable')}</div>
+                    </td>
+                    <td class="align-top" data-panel-cell-id="${escapeHtml(h.hospital_id || '')}">
+                        <div class="flex flex-wrap gap-1">
+                            ${schemePills.join(' ')}
+                        </div>
+                        <div class="text-[10px] text-[var(--text-muted)] mt-1">${escapeHtml(fac.emergency_dept || '24x7 Emergency')}</div>
+                    </td>
+                    <td class="align-top whitespace-nowrap">
+                        <div class="mb-1.5">${availHtml}</div>
+                        ${actionHtml}
+                    </td>
+                `;
+                // Assign onclick AFTER innerHTML (setting innerHTML wipes inline event handlers on the tr)
+                tr.onclick = (e) => {
+                    openHospitalDetailModal(h);
+                };
+                tbody.appendChild(tr);
+            });
+
+            container.classList.remove('hidden');
+        }
+
+        function renderCostBadgeHtml(badgeText) {
+            const text = badgeText || 'Cost not verified';
+            const lower = text.toLowerCase();
+            if (lower.includes('free')) {
+                return `<span class="cost-badge-free"><i class="fa-solid fa-check"></i> ${escapeHtml(text)}</span>`;
+            } else if (lower.includes('subsidised')) {
+                return `<span class="cost-badge-subsidised"><i class="fa-solid fa-building-columns"></i> ${escapeHtml(text)}</span>`;
+            } else if (lower.includes('charges')) {
+                return `<span class="cost-badge-charges"><i class="fa-solid fa-receipt"></i> ${escapeHtml(text)}</span>`;
+            } else {
+                return `<span class="cost-badge-unverified"><i class="fa-solid fa-circle-question"></i> ${escapeHtml(text)}</span>`;
+            }
+        }
+
+        // Open Hospital Detail Panel / Modal
+        window.openHospitalDetailModal = function(h) {
+            if (!h) return;
+            const modal = document.getElementById('hospitalDetailModal');
+            const nameEl = document.getElementById('modalHospitalName');
+            const typeEl = document.getElementById('modalHospitalType');
+            const bodyEl = document.getElementById('modalHospitalBody');
+            const footerBtnContainer = document.getElementById('modalBookingButtonContainer');
+
+            const fac = h.facilities || {};
+            const cost = fac.cost_model || {};
+            const panels = h.panel_info?.panels || {};
+            const rec = h.recommendation || {};
+            const ambFare = h.ambulance_fare || {};
+            const allTariffData = h.all_tariffs || {};
+
+            // ────────────────────────────────────────
+            // Derived strictly from ambulance data (ambFare.is_government), NOT hospital classification.
+            // Fix: "Private / Non-Government" must NOT evaluate as government fleet.
+            const isGovtFleet = (typeof ambFare.is_government === 'boolean')
+                ? ambFare.is_government
+                : ((fac.classification || '').toLowerCase().includes('government')
+                   && !(fac.classification || '').toLowerCase().includes('private')
+                   && !(fac.classification || '').toLowerCase().includes('non-government'));
+
+            nameEl.textContent = h.name;
+            typeEl.textContent = `${fac.classification || 'General Facility'} • ${fac.ownership || 'National Registry'}`;
+
+            // ────────────────────────────────────────
+            const fleet = h.fleet || [];
+            let fleetHtml = fleet.map(amb => {
+                const normT = (amb.type || 'BLS').toUpperCase();
+                const ow = (amb.ownership || '').toLowerCase();
+                const ambIsGovt = ow.includes('government') && !ow.includes('private') && !ow.includes('non-government');
+                let ambFareText = '';
+                if (ambIsGovt) {
+                    ambFareText = ambFare.is_free ? 'Free (CATS 102)' : `₹${(h.distance_km * 1.70).toFixed(2)} (@ ₹1.70/km)`;
+                } else {
+                    const pvtRates = { PTV: 30, BLS: 50, ALS: 100, ICU: 83, CARDIAC: 88, NEONATAL: 75 };
+                    const r = pvtRates[normT] || 50;
+                    ambFareText = `₹${(h.distance_km * r).toFixed(2)} (@ ₹${r}/km)`;
+                }
+                return `
+                    <div class="p-2.5 rounded bg-slate-50 dark:bg-slate-800 border border-[var(--border-color)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[11px]">
+                        <div>
+                            <span class="font-bold font-mono text-[var(--text-primary)]">${amb.ambulance_id}</span>
+                            <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-900 font-semibold">${amb.type}</span>
+                            <span class="ml-1 text-[10px] font-bold text-[#003366] dark:text-sky-300 font-mono">${ambFareText}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="${amb.availability_status === 'AVAILABLE' ? 'text-green-600 font-bold' : 'text-slate-500'}">${amb.availability_status}</span>
+                            <span class="text-[10px] text-[var(--text-muted)]">(${(amb.supported_priorities || []).join('/')})</span>
+                        </div>
+                    </div>`;
+            }).join('');
+            if (!fleetHtml) fleetHtml = `<div class="text-[11px] text-[var(--text-muted)] italic">No separate ambulance vehicle records currently allocated.</div>`;
+
+            // ────────────────────────────────────────
+            let geminiNoticeHtml = '';
+            if (h.gemini_research) {
+                const gr = h.gemini_research;
+                const topPanels = (gr.panels || []).slice(0, 8).map(p => `<span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 font-semibold">${escapeHtml(p)}</span>`).join(' ');
+                geminiNoticeHtml = `
+                    <div class="p-2.5 bg-blue-50/60 dark:bg-blue-950/30 rounded border border-blue-200 dark:border-blue-800 text-[11px] mb-2 space-y-1.5">
+                        <div class="flex items-center justify-between text-[#003366] dark:text-sky-300 font-bold">
+                            <span><i class="fa-solid fa-sparkles text-amber-500 mr-1"></i> Gemini AI Verified Empanelment</span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">Fresh Research</span>
+                        </div>
+                        <div class="text-[11px] text-slate-700 dark:text-slate-300">${escapeHtml(gr.summary || '')}</div>
+                        ${topPanels ? `<div class="flex flex-wrap gap-1 pt-1"><strong class="text-[10px] text-slate-500 w-full block">Cashless Insurance Partners / TPAs:</strong>${topPanels}</div>` : ''}
+                        <div class="text-[9px] text-[var(--text-muted)] italic">Source: ${escapeHtml(gr.source || 'Hospital Empanelment Directory')}</div>
+                    </div>
+                `;
+            }
+
+            let schemeRows = Object.keys(panels).map(k => {
+                const item = panels[k];
+                const isEmp = (item.status === 'Empanelled' || item.badge === 'empanelled');
+                return `
+                    <div class="flex items-start justify-between py-1 border-b border-gray-100 dark:border-gray-800 last:border-0 text-[11px]">
+                        <span class="font-semibold text-[var(--text-primary)]">${escapeHtml(item.name || k.toUpperCase())}:</span>
+                        <span class="${isEmp ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-slate-500'} text-right">
+                            ${isEmp ? '<i class="fa-solid fa-circle-check"></i> Empanelled' : 'Status Not Verified'}
+                        </span>
+                    </div>`;
+            }).join('');
+
+            // ────────────────────────────────────────
+            const fleetTariffDict = isGovtFleet
+                ? (allTariffData.government_fleet || {})
+                : (allTariffData.private_fleet || allTariffData.government_fleet || {});
+            const tariffList = Object.values(fleetTariffDict);
+
+            let transportCostDisplay = ambFare.is_free
+                ? '₹0.00 (Free CATS / Govt)'
+                : (ambFare.formatted_total || `₹${ambFare.total_fare || '0.00'}`);
+            let transportNote = ambFare.is_free
+                ? 'Official Verified Toll-Free (102/108)'
+                : `${ambFare.fare_status || 'Project Estimate'} (${escapeHtml(ambFare.ambulance_type || 'BLS')} @ ₹${ambFare.rate_per_km}/km)`;
+
+            let tariffRowsHtml = tariffList.map(t => {
+                const isActive = (t.ambulance_type === ambFare.ambulance_type);
+                const fareFormatted = t.is_free ? '₹0.00 (Official Free)' : (t.formatted_total || `₹${t.total_fare.toFixed(2)}`);
+                const badgeClass = t.is_free ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-slate-100 text-slate-800 border-slate-300';
+                return `
+                    <tr class="${isActive ? 'bg-blue-50/80 dark:bg-blue-950/40 font-semibold' : ''}">
+                        <td class="py-1 px-2 border-b border-gray-200 dark:border-gray-700">
+                            <span class="font-bold">${escapeHtml(t.ambulance_type)}</span>
+                            ${isActive ? '<span class="ml-1 text-[9px] bg-blue-600 text-white px-1.5 rounded font-bold">ACTIVE</span>' : ''}
+                        </td>
+                        <td class="py-1 px-2 border-b border-gray-200 dark:border-gray-700 text-center font-mono">${t.is_free ? '₹0' : '₹' + t.rate_per_km.toFixed(2)}</td>
+                        <td class="py-1 px-2 border-b border-gray-200 dark:border-gray-700 text-center font-mono">${h.distance_km} km</td>
+                        <td class="py-1 px-2 border-b border-gray-200 dark:border-gray-700 text-right font-mono font-bold text-[#003366] dark:text-sky-300">${fareFormatted}</td>
+                        <td class="py-1 px-2 border-b border-gray-200 dark:border-gray-700 text-center">
+                            <span class="inline-block text-[10px] px-1.5 rounded border ${badgeClass}">${escapeHtml(t.fare_status || 'Estimated')}</span>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            // ────────────────────────────────────────
+            const govtCategories = ['PTV', 'BLS', 'ALS'];
+            const pvtCategories  = ['PTV', 'BLS', 'ALS', 'ICU', 'Cardiac', 'Neonatal'];
+            const availableTypes = isGovtFleet ? govtCategories : pvtCategories;
+
+            const evalData = h.ambulance_evaluation || {};
+            const recommendedCat = evalData.recommended_category || '';
+
+            const typeButtonsHtml = availableTypes.map(cat => {
+                const isRec = (cat === recommendedCat);
+                const cls = isRec
+                    ? 'ambulance-type-btn px-3 py-1.5 rounded border-2 border-amber-500 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 text-[11px] font-bold cursor-pointer'
+                    : 'ambulance-type-btn px-3 py-1.5 rounded border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800 text-[var(--text-primary)] text-[11px] font-semibold cursor-pointer hover:border-[#003366] hover:bg-blue-50 dark:hover:bg-slate-700';
+                return `<button type="button" class="${cls}" data-category="${cat}" data-hospital-id="${escapeHtml(h.hospital_id || '')}">${cat}${isRec ? ' ★' : ''}</button>`;
+            }).join('');
+
+            bodyEl.innerHTML = `
+                <!-- 1. Distance & Transportation -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 bg-blue-50/60 dark:bg-slate-800/60 rounded-lg border border-blue-100 dark:border-slate-700">
+                    <div>
+                        <span class="text-[10px] text-[var(--text-muted)] block uppercase font-medium">Distance from Pickup</span>
+                        <span class="text-xs font-mono font-bold text-[#003366] dark:text-sky-300">${h.distance_km} km</span>
+                        <span class="text-[10px] text-[var(--text-muted)] block">Calculated road route</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-[var(--text-muted)] block uppercase font-medium">Estimated Travel Time</span>
+                        <span class="text-xs font-semibold text-[var(--text-primary)]">~${h.travel_time_minutes || 10} minutes</span>
+                        <span class="text-[10px] text-[var(--text-muted)] block">Subject to live traffic</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-[var(--text-muted)] block uppercase font-medium">Current Ambulance Est.</span>
+                        <span class="text-xs font-mono font-bold ${ambFare.is_free ? 'text-emerald-700 dark:text-emerald-400' : 'text-[#003366] dark:text-sky-300'}">${transportCostDisplay}</span>
+                        <span class="text-[10px] text-[var(--text-muted)] block">${transportNote}</span>
+                    </div>
+                </div>
+
+                <!-- 2. Fare Matrix (ambulance-fleet-ownership-driven, NOT hospital ownership) -->
+                <div class="p-3 bg-white dark:bg-slate-800/50 rounded-lg border border-blue-200 dark:border-slate-700 space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-1">
+                        <span class="font-bold text-xs text-[#003366] dark:text-sky-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calculator text-blue-700 dark:text-sky-400"></i>
+                            Official Ambulance Fare Matrix (${isGovtFleet ? 'Government Tariff' : 'Private Tariff Schedule'})
+                        </span>
+                        <span class="text-[10px] px-2 py-0.5 rounded font-mono font-bold ${isGovtFleet ? 'bg-emerald-50 text-emerald-800 border border-emerald-300' : 'bg-orange-50 text-orange-800 border border-orange-300'}">
+                            ${isGovtFleet ? 'Govt Fleet: PTV / BLS / ALS' : 'Private Fleet: 6 Categories'}
+                        </span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[11px] text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700/60 text-[var(--text-secondary)]">
+                                    <th class="py-1 px-2 border-b font-semibold">Category</th>
+                                    <th class="py-1 px-2 border-b font-semibold text-center">Per-KM Rate</th>
+                                    <th class="py-1 px-2 border-b font-semibold text-center">Distance</th>
+                                    <th class="py-1 px-2 border-b font-semibold text-right">Calculated Fare</th>
+                                    <th class="py-1 px-2 border-b font-semibold text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tariffRowsHtml}</tbody>
+                        </table>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] text-[var(--text-muted)] pt-1 border-t border-gray-100 dark:border-gray-800 flex-wrap gap-1">
+                        <span><strong>Formula:</strong> Actual Road Distance × Per-KM Rate (No arbitrary base/waiting charges)</span>
+                        ${isGovtFleet
+                            ? '<span class="italic">CATS 102: Verified Free Emergency Service</span>'
+                            : '<span class="italic text-orange-700 dark:text-orange-400">Project Estimates — Verify tariff with provider</span>'}
+                    </div>
+                </div>
+
+                <!-- 3. SELECT AMBULANCE TYPE (manual — user chooses, system never auto-selects) -->
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg border-2 border-[#003366] dark:border-sky-700 space-y-2" id="ambulanceTypeSelector">
+                    <div class="flex items-center justify-between flex-wrap gap-1">
+                        <span class="font-bold text-xs text-[#003366] dark:text-sky-300 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-truck-medical"></i> Select Ambulance Type
+                        </span>
+                        ${recommendedCat ? `<span class="text-[10px] text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 border border-amber-400 px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-star text-amber-500"></i> Recommended for Your Priority: ${escapeHtml(recommendedCat)}</span>` : ''}
+                    </div>
+                    <p class="text-[10px] text-[var(--text-muted)]">
+                        Choose a category to view all available ambulances. The recommendation is guidance only — the final selection is yours.
+                    </p>
+                    <div class="flex flex-wrap gap-2 pt-1" id="ambulanceTypeBtns">${typeButtonsHtml}</div>
+                    ${evalData.alert_message ? `<div class="text-[10px] text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-700 rounded p-2 mt-1"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(evalData.alert_message)}</div>` : ''}
+                </div>
+
+                <!-- 4. Ambulance Options (populated on type selection) -->
+                <div id="ambulanceOptionsContainer" class="space-y-2 hidden"></div>
+
+                <!-- 5. Hospital Address & Contact -->
+                <div class="space-y-1">
+                    <span class="text-[11px] font-bold text-[#003366] dark:text-sky-400 uppercase tracking-wide">Hospital Contact &amp; Location</span>
+                    <p class="text-xs text-[var(--text-secondary)] leading-relaxed">${escapeHtml(h.address || 'Address registered on central dispatch')}</p>
+                    <div class="text-[11px] text-[var(--text-muted)] flex items-center gap-2">
+                        <i class="fa-solid fa-phone text-[#003366] dark:text-sky-400"></i>
+                        <span>Verified Contact: <strong>${escapeHtml(h.phone || 'Central Emergency Dispatch 112')}</strong></span>
+                    </div>
+                </div>
+
+                <!-- 6. Hospital Treatment Charges -->
+                <div class="p-3 bg-gray-50 dark:bg-slate-800/40 rounded-lg border border-[var(--border-color)] space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-xs text-[#003366] dark:text-sky-300">Hospital Treatment Charges</span>
+                        ${renderCostBadgeHtml(cost.summary_badge)}
+                    </div>
+                    <div class="space-y-1 text-[11px] text-[var(--text-secondary)]">
+                        <div>• <strong>Emergency Casualty Care:</strong> ${escapeHtml(cost.emergency_treatment || 'Standard tariff applicable')}</div>
+                        <div>• <strong>OPD Registration:</strong> ${escapeHtml(cost.opd_consultation || 'Consultation fee applicable')}</div>
+                        <div>• <strong>Inpatient / Bed Charges:</strong> ${escapeHtml(cost.inpatient_charges || 'Per published hospital tariff')}</div>
+                        <div>• <strong>Government Scheme Coverage:</strong> ${escapeHtml(cost.schemes_coverage || 'Eligible schemes apply')}</div>
+                    </div>
+                    <div class="text-[10px] text-[var(--text-muted)] pt-1 border-t border-[var(--border-color)] italic">
+                        Official Tariff Reference: ${escapeHtml(cost.tariff_source || 'MoHFW National Health Portal')}
+                    </div>
+                </div>
+
+                <!-- 7. Specialties -->
+                <div class="space-y-2">
+                    <span class="text-[11px] font-bold text-[#003366] dark:text-sky-400 uppercase tracking-wide">Facilities &amp; Specialized Care</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-[var(--border-color)]">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">ICU &amp; Critical Care:</span>
+                            <span class="text-[var(--text-muted)]">${escapeHtml(fac.icu_facilities || 'Facility not verified')}</span>
+                        </div>
+                        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-[var(--border-color)]">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Trauma Care Center:</span>
+                            <span class="text-[var(--text-muted)]">${escapeHtml(fac.trauma_care || 'Facility not verified')}</span>
+                        </div>
+                        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-[var(--border-color)]">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Cardiac Emergency (Cath Lab):</span>
+                            <span class="text-[var(--text-muted)]">${escapeHtml(fac.cardiac_care || 'Facility not verified')}</span>
+                        </div>
+                        <div class="p-2 rounded bg-slate-50 dark:bg-slate-800 border border-[var(--border-color)]">
+                            <span class="font-bold block text-slate-800 dark:text-slate-200">Stroke / Neurology Care:</span>
+                            <span class="text-[var(--text-muted)]">${escapeHtml(fac.stroke_care || 'Facility not verified')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Schemes -->
+                <div class="p-3 rounded-lg border border-[var(--border-color)] space-y-1.5">
+                    <span class="text-[11px] font-bold text-[#003366] dark:text-sky-400 uppercase tracking-wide">Cashless Treatment &amp; Scheme Verification</span>
+                    ${geminiNoticeHtml}
+                    ${schemeRows}
+                </div>
+
+                <!-- 9. Fleet -->
+                <div class="space-y-1.5">
+                    <span class="text-[11px] font-bold text-[#003366] dark:text-sky-400 uppercase tracking-wide">Assigned Ambulance Compatibility</span>
+                    <div class="space-y-1.5">${fleetHtml}</div>
+                </div>
+            `;
+
+            // Attach type button handlers — store hospital data on button objects to avoid JSON issues
+            document.querySelectorAll('#ambulanceTypeBtns .ambulance-type-btn').forEach(btn => {
+                btn._hospitalRef = h;
+                btn.addEventListener('click', function() {
+                    onAmbulanceTypeSelect(this, this._hospitalRef, this.dataset.category);
+                });
+            });
+
+            // Footer button — scroll to type selector, never auto-dispatch
+            if (h.can_book) {
+                footerBtnContainer.innerHTML = `
+                    <button type="button"
+                        onclick="document.getElementById('ambulanceTypeSelector')?.scrollIntoView({behavior:'smooth', block:'center'})"
+                        class="bg-[#003366] hover:bg-[#002244] text-white px-5 py-2 rounded text-xs font-bold tracking-wide flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-truck-medical"></i> Select Ambulance Type &amp; Vehicle
+                    </button>
+                `;
+            } else if (h.availability !== 'AVAILABLE') {
+                footerBtnContainer.innerHTML = `
+                    <span class="text-xs font-semibold text-red-700 bg-red-100 dark:bg-red-950 px-3 py-1.5 rounded border border-red-300">
+                        <i class="fa-solid fa-ban"></i> Currently Unavailable — No Active Ambulance
+                    </span>
+                `;
+            } else {
+                const isRedCase = (patientData.priority || "").toUpperCase() === "RED";
+                const modalWarningText = isRedCase 
+                    ? "Tertiary Referral Required — Facility Lacks Level-3 ICU / Trauma Life Support for RED Emergency"
+                    : "Specialty Referral Needed — Specific Emergency Department Not Available";
+                footerBtnContainer.innerHTML = `
+                    <span class="text-xs font-semibold text-rose-800 bg-rose-100 dark:bg-rose-950 px-3 py-1.5 rounded border border-rose-300">
+                        <i class="fa-solid fa-circle-exclamation text-rose-600 mr-1"></i> ${modalWarningText}
+                    </span>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        // ────────────────────────────────────────
+        // Called when user clicks a category button (e.g. [Cardiac], [ALS]).
+        // Displays all matching ambulance option cards. Never auto-selects.
+        function onAmbulanceTypeSelect(btn, h, selectedCategory) {
+            // Highlight the selected button, deselect others
+            document.querySelectorAll('#ambulanceTypeBtns .ambulance-type-btn').forEach(b => {
+                b.className = 'ambulance-type-btn px-3 py-1.5 rounded border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800 text-[var(--text-primary)] text-[11px] font-semibold cursor-pointer hover:border-[#003366] hover:bg-blue-50 dark:hover:bg-slate-700';
+            });
+            btn.className = 'ambulance-type-btn px-3 py-1.5 rounded border-2 border-[#003366] bg-[#003366] text-white text-[11px] font-bold cursor-pointer';
+
+            const container = document.getElementById('ambulanceOptionsContainer');
+            container.classList.remove('hidden');
+
+            // Filter options by selected category (case-insensitive)
+            const evalData = h.ambulance_evaluation || {};
+            const allOptions = evalData.options || [];
+            const categoryOptions = allOptions.filter(o => (o.category || '').toLowerCase() === selectedCategory.toLowerCase());
+
+            if (categoryOptions.length === 0) {
+                container.innerHTML = `
+                    <div class="p-3 bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-700 rounded-lg text-[11px] text-red-800 dark:text-red-300 flex items-start gap-2">
+                        <i class="fa-solid fa-ban mt-0.5 flex-shrink-0"></i>
+                        <div>
+                            <strong>No ${escapeHtml(selectedCategory)} ambulance is currently available for this facility.</strong><br>
+                            All units of this category are either unavailable or unverified. Please select another category.
+                            The system will not automatically switch your selection.
+                        </div>
+                    </div>
+                `;
+                container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                return;
+            }
+
+            const optionsHtml = categoryOptions.map(opt => {
+                const isRec = opt.is_recommended;
+                const isAvail = opt.is_available;
+                const ownershipBadge = opt.is_government
+                    ? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">GOVERNMENT</span>'
+                    : '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-orange-100 text-orange-800 border border-orange-300">PRIVATE</span>';
+                const availBadge = isAvail
+                    ? '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-green-100 text-green-800 border border-green-300"><i class="fa-solid fa-circle-check"></i> AVAILABLE</span>'
+                    : `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-red-100 text-red-800 border border-red-300"><i class="fa-solid fa-circle-xmark"></i> ${escapeHtml(opt.availability_status)}</span>`;
+                const capsList = (opt.verified_capabilities || []).map(c => `<li>${escapeHtml(c)}</li>`).join('');
+                const cardBorder = isRec ? 'border-2 border-amber-400 dark:border-amber-500' : 'border border-slate-300 dark:border-slate-600';
+                const fareText = opt.is_free ? '₹0.00 (Free — CATS 102)' : (opt.formatted_total || '₹—');
+                const fareStatus = opt.is_free ? 'Official Verified Fare' : (opt.fare_status || 'Project Estimate');
+                const fareBadgeClass = opt.is_free ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-slate-100 text-slate-700 border-slate-300';
+                const rateBreakdown = opt.rate_breakdown || `Fare = ${opt.distance_km} km × ₹${opt.rate_per_km}/km`;
+                const suitabilityColor = opt.medical_suitability_score >= 80
+                    ? 'text-green-700 dark:text-green-400'
+                    : opt.medical_suitability_score >= 50
+                        ? 'text-amber-700 dark:text-amber-400'
+                        : 'text-red-700 dark:text-red-400';
+
+                return `
+                    <div class="p-3 rounded-lg ${cardBorder} bg-white dark:bg-slate-800 space-y-2 amb-option-card" data-amb-id="${escapeHtml(opt.ambulance_id)}">
+                        ${isRec ? `
+                        <div class="flex items-start gap-1.5 text-[10px] font-bold text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 px-2 py-1.5 rounded">
+                            <i class="fa-solid fa-star text-amber-500 mt-0.5 flex-shrink-0"></i>
+                            <span>RECOMMENDED FOR YOUR PRIORITY — ${escapeHtml(opt.recommendation_reason || opt.suitability_reason)}</span>
+                        </div>` : ''}
+                        <div class="flex items-start justify-between gap-2 flex-wrap">
+                            <div class="flex flex-wrap gap-1 items-center">
+                                ${ownershipBadge}
+                                <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-blue-100 text-blue-800 border border-blue-300">${escapeHtml(opt.category)}</span>
+                                ${availBadge}
+                            </div>
+                            <div class="text-right">
+                                <div class="font-mono font-bold text-xs text-[#003366] dark:text-sky-300">${fareText}</div>
+                                <div class="text-[10px] text-[var(--text-muted)]">@ ₹${opt.rate_per_km}/km</div>
+                            </div>
+                        </div>
+                        <div class="text-[11px] space-y-0.5">
+                            <div><strong>Provider:</strong> ${escapeHtml(opt.provider_name || '—')}</div>
+                            <div><strong>Vehicle ID:</strong> <span class="font-mono">${escapeHtml(opt.vehicle_id || '—')}</span></div>
+                            <div><strong>Ambulance ID:</strong> <span class="font-mono text-[10px] text-[var(--text-muted)]">${escapeHtml(opt.ambulance_id || '—')}</span></div>
+                            <div><strong>Qualified Staff:</strong> ${escapeHtml(opt.qualified_staff || '—')}</div>
+                            <div><strong>Distance:</strong> ${opt.distance_km} km &nbsp;•&nbsp; <strong>ETA:</strong> ~${opt.estimated_eta_minutes} min</div>
+                            <div class="${suitabilityColor}"><strong>Medical Suitability:</strong> ${escapeHtml(opt.suitability_label)} (Score: ${opt.medical_suitability_score}/100)</div>
+                        </div>
+                        ${capsList ? `
+                        <div class="text-[10px] text-[var(--text-muted)]">
+                            <strong class="text-[var(--text-primary)]">Verified Equipment &amp; Capabilities:</strong>
+                            <ul class="list-disc list-inside mt-0.5 space-y-0.5">${capsList}</ul>
+                        </div>` : ''}
+                        <div class="flex items-center justify-between pt-1.5 border-t border-gray-100 dark:border-gray-700 gap-2 flex-wrap">
+                            <div>
+                                <div class="font-mono text-[10px] text-[#003366] dark:text-sky-300">${escapeHtml(rateBreakdown)}</div>
+                                <span class="inline-block mt-0.5 px-1.5 rounded border text-[9px] ${fareBadgeClass}">${escapeHtml(fareStatus)}</span>
+                            </div>
+                            ${isAvail
+                                ? `<button type="button" class="select-amb-btn bg-[#003366] hover:bg-[#002244] text-white px-3 py-1.5 rounded text-[11px] font-bold flex items-center gap-1.5 shadow" data-amb-id="${escapeHtml(opt.ambulance_id)}">
+                                        <i class="fa-solid fa-check"></i> Select This Ambulance
+                                   </button>`
+                                : `<span class="text-[10px] text-slate-500 italic">Not available for dispatch</span>`}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="text-[11px] font-bold text-[#003366] dark:text-sky-300 uppercase tracking-wide">
+                    ${escapeHtml(selectedCategory)} Ambulances — ${categoryOptions.length} Option${categoryOptions.length !== 1 ? 's' : ''} Found
+                </div>
+                ${optionsHtml}
+            `;
+
+            // Attach select button handlers using object refs (no JSON in onclick)
+            // User requirement: Clicking "Select This Ambulance" navigates to the separate allocation page
+            container.querySelectorAll('.select-amb-btn').forEach(btn => {
+                const ambId = btn.dataset.ambId;
+                const opt = categoryOptions.find(o => o.ambulance_id === ambId);
+                if (opt) {
+                    btn._optRef = opt;
+                    btn._hRef   = h;
+                    btn.addEventListener('click', function() {
+                        navigateToAllocationPage(this._hRef, this._optRef);
+                    });
+                }
+            });
+
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ────────────────────────────────────────
+        // Shows summary of selected ambulance, hospital & fare. User must explicitly confirm.
+        // NEVER auto-dispatches.
+        function openAmbulanceConfirmModal(h, selectedOpt) {
+            const fareText = selectedOpt.is_free
+                ? '₹0.00 (Free — CATS 102 Verified)'
+                : `${selectedOpt.formatted_total || '₹—'} — ${selectedOpt.rate_breakdown || (selectedOpt.distance_km + ' km × ₹' + selectedOpt.rate_per_km + '/km')}`;
+            const fareStatusBadge = selectedOpt.is_free
+                ? '<span class="text-[10px] px-1.5 rounded border bg-emerald-100 text-emerald-800 border-emerald-300">Official Verified Fare</span>'
+                : '<span class="text-[10px] px-1.5 rounded border bg-slate-100 text-slate-700 border-slate-300">Project Estimate — Verify with provider</span>';
+            const ownershipLabel = selectedOpt.is_government ? 'Government' : 'Private';
+
+            const existing = document.getElementById('ambConfirmOverlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'ambConfirmOverlay';
+            overlay.className = 'fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-4';
+            overlay.innerHTML = `
+                <div class="bg-white dark:bg-[#161b27] border border-[var(--border-color)] rounded-lg shadow-2xl max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-[#003366] dark:text-sky-300 flex items-center gap-2">
+                            <i class="fa-solid fa-truck-medical"></i> Confirm Ambulance Dispatch
+                        </h3>
+                        <button type="button" id="closeAmbConfirmBtn" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 dark:bg-slate-800 rounded border border-blue-200 dark:border-slate-600 space-y-1.5 text-[11px]">
+                        <div class="font-bold text-[10px] uppercase tracking-wide text-[var(--text-muted)] mb-1">Selected Ambulance</div>
+                        <div><strong>Vehicle ID:</strong> <span class="font-mono">${escapeHtml(selectedOpt.vehicle_id || selectedOpt.ambulance_id)}</span></div>
+                        <div><strong>Ambulance ID:</strong> <span class="font-mono text-[10px]">${escapeHtml(selectedOpt.ambulance_id)}</span></div>
+                        <div><strong>Category:</strong> ${escapeHtml(selectedOpt.category)} (${ownershipLabel})</div>
+                        <div><strong>Provider:</strong> ${escapeHtml(selectedOpt.provider_name || '—')}</div>
+                        <div><strong>Qualified Staff:</strong> ${escapeHtml(selectedOpt.qualified_staff || '—')}</div>
+                        <div><strong>ETA:</strong> ~${selectedOpt.estimated_eta_minutes} min &nbsp;•&nbsp; <strong>Distance:</strong> ${selectedOpt.distance_km} km</div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded border border-slate-200 dark:border-slate-600 space-y-1 text-[11px]">
+                        <div class="font-bold text-[10px] uppercase tracking-wide text-[var(--text-muted)] mb-1">Destination Hospital</div>
+                        <div class="font-semibold text-[var(--text-primary)]">${escapeHtml(h.name)}</div>
+                        <div class="text-[var(--text-muted)]">${escapeHtml(h.address || 'Central dispatch address')}</div>
+                    </div>
+
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-800 space-y-1.5 text-[11px]">
+                        <div class="font-bold text-[10px] uppercase tracking-wide text-amber-800 dark:text-amber-300 mb-1">Estimated Fare</div>
+                        <div class="font-mono font-bold text-[#003366] dark:text-sky-300">${fareText}</div>
+                        <div>${fareStatusBadge}</div>
+                    </div>
+
+                    <div class="text-[10px] text-[var(--text-muted)] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded p-2">
+                        <i class="fa-solid fa-circle-info text-blue-500"></i>
+                        Backend will recheck ambulance availability before dispatch. If the unit becomes unavailable, you will be notified immediately and may select another.
+                    </div>
+
+                    <div class="flex gap-2 justify-end flex-wrap">
+                        <button type="button" id="changeSelectionBtn"
+                            class="px-4 py-2 text-xs font-semibold border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-800 text-[var(--text-primary)]">
+                            <i class="fa-solid fa-arrow-left"></i> Change Selection
+                        </button>
+                        <button type="button" id="doDispatchBtn"
+                            class="bg-[#003366] hover:bg-[#002244] text-white px-5 py-2 rounded text-xs font-bold flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-truck-medical"></i> Confirm &amp; Dispatch Ambulance
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            document.getElementById('closeAmbConfirmBtn').addEventListener('click', () => overlay.remove());
+            document.getElementById('changeSelectionBtn').addEventListener('click', () => overlay.remove());
+            document.getElementById('doDispatchBtn').addEventListener('click', () => {
+                overlay.remove();
+                navigateToAllocationPage(h, selectedOpt);
+            });
+        }
+
+        function closeHospitalDetailModal() {
+            document.getElementById('hospitalDetailModal').classList.add('hidden');
+        }
+
+        // ────────────────────────────────────────
+        // Passes exact user-selected ambulance, hospital, pickup location and calculated fare
+        function navigateToAllocationPage(h, selectedOpt) {
+            const bookingCtx = {
+                hospital_id: h.hospital_id,
+                hospital_name: h.name,
+                hospital_address: h.address || '',
+                hospital_lat: h.latitude || h.lat || null,
+                hospital_lng: h.longitude || h.lon || null,
+                pickup_address: patientData.address || 'Current Location',
+                pickup_lat: patientData.lat || null,
+                pickup_lng: patientData.lon || null,
+                request_id: patientData.ackId || 'NAS-2026-UNSPECIFIED',
+                patient_priority: patientData.priority || 'YELLOW',
+                ambulance_id: selectedOpt.ambulance_id,
+                vehicle_id: selectedOpt.vehicle_id || selectedOpt.ambulance_id,
+                category: selectedOpt.category,
+                ownership: selectedOpt.ownership || (selectedOpt.is_government ? 'Government' : 'Private'),
+                is_government: Boolean(selectedOpt.is_government),
+                provider_name: selectedOpt.provider_name || '',
+                qualified_staff: selectedOpt.qualified_staff || 'Paramedic Crew',
+                distance_km: selectedOpt.distance_km || h.distance_km || 0.0,
+                estimated_eta_minutes: selectedOpt.estimated_eta_minutes || 12,
+                rate_per_km: selectedOpt.rate_per_km,
+                total_fare: selectedOpt.total_fare,
+                formatted_total: selectedOpt.formatted_total,
+                rate_breakdown: selectedOpt.rate_breakdown,
+                fare_status: selectedOpt.fare_status,
+                is_free: Boolean(selectedOpt.is_free),
+                insurance_data: h.insurance_data || h.gemini_research || null
+            };
+
+            // Store in sessionStorage for seamless cross-page delivery
+            try {
+                sessionStorage.setItem('currentAmbulanceBooking', JSON.stringify(bookingCtx));
+            } catch (e) {
+                console.warn('Storage save error:', e);
+            }
+
+            // Build query parameters as fallback
+            const params = new URLSearchParams({
+                category: selectedOpt.category,
+                fleet: selectedOpt.is_government ? 'Government' : 'Private',
+                hospital_name: h.name,
+                hospital_id: h.hospital_id,
+                hospital_address: h.address || '',
+                hospital_lat: h.latitude || h.lat || '',
+                hospital_lng: h.longitude || h.lon || '',
+                pickup: patientData.address || '',
+                pickup_lat: patientData.lat || '',
+                pickup_lng: patientData.lon || '',
+                distance: selectedOpt.distance_km || h.distance_km || '0',
+                rate: selectedOpt.rate_per_km || '0',
+                fare: selectedOpt.total_fare || '0',
+                formatted_fare: selectedOpt.formatted_total || '',
+                breakdown: selectedOpt.rate_breakdown || '',
+                status: selectedOpt.fare_status || '',
+                is_free: selectedOpt.is_free ? 'true' : 'false',
+                provider: selectedOpt.provider_name || '',
+                ambulance_id: selectedOpt.ambulance_id || '',
+                vehicle_id: selectedOpt.vehicle_id || '',
+                eta: selectedOpt.estimated_eta_minutes || '12',
+                staff: selectedOpt.qualified_staff || ''
+            });
+
+            window.location.href = `allocation.html?${params.toString()}`;
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('ambConfirmOverlay');
+                if (overlay) { overlay.remove(); return; }
+                closeHospitalDetailModal();
+            }
+        });
+
+        // CONFIRM & DISPATCH (called after user explicit confirmation in modal)
+        // Sends user-selected ambulance ID, category and explicit confirmation flag to backend.
+        // Backend rechecks availability before proceeding. Never auto-dispatches.
+        async function confirmAndDispatchAmbulance(hospitalId, hospitalName, selectedAmbulanceId, selectedCategory, overlayEl, distanceKm, selectedOpt) {
+            if (overlayEl) {
+                const btn = overlayEl.querySelector('#doDispatchBtn');
+                if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dispatching...'; }
+            }
+            try {
+                const resp = await fetch('/api/hospitals/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hospital_id: hospitalId,
+                        hospital_name: hospitalName,
+                        request_id: patientData.ackId,
+                        selected_ambulance_id: selectedAmbulanceId,
+                        selected_category: selectedCategory,
+                        distance_km: distanceKm || (selectedOpt ? selectedOpt.distance_km : 0.0),
+                        user_confirmed: true
+                    })
+                });
+                const data = await resp.json();
+                if (resp.ok && data.success) {
+                    if (overlayEl) overlayEl.remove();
+                    closeHospitalDetailModal();
+                    const banner = document.getElementById('bookingConfirmationBanner');
+                    const text   = document.getElementById('bookingConfirmationText');
+                    
+                    // Display allocated ambulance card with exact selected fleet and category fare details
+                    const amb = data.selected_ambulance || {};
+                    const fare = amb.fare || (selectedOpt ? {
+                        rate_per_km: selectedOpt.rate_per_km,
+                        total_fare: selectedOpt.total_fare,
+                        formatted_total: selectedOpt.formatted_total,
+                        rate_breakdown: selectedOpt.rate_breakdown,
+                        fare_status: selectedOpt.fare_status,
+                        is_free: selectedOpt.is_free
+                    } : {});
+
+                    // Persist valid booking session for Ambulance Tracking access
+                    try {
+                        sessionStorage.setItem('currentAmbulanceBooking', JSON.stringify({
+                            hospital_id: hospitalId,
+                            hospital_name: hospitalName,
+                            hospital_address: '',
+                            hospital_lat: (selectedOpt && selectedOpt.hospital_lat) || patientData.lat || null,
+                            hospital_lng: (selectedOpt && selectedOpt.hospital_lng) || patientData.lon || null,
+                            pickup_address: patientData.address || 'Registered Pickup Location',
+                            pickup_lat: patientData.lat || null,
+                            pickup_lng: patientData.lon || null,
+                            request_id: patientData.ackId || 'REQ-REGISTERED',
+                            ambulance_id: amb.ambulance_id || selectedAmbulanceId,
+                            vehicle_id: amb.vehicle_id || selectedAmbulanceId,
+                            category: selectedCategory,
+                            is_government: Boolean(amb.is_government),
+                            distance_km: distanceKm || (selectedOpt ? selectedOpt.distance_km : 0.0),
+                            rate_per_km: fare.rate_per_km,
+                            total_fare: fare.total_fare,
+                            formatted_total: fare.formatted_total,
+                            rate_breakdown: fare.rate_breakdown,
+                            fare_status: fare.fare_status,
+                            is_free: Boolean(fare.is_free),
+                            booking_reference: data.booking_reference,
+                            bookingRef: data.booking_reference,
+                            booking_completed: true,
+                            allocated: true
+                        }));
+                    } catch(e) {}
+
+                    const fareLabel = fare.is_free
+                        ? '<span class="inline-flex items-center gap-1 font-bold text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/50">₹0.00 (Free CATS 102)</span>'
+                        : `<span class="font-mono font-bold text-amber-200">${fare.formatted_total || ('₹' + (fare.total_fare || 0).toFixed(2))}</span> <span class="text-[11px] text-emerald-200">(@ ₹${fare.rate_per_km}/km)</span>`;
+
+                    const fleetOwnershipBadge = amb.is_government
+                        ? '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-emerald-800 text-emerald-100 border border-emerald-500">GOVERNMENT FLEET</span>'
+                        : '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-amber-800 text-amber-100 border border-amber-500">PRIVATE FLEET</span>';
+
+                    text.innerHTML = `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2 border-b border-emerald-700/60 pb-1.5">
+                                <span class="font-bold text-white text-xs">${escapeHtml(hospitalName)}</span>
+                                <span class="font-mono text-[10px] bg-emerald-950 px-2 py-0.5 rounded text-emerald-200 border border-emerald-700">${escapeHtml(data.booking_reference)}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                <div>
+                                    <span class="text-emerald-300 block text-[10px] uppercase font-semibold">Allocated Unit:</span>
+                                    <span class="font-bold text-white">${escapeHtml(selectedCategory)}</span> &nbsp;${fleetOwnershipBadge}
+                                    <div class="font-mono text-[10px] text-emerald-200 mt-0.5">${escapeHtml(amb.vehicle_id || selectedAmbulanceId)}</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-emerald-300 block text-[10px] uppercase font-semibold">Calculated Fare:</span>
+                                    <div>${fareLabel}</div>
+                                    <div class="text-[9px] text-emerald-300/80 mt-0.5 font-mono">${escapeHtml(fare.rate_breakdown || (fare.is_free ? 'Government Funded' : 'Actual Road Distance × Rate'))}</div>
+                                </div>
+                            </div>
+                            <div class="text-[10px] text-emerald-200/90 bg-emerald-950/40 rounded px-2 py-1 border border-emerald-800/40 flex items-center justify-between">
+                                <span><i class="fa-solid fa-route"></i> En route to incident location</span>
+                                <span class="font-semibold">${escapeHtml(fare.fare_status || (fare.is_free ? 'Official Verified Fare' : 'Project Estimate'))}</span>
+                            </div>
+                            <div class="pt-1.5 border-t border-emerald-700/60 flex items-center justify-between">
+                                <span class="text-[10px] text-emerald-200">Telemetry clearance active</span>
+                                <a href="allocation.html" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-emerald-950 font-bold rounded text-[11px] hover:bg-emerald-100 shadow transition">
+                                    <i class="fa-solid fa-location-dot text-emerald-700"></i> Track Ambulance &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    banner.classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    if (overlayEl) {
+                        const btn = overlayEl.querySelector('#doDispatchBtn');
+                        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck-medical"></i> Confirm &amp; Dispatch Ambulance'; }
+                    }
+                    alert(data.error || 'Unable to confirm dispatch. Please try again or call 112.');
+                }
+            } catch (err) {
+                if (overlayEl) {
+                    const btn = overlayEl.querySelector('#doDispatchBtn');
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck-medical"></i> Confirm &amp; Dispatch Ambulance'; }
+                }
+                alert('Network communication error. Please try again or dial 112.');
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initPatientContext();
+            loadInitialNearbyHospitals();
+        }, { once: true });
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+{
+  "results": [
+    {
+      "name": "Arvind Medicare",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Central Hospital (Northern Railways)",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "General Williams Hospital",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Lady Hardinge Medical College & Associated Hospitals",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Kalawati Saran Children's Hospital",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Guru Harkrishan Polyclinic Bangla Sahib",
+      "is_govt": false,
+      "source": "Trust/Charitable Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Mrs. Girdhar Lal Maternity Hospital",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Guru Nanak Eye Hospital",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Delhi Heart and Lung Institute Super Speciality Hospital",
+      "is_govt": false,
+      "source": "Official CGHS/TPA Network Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Maulana Azad Institute of Dental Sciences",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Surbhi hospital",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Banwari Lal Charitable Trust Diagnostic Centre",
+      "is_govt": false,
+      "source": "Trust/Charitable Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Free Maternity & Child Welfare Centeri",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "NGO Lok Kalyan Samiti",
+      "is_govt": false,
+      "source": "Trust/Charitable Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Dr. Ram Manohar Lohia Hospital",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Sharma Medical Center",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Sunder Lal Jain Eye Hospital",
+      "is_govt": false,
+      "source": "Official CGHS/TPA Network Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Khadija National Hospital",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Sabharwal Hospital",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Sanjeevan Hospital",
+      "is_govt": false,
+      "source": "Official CGHS/TPA Network Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Kasturba Hospital",
+      "is_govt": true,
+      "source": "Official Central/State Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Empanelled",
+      "esic": "Empanelled",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Neera Eye Centre",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Navjoyti Eye Centre",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Chaudhary Eye Centre",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Dayanand Road",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Dr. Shroff Charity Eye Hospital",
+      "is_govt": false,
+      "source": "Official CGHS/TPA Network Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Empanelled",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Empanelled"
+    },
+    {
+      "name": "Dehli Hospital",
+      "is_govt": false,
+      "source": "Status Not Verified Registry",
+      "pmjay": "Status Not Verified",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Status Not Verified",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Ramakrishna Mission T.B.Clinic and Medical Centre",
+      "is_govt": false,
+      "source": "Trust/Charitable Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Status Not Verified"
+    },
+    {
+      "name": "Mahavir International Eye Hospital",
+      "is_govt": false,
+      "source": "Trust/Charitable Healthcare Registry",
+      "pmjay": "Empanelled",
+      "cghs": "Status Not Verified",
+      "echs": "Status Not Verified",
+      "esic": "Status Not Verified",
+      "state_govt": "Empanelled",
+      "tpa_insurance": "Status Not Verified"
+    }
+  ]
+}

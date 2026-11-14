@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AmbuPriority — National Emergency Ambulance Priority Routing System, Government of India">
+    <title>AmbuPriority — National Emergency Ambulance Priority System | Government of India</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Indian National Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar (GIGW 3.0) -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Authority -->
+            <div class="flex items-center gap-3 text-[11px] text-white/90">
+                <span class="font-semibold tracking-wide" data-i18n="gov_authority">Government of India &nbsp;|&nbsp; National Health Authority</span>
+                <span class="hidden md:inline text-white/40">•</span>
+                <span class="hidden md:inline" data-i18n="gov_india">Official Emergency Portal</span>
+            </div>
+            <!-- Right: Controls -->
+            <div class="flex items-center gap-3 text-[11px]">
+                <!-- Text Size -->
+                <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded border border-white/15">
+                    <span class="text-white/60 hidden sm:inline" data-i18n="text_size">Size:</span>
+                    <button type="button" onclick="adjustPortalZoom(-1)" class="text-white hover:text-yellow-300 px-1 font-bold" title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"  class="text-white hover:text-yellow-300 px-1 font-bold" title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"  class="text-white hover:text-yellow-300 px-1 font-bold" title="Increase text">A+</button>
+                </div>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-2.5 py-0.5 rounded border border-white/15 text-white transition cursor-pointer">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-xs"></i>
+                    <span id="themeToggleText" class="font-medium" data-i18n="theme_dark">Dark Mode</span>
+                </button>
+                <!-- Language -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="flex items-center gap-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 px-2.5 py-0.5 rounded border border-yellow-400/30 text-yellow-300 font-bold transition cursor-pointer">
+                    <i class="fa-solid fa-language text-xs"></i>
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] sticky top-0 z-50 shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center gap-4">
+
+            <!-- Branding -->
+            <a href="index.html" class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-12 w-12 sm:h-14 sm:w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 sm:pl-4 min-w-0">
+                    <h1 class="text-xl sm:text-2xl font-black text-[#003366] dark:text-sky-400 leading-none tracking-tight uppercase" data-i18n="portal_name">AmbuPriority</h1>
+                    <p class="text-[10px] text-[var(--text-muted)] uppercase tracking-widest mt-0.5 font-semibold truncate" data-i18n="portal_subtitle">Advanced Ambulance Priority Routing System</p>
+                    <p class="text-[9px] text-[var(--text-muted)] font-medium hidden sm:block" data-i18n="ministry_name">Ministry of Health and Family Welfare, Government of India</p>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-[var(--text-secondary)]">
+                <a href="index.html" class="nav-active" data-i18n="nav_home">Home</a>
+                <a href="#features" class="hover:text-[#003366] dark:hover:text-sky-400 transition" data-i18n="nav_features">System Features</a>
+                <a href="detail.html" class="hover:text-[#003366] dark:hover:text-sky-400 transition" data-i18n="nav_docs">Documentation</a>
+                <a href="register.html"
+                   class="flex items-center gap-2 text-[#c0392b] dark:text-red-400 font-semibold hover:text-red-800 dark:hover:text-red-300 transition">
+                    <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    <span data-i18n="nav_emergency">Emergency Help</span>
+                </a>
+            </nav>
+
+            <!-- CTA Button -->
+            <div class="flex items-center gap-3">
+                <a href="register.html" class="btn-helpline px-4 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+                <!-- Mobile nav toggle placeholder -->
+                <button type="button" class="lg:hidden p-2 rounded text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- News Ticker -->
+    <div class="bg-[var(--bg-muted)] dark:bg-[#1a2235] border-b border-[var(--border-color)] py-2 transition-colors">
+        <div class="container mx-auto px-4 flex items-center gap-3 text-xs overflow-hidden">
+            <span class="bg-red-600 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded flex-shrink-0" data-i18n="ticker_latest">Latest</span>
+            <marquee class="text-[var(--text-secondary)] font-medium" data-i18n="ticker_news">
+                AmbuPriority green-corridor priority integrated across 48 major metropolitan hospitals. &nbsp;|&nbsp; Real-time traffic signal preemption operational at 120 key junctions. &nbsp;|&nbsp; Multilingual emergency hotline 102 &amp; 108 operating 24×7 nationwide.
+            </marquee>
+        </div>
+    </div>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section id="hero" class="relative min-h-[520px] flex items-center border-b border-[var(--border-color)] overflow-hidden">
+        <!-- Background image -->
+        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_1a232a2b46_8d98a997cb6fa945.png"
+             alt="National Ambulance Fleet" class="absolute inset-0 w-full h-full object-cover">
+        <!-- Overlay: left-heavy for readability; solid dark navy -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#001f3f]/95 via-[#001f3f]/80 to-[#001f3f]/30"></div>
+
+        <div class="relative container mx-auto px-4 py-16 lg:py-20">
+            <!-- Split: Text left, stats right -->
+            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-12 lg:gap-16">
+
+                <!-- Left: Text -->
+                <div class="max-w-xl text-white">
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-yellow-400 mb-3" data-i18n="hero_tag">National Health Emergency Corridor</p>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-5 text-white" data-i18n="hero_heading">
+                        Seconds Save Lives.<br>Priority Ensures Reaching.
+                    </h2>
+                    <p class="text-blue-100 text-base leading-relaxed mb-8 font-normal" data-i18n="hero_desc">
+                        Centrally integrated automated emergency response system connecting GPS ambulances, signal corridors, and hospital ICU dashboards in real-time nationwide.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="register.html"
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-[#f39c12] hover:bg-yellow-600 text-slate-900 font-bold rounded text-sm shadow transition">
+                            <i class="fa-solid fa-truck-medical"></i>
+                            <span data-i18n="hero_cta_help">Call for Ambulance</span>
+                        </a>
+                        <a href="detail.html"
+                           class="inline-flex items-center gap-2 px-6 py-3 border border-white/50 hover:bg-white/10 text-white font-semibold rounded text-sm transition">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span data-i18n="hero_cta_stats">View Documentation</span>
+                        </a>
+                    </div>
+                    <!-- Simple two-stat row -->
+                    <div class="mt-10 pt-6 border-t border-white/15 flex gap-8 text-xs text-blue-200">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-green-400"></i>
+                            <span data-i18n="hero_badge_247">24/7 Command Active</span>
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-yellow-400"></i>
+                            <span data-i18n="hero_badge_avg">Avg. Arrival: 6.8 Min</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Right: Stat block (desktop only) -->
+                <div class="hidden lg:grid grid-cols-2 gap-px bg-white/10 rounded overflow-hidden border border-white/15 flex-shrink-0">
+                    <div class="bg-[#002244]/80 p-6 text-center">
+                        <div class="text-3xl font-black text-white mb-1">48+</div>
+                        <div class="text-xs text-blue-200 uppercase tracking-wide">Hospitals Linked</div>
+                    </div>
+                    <div class="bg-[#002244]/80 p-6 text-center">
+                        <div class="text-3xl font-black text-white mb-1">120</div>
+                        <div class="text-xs text-blue-200 uppercase tracking-wide">Smart Junctions</div>
+                    </div>
+                    <div class="bg-[#002244]/80 p-6 text-center">
+                        <div class="text-3xl font-black text-yellow-300 mb-1">6.8m</div>
+                        <div class="text-xs text-blue-200 uppercase tracking-wide">Avg. Response</div>
+                    </div>
+                    <div class="bg-[#002244]/80 p-6 text-center">
+                        <div class="text-3xl font-black text-white mb-1">24/7</div>
+                        <div class="text-xs text-blue-200 uppercase tracking-wide">Command Centre</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SYSTEM FEATURES ===== -->
+    <section id="features" class="section-pad bg-white dark:bg-[var(--bg-card)] border-b border-[var(--border-color)] transition-colors">
+        <div class="container mx-auto px-4">
+
+            <div class="max-w-2xl mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--gov-saffron)] mb-2" data-i18n="features_badge">System Architecture</p>
+                <h2 class="text-2xl sm:text-3xl text-[#003366] dark:text-sky-400" data-i18n="features_heading">Core Emergency Dispatch Architecture</h2>
+                <span class="section-accent"></span>
+                <p class="text-sm text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="features_subheading">
+                    Standardised under National Ambulance Services (NAS) and AIS-125 Code of Practice
+                </p>
+            </div>
+
+            <!-- Feature rows — left-aligned icon + text, no colored card borders -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+
+                <!-- F1 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-blue-50 dark:bg-blue-950 text-[#003366] dark:text-sky-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f1_title">Real-time GPS Tracking</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f1_desc">
+                        Continuous geofencing monitors every ambulance's location, velocity, and priority status to predict traffic preemption requirements at upcoming junctions.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- F2 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-amber-50 dark:bg-amber-950 text-[#f39c12] text-lg flex-shrink-0">
+                            <i class="fa-solid fa-traffic-light"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f2_title">Smart Signal Preemption</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f2_desc">
+                        Automated radio-frequency &amp; sensor integration switches upcoming traffic signals to green when emergency vehicles are detected within 500 metres.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- F3 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded flex items-center justify-center bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <h3 class="text-base font-semibold text-[var(--text-primary)]" data-i18n="f3_title">Hospital ICU Bed Sync</h3>
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed" data-i18n="f3_desc">
+                        Direct telemetric feed to designated trauma centres to transmit patient vital telemetry and prepare emergency bays before the vehicle arrives.
+                    </p>
+                    <a href="detail.html" class="text-xs font-semibold text-[#003366] dark:text-sky-400 hover:underline inline-flex items-center gap-1 mt-auto">
+                        <span data-i18n="learn_more">Learn More</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CITIZEN RESOURCE CENTER ===== -->
+    <section id="help" class="section-pad bg-[var(--bg-muted)] dark:bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-[var(--gov-saffron)] mb-2" data-i18n="crc_badge">Citizen Services</p>
+                <h2 class="text-2xl sm:text-3xl text-[#003366] dark:text-sky-400" data-i18n="crc_heading">Citizen Resource &amp; Emergency Command Centre</h2>
+                <span class="section-accent"></span>
+                <p class="text-sm text-[var(--text-secondary)] mt-1 leading-relaxed" data-i18n="crc_desc">
+                    Direct citizen access to emergency protocols, first responder instructions, and real-time helpline networks.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                <!-- Left: Info panels -->
+                <div class="lg:w-1/2 flex flex-col gap-6">
+
+                    <div class="gov-card rounded p-6 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-[#003366] dark:text-sky-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-book-medical"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-1" data-i18n="crc_card1_title">First Aid Medical Guide</h4>
+                            <p class="text-xs text-[var(--text-secondary)] leading-relaxed" data-i18n="crc_card1_desc">Official Standard Operating Procedures (SOP) for roadside trauma and acute cardiac arrest.</p>
+                        </div>
+                    </div>
+
+                    <div class="gov-card rounded p-6 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded bg-amber-50 dark:bg-amber-950 flex items-center justify-center text-[#f39c12] text-lg flex-shrink-0">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-1" data-i18n="crc_card2_title">Nearby Trauma Hubs</h4>
+                            <p class="text-xs text-[var(--text-secondary)] leading-relaxed" data-i18n="crc_card2_desc">Live network map of recognised emergency trauma centres and government tertiary hospitals.</p>
+                        </div>
+                    </div>
+
+                    <!-- Helpline -->
+                    <div class="gov-card rounded p-6 flex items-center gap-4 border-l-4 border-[var(--gov-red)]">
+                        <div class="w-12 h-12 rounded bg-red-50 dark:bg-red-950 flex items-center justify-center text-red-600 dark:text-red-400 text-xl flex-shrink-0">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-wide mb-0.5" data-i18n="crc_helpline_title">Toll-Free National Helpline</p>
+                            <p class="text-2xl font-black text-[var(--text-primary)] tracking-wide font-mono">102 / 108 / 112</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Gallery -->
+                <div class="lg:w-1/2">
+                    <div class="gov-card rounded overflow-hidden">
+                        <div class="flex justify-between items-center px-5 py-4 border-b border-[var(--border-color)]">
+                            <h3 class="text-sm font-semibold text-[var(--text-primary)]" data-i18n="crc_gallery_title">National Fleet &amp; Command Gallery</h3>
+                            <button onclick="nextImage()"
+                                class="btn-primary px-3 py-1.5 text-xs font-semibold cursor-pointer">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span data-i18n="gallery_next">Next</span>
+                            </button>
+                        </div>
+                        <div class="relative h-56 sm:h-64 bg-gray-100 dark:bg-slate-800">
+                            <img id="galleryMainImage"
+                                 src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png"
+                                 alt="Command Gallery"
+                                 class="w-full h-full object-cover transition-opacity duration-300">
+                        </div>
+                        <div class="flex gap-2 p-3 overflow-x-auto bg-[var(--bg-muted)] dark:bg-[#1a2235]">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 1">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_14a618c435_377f6f449240104b.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 2">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_a27f817392_7eff69f72e6c2370.png"
+                                 onclick="setMainImage(this.src)"
+                                 class="h-14 w-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-[#003366] dark:hover:border-sky-400 transition" alt="Fleet 3">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-[#111827] text-white mt-auto border-t-4 border-[var(--gov-saffron)]">
+        <div class="container mx-auto px-4 py-10">
+            <div class="flex flex-col md:flex-row md:justify-between gap-8">
+
+                <!-- Left: Identity -->
+                <div class="max-w-xs">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                             alt="National Emblem" class="h-10 brightness-0 invert opacity-80">
+                        <div>
+                            <h2 class="text-sm font-bold leading-tight" data-i18n="footer_title">AmbuPriority National Portal</h2>
+                            <p class="text-[10px] text-gray-400 mt-0.5" data-i18n="footer_dept">National Health Authority, Govt. of India</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-relaxed" data-i18n="footer_disclaimer">
+                        Official Central Citizen Emergency Health Corridor System. Ambulances monitored under AIS-125 Compliant Real-Time Priority Routing Protocol.
+                    </p>
+                </div>
+
+                <!-- Right: Links -->
+                <div class="flex flex-col gap-2">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Portal Links</p>
+                    <div class="grid grid-cols-2 gap-x-10 gap-y-1 text-xs text-gray-400">
+                        <a href="index.html" class="hover:text-white hover:underline" data-i18n="footer_links_home">Home</a>
+                        <a href="detail.html" class="hover:text-white hover:underline" data-i18n="footer_links_docs">Documentation</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_privacy">Privacy Policy</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_terms">Terms of Service</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_guidelines">GIGW Compliance</a>
+                        <a href="#" class="hover:text-white hover:underline" data-i18n="footer_links_contact">Contact Directorate</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-2 text-xs text-gray-500">
+                <p data-i18n="footer_copyright">© 2026 National Health Authority, Government of India. All Rights Reserved. Emergency: 102 / 108 / 112</p>
+                <p data-i18n="footer_last_updated">Last Reviewed: 07 Nov 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portal Controller -->
+    <script src="gov-portal.js"></script>
+    <!-- ARIA 3D AI Virtual Assistant -->
+    <script src="assistant.js"></script>
+    <script>
+        const galleryImages = [
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0c71d73628_b3db3683d038c9e0.png",
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_14a618c435_377f6f449240104b.png",
+            "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_a27f817392_7eff69f72e6c2370.png"
+        ];
+        let currentGalleryIdx = 0;
+        function setMainImage(src) {
+            const mainImg = document.getElementById('galleryMainImage');
+            mainImg.style.opacity = 0;
+            setTimeout(() => {
+                mainImg.src = src;
+                mainImg.style.opacity = 1;
+                currentGalleryIdx = galleryImages.indexOf(src);
+            }, 200);
+        }
+        function nextImage() {
+            currentGalleryIdx = (currentGalleryIdx + 1) % galleryImages.length;
+            setMainImage(galleryImages[currentGalleryIdx]);
+        }
+    </script>
+</body>
+</html>

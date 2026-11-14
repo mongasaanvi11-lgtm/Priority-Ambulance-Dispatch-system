@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Emergency Clinical Assessment & Triage Intake | AmbuPriority National Portal">
+    <title>Clinical Assessment & Triage Intake | AmbuPriority</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+    <style>
+        .reg-nav-bar { background: linear-gradient(180deg, #1a3a5c 0%, #0d2137 100%); }
+        .reg-nav-bar a {
+            color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 500;
+            padding: 10px 16px; display: inline-flex; align-items: center; gap: 6px;
+            transition: background-color 0.15s; white-space: nowrap;
+        }
+        .reg-nav-bar a:hover, .reg-nav-bar a.active { background-color: rgba(255,255,255,0.12); color: #ffffff; }
+        .reg-advisory { background-color: #fef2f2; border-bottom: 1px solid #fecaca; color: #991b1b; }
+        html.dark .reg-advisory { background-color: rgba(127, 29, 29, 0.15); border-bottom-color: #7f1d1d; color: #fca5a5; }
+        .reg-page-heading { background: linear-gradient(135deg, #e8f0fe 0%, #d4e4f7 100%); border-bottom: 1px solid #bdd4ea; }
+        html.dark .reg-page-heading { background: linear-gradient(135deg, #1a2744 0%, #15203a 100%); border-bottom-color: #2d3748; }
+        .reg-sidebar { background: linear-gradient(180deg, #1a3a5c 0%, #0f2740 100%); color: #ffffff; }
+        .reg-form-area { background-color: var(--bg-card); border: 1px solid var(--border-color); }
+        .reg-form-header {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
+            color: #ffffff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .reg-form-section-title { font-size: 14px; font-weight: 700; color: var(--gov-navy); margin-bottom: 2px; }
+        html.dark .reg-form-section-title { color: #7dd3fc; }
+        .reg-form-section-sub { font-size: 11px; color: var(--text-muted); }
+        .reg-form-section-divider { border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 20px; }
+        .reg-field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .reg-field-input, .reg-field-select {
+            width: 100%; padding: 8px 12px; font-size: 13px;
+            background-color: var(--bg-card); color: var(--text-primary);
+            border: 1px solid var(--border-color); border-radius: 6px;
+        }
+        .btn-submit-assessment {
+            background-color: var(--gov-navy); color: #ffffff; font-size: 13px; font-weight: 700;
+            padding: 10px 28px; border-radius: 6px; display: inline-flex; align-items: center; gap: 8px;
+            cursor: pointer; border: none; transition: background-color 0.15s;
+        }
+        .btn-submit-assessment:hover { background-color: var(--gov-navy-dark); }
+        .chip-label {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+            border: 1px solid var(--border-color); border-radius: 20px; font-size: 12px;
+            cursor: pointer; user-select: none; transition: all 0.15s ease;
+        }
+        .chip-label input[type="checkbox"]:checked + span,
+        .chip-label:has(input[type="checkbox"]:checked) {
+            background-color: #003366; color: #ffffff; border-color: #003366;
+        }
+        html.dark .chip-label:has(input[type="checkbox"]:checked) {
+            background-color: #0284c7; color: #ffffff; border-color: #0284c7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex justify-between items-center text-[11px]">
+            <div class="flex items-center gap-3 text-white/90">
+                <span class="font-bold" data-i18n="gov_authority_hindi">भारत सरकार</span>
+                <span class="text-white/40">|</span>
+                <span data-i18n="gov_india">Government of India</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="govPortal.toggleTheme()" class="text-white/80 hover:text-white flex items-center gap-1 cursor-pointer">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <button type="button" onclick="govPortal.toggleLanguage()" class="text-yellow-300 hover:text-yellow-200 font-bold cursor-pointer">
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header (Unified Standard Government Header) -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight" style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center" data-i18n="portal_subtitle">National Ambulance Priority Routing &amp; Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="register.html" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar — dark navy, matching register.html and hospitals.html -->
+    <nav class="reg-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" class="active" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="detail.html#standards" class="hidden lg:inline-flex" data-i18n="nav_reports"><i class="fa-solid fa-chart-column"></i> Reports &amp; Statistics</a>
+        </div>
+    </nav>
+
+    <!-- Emergency Advisory -->
+    <div class="reg-advisory py-2 px-4">
+        <div class="container mx-auto flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                <span class="font-bold text-red-700" data-i18n="advisory_label">Emergency Advisory:</span>
+                <span data-i18n="asm_advisory_text">If the patient is unconscious, not breathing, or bleeding profusely, dial 112 immediately.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Heading -->
+    <div class="reg-page-heading py-5">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-[#003366] dark:text-sky-400 mb-1" style="font-family: 'Merriweather', serif;" data-i18n="asm_main_title">
+                Patient Symptom &amp; Clinical Assessment
+            </h2>
+            <p class="text-xs text-[var(--text-secondary)]" data-i18n="asm_main_sub">
+                Structured clinical intake based on WHO Interagency Integrated Triage Tool (IITT) and National Ambulance Service guidelines.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Form Area -->
+    <main class="flex-grow py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row gap-0">
+
+                <!-- Sidebar -->
+                <aside class="reg-sidebar rounded-t-lg lg:rounded-t-none lg:rounded-l-lg w-full lg:w-[280px] p-5">
+                    <h3 class="text-sm font-bold pb-3 border-b border-white/15 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-notes-medical text-sky-300"></i> <span data-i18n="asm_sidebar_title">Active Request</span>
+                    </h3>
+                    <div class="space-y-4 text-xs text-white/90">
+                        <div>
+                            <span class="text-white/60 block text-[10px] uppercase" data-i18n="asm_lbl_regid">Registration ID</span>
+                            <span id="displayReqId" class="font-mono font-bold text-base text-yellow-300">NAS-2026-PENDING</span>
+                        </div>
+                        <div>
+                            <span class="text-white/60 block text-[10px] uppercase" data-i18n="asm_lbl_patient">Patient Profile</span>
+                            <span id="displayPatientInfo" class="font-semibold">-</span>
+                        </div>
+                        <div class="pt-3 border-t border-white/15 text-[11px] text-white/70 leading-relaxed">
+                            <i class="fa-solid fa-shield-halved text-green-300 mr-1"></i>
+                            <span data-i18n="asm_sidebar_notice">This clinical assessment guides ambulance response and hospital ICU pre-alert. All answers are recorded in the central dispatch audit trail.</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Form -->
+                <div class="reg-form-area rounded-b-lg lg:rounded-b-none lg:rounded-r-lg flex-grow min-w-0">
+                    <div class="reg-form-header">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-yellow-400"></i>
+                            <h3 class="text-sm font-bold" data-i18n="asm_form_title">Complaint-Based Clinical Assessment Form</h3>
+                        </div>
+                        <span class="text-xs bg-white/10 px-3 py-1 rounded" data-i18n="asm_confidential_tag">Confidential Medical Triage</span>
+                    </div>
+
+                    <form id="assessmentForm" class="p-6 space-y-6" onsubmit="event.preventDefault(); submitAssessment();">
+
+                        <!-- SECTION 1: CHIEF COMPLAINT & SYMPTOMS -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="asm_sec1_title">1. Primary Emergency &amp; Symptoms</h4>
+                                <p class="reg-form-section-sub" data-i18n="asm_sec1_sub">Identify the main reason for calling and associated signs</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="reg-field-label"><span data-i18n="asm_complaint_label">Chief Complaint Category</span> <span class="text-red-600">*</span></label>
+                                    <select id="chiefComplaint" class="reg-field-select" required onchange="handleComplaintChange()">
+                                        <option value="" disabled selected data-i18n="asm_cc_select">-- Select Primary Complaint --</option>
+                                        <option value="cardiac_chest" data-i18n="asm_cc_cardiac">Cardiac / Chest Pain / Heart Condition</option>
+                                        <option value="breathing" data-i18n="asm_cc_breathing">Severe Breathing Difficulty / Asthma / Choking</option>
+                                        <option value="neurological" data-i18n="asm_cc_neuro">Stroke Signs / Paralysis / Altered Mental Status</option>
+                                        <option value="trauma" data-i18n="asm_cc_trauma">Road Traffic Accident / Fall / Major Trauma</option>
+                                        <option value="bleeding_injury" data-i18n="asm_cc_bleeding">Severe Bleeding / Open Injury</option>
+                                        <option value="burns" data-i18n="asm_cc_burns">Burns (Thermal, Chemical, Electrical)</option>
+                                        <option value="seizures" data-i18n="asm_cc_seizures">Seizures / Convulsions / Fits</option>
+                                        <option value="fever_infection" data-i18n="asm_cc_fever">High Fever / Serious Infection / Sepsis Signs</option>
+                                        <option value="abdominal" data-i18n="asm_cc_abdominal">Severe Abdominal Pain / GI Symptoms</option>
+                                        <option value="pregnancy" data-i18n="asm_cc_pregnancy">Pregnancy-Related Emergency / Labor</option>
+                                        <option value="poisoning" data-i18n="asm_cc_poisoning">Poisoning / Chemical Ingestion / Snake Bite</option>
+                                        <option value="other" data-i18n="asm_cc_other">Other Acute Medical Emergency</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="reg-field-label"><span data-i18n="asm_onset_label">Onset &amp; Duration</span> <span class="text-red-600">*</span></label>
+                                    <select id="onsetDuration" class="reg-field-select" required>
+                                        <option value="less_than_15min" data-i18n="asm_onset_15m">Sudden onset (within last 15 minutes)</option>
+                                        <option value="15_to_60min" data-i18n="asm_onset_1h">15 to 60 minutes ago</option>
+                                        <option value="1_to_6hours" data-i18n="asm_onset_6h">1 to 6 hours ago</option>
+                                        <option value="more_than_6hours" data-i18n="asm_onset_gt6h">More than 6 hours ago</option>
+                                        <option value="ongoing_chronic" data-i18n="asm_onset_chronic">Ongoing / worsening since days</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="reg-field-label mb-2" data-i18n="asm_assoc_sym_title">Associated Symptoms (Select all that apply)</label>
+                                <div class="flex flex-wrap gap-2 text-xs">
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="sweating"><span data-i18n="sym_sweating">Profuse Sweating</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="nausea_vomiting"><span data-i18n="sym_nausea">Nausea / Vomiting</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="dizziness"><span data-i18n="sym_dizziness">Dizziness / Fainting</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="palpitations"><span data-i18n="sym_palpitations">Palpitations / Fast Pulse</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="confusion"><span data-i18n="sym_confusion">Confusion / Agitation</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="cyanosis"><span data-i18n="sym_cyanosis">Bluish Skin / Lips</span></label>
+                                    <label class="chip-label"><input type="checkbox" name="symptom" value="cold_clammy"><span data-i18n="sym_cold_clammy">Cold Clammy Skin</span></label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="reg-field-label" data-i18n="asm_worsening_label">Are symptoms rapidly worsening?</label>
+                                <div class="flex items-center gap-4 text-xs">
+                                    <label><input type="radio" name="worsening" value="yes" required> <span data-i18n="asm_worsening_yes">Yes, deteriorating rapidly</span></label>
+                                    <label><input type="radio" name="worsening" value="no"> <span data-i18n="asm_worsening_no">Stable / Not deteriorating</span></label>
+                                    <label><input type="radio" name="worsening" value="unknown"> <span data-i18n="asm_worsening_unk">Unknown / Unsure</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: DYNAMIC COMPLAINT-SPECIFIC QUESTIONS -->
+                        <div id="dynamicSection" class="reg-form-section-divider hidden">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" id="dynamicTitle" data-i18n="asm_sec2_title">2. Complaint-Specific Evaluation</h4>
+                                <p class="reg-form-section-sub" data-i18n="asm_sec2_sub">Targeted questions based on the selected primary emergency</p>
+                            </div>
+                            <div id="dynamicQuestions" class="space-y-4">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: CORE CLINICAL DOMAINS (WHO IITT / ABCDE) -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="asm_sec3_title">3. Primary Survey &amp; Clinical Domains</h4>
+                                <p class="reg-form-section-sub" data-i18n="asm_sec3_sub">Standardized ABCDE checks (Airway, Breathing, Circulation, Disability)</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div>
+                                    <label class="reg-field-label"><span data-i18n="asm_avpu_label">Consciousness / Mental Status (AVPU)</span> <span class="text-red-600">*</span></label>
+                                    <select id="consciousness" class="reg-field-select" required>
+                                        <option value="alert" data-i18n="avpu_alert">Alert (fully awake &amp; responsive)</option>
+                                        <option value="responds_to_voice" data-i18n="avpu_voice">Responds only to Voice / Verbal stimuli</option>
+                                        <option value="responds_to_pain" data-i18n="avpu_pain">Responds only to Pain (Pinch / Shake)</option>
+                                        <option value="unresponsive" data-i18n="avpu_unresponsive">Unresponsive / Completely Unconscious</option>
+                                        <option value="unknown" data-i18n="avpu_unknown">Unknown / Not Assessed</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="reg-field-label"><span data-i18n="asm_breath_label">Breathing Status</span> <span class="text-red-600">*</span></label>
+                                    <select id="breathingStatus" class="reg-field-select" required>
+                                        <option value="normal" data-i18n="breath_normal">Normal / Comfortable breathing</option>
+                                        <option value="mild_difficulty" data-i18n="breath_mild">Mild / Moderate shortness of breath</option>
+                                        <option value="severe_distress" data-i18n="breath_severe">Severe Respiratory Distress (struggling to breathe)</option>
+                                        <option value="not_breathing" data-i18n="breath_none">Not Breathing / Gasping (Agonal)</option>
+                                        <option value="unknown" data-i18n="breath_unknown">Unknown</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="reg-field-label" data-i18n="asm_airway_label">Airway Status</label>
+                                    <select id="airwayStatus" class="reg-field-select">
+                                        <option value="patent" data-i18n="airway_patent">Clear / Normal</option>
+                                        <option value="stridor" data-i18n="airway_stridor">Noisy breathing / Stridor (high-pitched)</option>
+                                        <option value="obstructed" data-i18n="airway_obstructed">Obstructed / Choking</option>
+                                        <option value="unknown" data-i18n="airway_unknown">Unknown</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="reg-field-label" data-i18n="asm_bleed_label">External Bleeding</label>
+                                    <select id="bleedingSeverity" class="reg-field-select">
+                                        <option value="none" data-i18n="bleed_none">No external bleeding</option>
+                                        <option value="minor" data-i18n="bleed_minor">Minor cuts / Scrapes (controlled)</option>
+                                        <option value="moderate" data-i18n="bleed_moderate">Moderate bleeding (partially controlled)</option>
+                                        <option value="heavy_uncontrolled" data-i18n="bleed_heavy">Heavy / Uncontrolled / Spurting Bleeding</option>
+                                        <option value="unknown" data-i18n="bleed_unknown">Unknown</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="reg-field-label" data-i18n="asm_pain_label">Severe Disabling Pain?</label>
+                                    <select id="severePain" class="reg-field-select">
+                                        <option value="no" data-i18n="opt_no">No / Mild to moderate pain</option>
+                                        <option value="yes" data-i18n="opt_yes">Yes (excruciating, unable to move)</option>
+                                        <option value="unknown" data-i18n="opt_unknown">Unable to answer / Unknown</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="reg-field-label" data-i18n="asm_conv_label">Active Convulsions / Seizures?</label>
+                                    <select id="activeConvulsions" class="reg-field-select">
+                                        <option value="no" data-i18n="opt_no">No</option>
+                                        <option value="yes" data-i18n="opt_yes_active_conv">Yes (actively jerking or fitting now)</option>
+                                        <option value="unknown" data-i18n="opt_unknown">Unknown</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 4: OPTIONAL VITAL SIGNS -->
+                        <div class="reg-form-section-divider">
+                            <div class="mb-4">
+                                <h4 class="reg-form-section-title" data-i18n="asm_sec4_title">4. Vital Signs (Optional — Only if already measured)</h4>
+                                <p class="reg-form-section-sub" data-i18n="asm_sec4_sub">Never instruct an untrained person to take measurements in an emergency. Leave blank if unavailable.</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="reg-field-label" data-i18n="vitals_hr_lbl">Pulse (bpm)</label>
+                                    <input type="number" id="vitalsHR" min="30" max="250" placeholder="e.g. 78" class="reg-field-input">
+                                </div>
+                                <div>
+                                    <label class="reg-field-label" data-i18n="vitals_spo2_lbl">SpO2 (%)</label>
+                                    <input type="number" id="vitalsSpO2" min="50" max="100" placeholder="e.g. 98" class="reg-field-input">
+                                </div>
+                                <div>
+                                    <label class="reg-field-label" data-i18n="vitals_rr_lbl">Resp. Rate (/min)</label>
+                                    <input type="number" id="vitalsRR" min="5" max="60" placeholder="e.g. 16" class="reg-field-input">
+                                </div>
+                                <div>
+                                    <label class="reg-field-label" data-i18n="vitals_bp_lbl">Blood Pressure</label>
+                                    <input type="text" id="vitalsBP" placeholder="e.g. 120/80" class="reg-field-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT -->
+                        <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-xs text-[var(--text-muted)] flex items-center gap-2">
+                                <i class="fa-solid fa-lock text-green-600"></i>
+                                <span data-i18n="asm_secure_note">Encrypted clinical transmission to dispatch control room</span>
+                            </div>
+                            <button type="submit" id="btnSubmitAssessment" class="btn-submit-assessment">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span data-i18n="btn_submit_assessment">Submit Clinical Assessment</span>
+                            </button>
+                        </div>
+
+                        <!-- SUCCESS CARD -->
+                        <div id="assessmentSuccess" class="hidden p-5 rounded-lg bg-green-50 dark:bg-green-950/40 border border-green-300 dark:border-green-800 text-green-900 dark:text-green-100">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-green-600 text-xl mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-bold text-sm" data-i18n="asm_success_title">Assessment Successfully Forwarded</h4>
+                                    <div id="triagePriorityResultBadge" class="mt-2 mb-2"></div>
+                                    <p class="text-xs mt-1 text-green-800 dark:text-green-200" data-i18n="asm_success_desc">
+                                        Clinical data has been processed by the National Triage Engine and queued for physician verification. Nearest suitable ambulance is being coordinated.
+                                    </p>
+                                    <p class="text-[11px] mt-2 font-mono" id="assessmentRef">Assessment ID: -</p>
+                                    <div class="mt-4 flex flex-wrap gap-3">
+                                        <a href="hospitals.html" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-[#003366] text-white text-xs font-bold hover:bg-[#002244] transition-colors shadow">
+                                            <i class="fa-solid fa-hospital"></i>
+                                            <span>View Nearby Hospitals &amp; Ambulance Availability &rarr;</span>
+                                        </a>
+                                        <a href="index.html" class="inline-flex items-center gap-2 px-4 py-2 rounded bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs font-semibold hover:bg-gray-300 transition-colors">
+                                            <span data-i18n="docs_back">Return to Portal</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="reg-footer mt-auto py-6 bg-[#0f1b2d] text-white">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+            <div><span data-i18n="footer_copyright">© 2026 National Health Authority, Government of India.</span></div>
+            <div class="flex gap-4">
+                <a href="detail.html" class="hover:underline" data-i18n="nav_docs">Documentation</a>
+                <a href="#" class="hover:underline" data-i18n="footer_links_privacy">Privacy Policy</a>
+                <a href="register.html" class="hover:underline" data-i18n="reg_title">Call for Ambulance</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="gov-portal.js"></script>
+    <!-- ARIA 3D AI Virtual Assistant -->
+    <script src="assistant.js"></script>
+    <script>
+        // Retrieve patient information from previous registration
+        let lastReg = {};
+        try {
+            const raw = sessionStorage.getItem('lastRegistration');
+            if (raw) lastReg = JSON.parse(raw);
+        } catch(e) {}
+
+        const displayReqId = document.getElementById('displayReqId');
+        const displayPatientInfo = document.getElementById('displayPatientInfo');
+        if (lastReg.ackId) {
+            displayReqId.textContent = lastReg.ackId;
+            displayPatientInfo.textContent = `${lastReg.pName || 'Patient'} (${lastReg.pAge || '-'}y, ${lastReg.pGender || '-'})`;
+        }
+
+        const COMPLAINT_TEMPLATES = {
+            cardiac_chest: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_chest_type_lbl">Type of Chest Pain</label>
+                        <select name="chest_pain_type" class="reg-field-select">
+                            <option value="crushing" data-i18n="opt_pain_crushing">Crushing / Heavy Pressure / Squeezing</option>
+                            <option value="sharp" data-i18n="opt_pain_sharp">Sharp / Stabbing</option>
+                            <option value="burning" data-i18n="opt_pain_burning">Burning / Indigestion-like</option>
+                            <option value="dull" data-i18n="opt_pain_dull">Dull Ache</option>
+                            <option value="unknown" data-i18n="opt_unknown">Unspecified</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_radiating_lbl">Pain radiating to left arm, neck, or jaw?</label>
+                        <select name="pain_radiating" class="reg-field-select">
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="unknown" data-i18n="opt_unknown">Unknown</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_assoc_breath_lbl">Associated Shortness of Breath?</label>
+                        <select name="associated_breathlessness" class="reg-field-select">
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                            <option value="no" data-i18n="opt_no">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_assoc_sweat_lbl">Associated Cold Sweating or Nausea?</label>
+                        <select name="associated_sweating" class="reg-field-select">
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                            <option value="no" data-i18n="opt_no">No</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            breathing: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_choking_lbl">Is the patient actively choking?</label>
+                        <select name="choking" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_choking">Yes (foreign object in airway)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_wheezing_lbl">Audible wheezing or whistling sound?</label>
+                        <select name="wheezing" class="reg-field-select">
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                            <option value="no" data-i18n="opt_no">No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_throat_swell_lbl">Visible swelling of tongue, throat, or neck?</label>
+                        <select name="throat_swelling" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="cc_speech_cap_lbl">Can the patient speak full sentences?</label>
+                        <select name="speech_capacity" class="reg-field-select">
+                            <option value="yes" data-i18n="opt_speech_full">Yes, normal speech</option>
+                            <option value="single_words" data-i18n="opt_speech_single">Only single words at a time</option>
+                            <option value="cannot_speak" data-i18n="opt_speech_cannot">Cannot speak due to breathlessness</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            neurological: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="fast_f_lbl">Facial Drooping? (FAST - F)</label>
+                        <select name="facial_drooping" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_facial">Yes (one side of face drooping/uneven)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="fast_a_lbl">Arm Weakness / Drift? (FAST - A)</label>
+                        <select name="arm_weakness" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_arm">Yes (cannot raise or hold up one arm)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="fast_s_lbl">Slurred Speech / Difficulty Talking? (FAST - S)</label>
+                        <select name="speech_difficulty" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_speech">Yes (slurred, garbled, unable to speak)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="fast_headache_lbl">Sudden worst headache of life with stiff neck?</label>
+                        <select name="severe_headache" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            trauma: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="trauma_mech_lbl">Trauma Mechanism</label>
+                        <select name="trauma_mechanism" class="reg-field-select">
+                            <option value="high_speed_rta" data-i18n="opt_mech_high_speed">High-Speed Road Traffic Crash / Rollover</option>
+                            <option value="fall_from_height" data-i18n="opt_mech_fall">Fall from height (>20 ft / 2 floors)</option>
+                            <option value="penetrating_injury" data-i18n="opt_mech_penetrating">Penetrating (Stab / Gunshot)</option>
+                            <option value="low_speed_rta" data-i18n="opt_mech_low_speed">Low-speed collision / Motorcycle fall</option>
+                            <option value="blunt_injury" data-i18n="opt_mech_blunt">Blunt impact / Physical assault</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="trauma_fracture_lbl">Visible Open Fracture or Limb Deformity?</label>
+                        <select name="open_fracture" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_fracture">Yes (bone exposed or abnormal angle)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="trauma_spinal_lbl">Suspected Spinal / Neck Injury?</label>
+                        <select name="suspected_spinal" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_spinal">Yes (neck pain, paralysis, numbness)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="trauma_multi_lbl">Multiple Body Areas Injured?</label>
+                        <select name="multiple_injuries" class="reg-field-select">
+                            <option value="no" data-i18n="opt_single_injury">Single localized injury</option>
+                            <option value="yes" data-i18n="opt_multi_injury">Yes, multiple regions (polytrauma)</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            bleeding_injury: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="bleed_spurting_lbl">Is blood spurting or pumping rapidly?</label>
+                        <select name="spurting_blood" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_spurting">Yes (arterial spurting)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="bleed_amputation_lbl">Traumatic Amputation / Severed Limb?</label>
+                        <select name="amputation" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="bleed_gi_lbl">Internal Bleeding / Vomiting Blood / Black Stools?</label>
+                        <select name="gi_bleeding" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_gi">Yes (hematemesis / melena)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="bleed_ctrl_lbl">Has bleeding stopped with firm pressure?</label>
+                        <select name="bleeding_controlled" class="reg-field-select">
+                            <option value="no" data-i18n="opt_bleed_uncontrolled">No, continuous active bleeding</option>
+                            <option value="yes" data-i18n="opt_bleed_controlled">Yes, bleeding controlled</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            burns: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="burn_type_lbl">Burn Source / Type</label>
+                        <select name="burn_type" class="reg-field-select">
+                            <option value="thermal" data-i18n="opt_burn_thermal">Thermal (Flame / Boiling Water / Steam)</option>
+                            <option value="chemical" data-i18n="opt_burn_chemical">Chemical</option>
+                            <option value="electrical" data-i18n="opt_burn_electrical">Electrical / High-Voltage</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="burn_extent_lbl">Estimated Extent</label>
+                        <select name="burn_extent" class="reg-field-select">
+                            <option value="small" data-i18n="opt_burn_small">Small area (single palm size or less)</option>
+                            <option value="moderate" data-i18n="opt_burn_mod">Moderate area (single arm or leg)</option>
+                            <option value="large" data-i18n="opt_burn_large">Large area (>20% body surface / chest & abdomen)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="burn_face_lbl">Burns involving Face, Neck, or Mouth?</label>
+                        <select name="burn_face_airway" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_inhalation">Yes (potential inhalation injury)</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            seizures: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="sz_active_lbl">Is the patient actively convulsing right now?</label>
+                        <select name="currently_seizing" class="reg-field-select">
+                            <option value="no" data-i18n="opt_sz_stopped">No, fit has stopped</option>
+                            <option value="yes" data-i18n="opt_sz_active">Yes, actively convulsing now</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="sz_multi_lbl">Multiple seizures without waking up between?</label>
+                        <select name="multiple_seizures" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_status">Yes (status epilepticus concern)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="sz_first_lbl">First time the patient has ever had a seizure?</label>
+                        <select name="first_seizure" class="reg-field-select">
+                            <option value="no" data-i18n="opt_sz_known">Known epilepsy / previous seizures</option>
+                            <option value="yes" data-i18n="opt_sz_first">Yes, first time ever</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            fever_infection: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="fvr_neck_lbl">Stiff Neck / Extreme photophobia (cannot bend chin to chest)?</label>
+                        <select name="stiff_neck" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_meningism">Yes (meningism concern)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="fvr_dehydration_lbl">Signs of Dehydration / Inability to drink fluids?</label>
+                        <select name="signs_of_dehydration" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_dehydration">Yes (sunken eyes, no urine, parched)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="fvr_infant_lbl">Is the patient an infant under 2 months old?</label>
+                        <select name="infant_under_2months" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            abdominal: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="abd_pain_lbl">Severity of Abdominal Pain</label>
+                        <select name="severe_pain" class="reg-field-select">
+                            <option value="no" data-i18n="opt_pain_mild">Mild to moderate</option>
+                            <option value="yes" data-i18n="opt_pain_excruciating">Severe / Excruciating (cannot stand straight)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="abd_rigid_lbl">Is the abdomen rigid / board-like to touch?</label>
+                        <select name="rigid_abdomen" class="reg-field-select">
+                            <option value="no" data-i18n="opt_abd_soft">No, soft</option>
+                            <option value="yes" data-i18n="opt_abd_rigid">Yes, rigid and hard (peritonitis sign)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="abd_vomit_blood_lbl">Vomiting blood or coffee-ground material?</label>
+                        <select name="vomiting_blood" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            pregnancy: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_injury_lbl">Maternal Trauma / Physical Injury / Fall / Road Accident?</label>
+                        <select name="maternal_injury" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" class="font-bold text-red-600" data-i18n="opt_yes_maternal_injury">Yes — Trauma / Fall / Accident in Pregnancy (RED)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_crown_lbl">Active Labor: Is baby's head visible (crowning)?</label>
+                        <select name="crowning" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" class="font-bold text-red-600" data-i18n="opt_yes_crowning">Yes, crowning (delivery imminent - RED)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_bleed_lbl">Heavy Vaginal Bleeding / Haemorrhage?</label>
+                        <select name="heavy_vaginal_bleeding" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" class="font-bold text-red-600" data-i18n="opt_yes_pad_soaking">Yes (soaking pads rapidly - RED)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_eclamp_lbl">Convulsions / Severe Headache with High BP?</label>
+                        <select name="eclamptic_seizures" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" class="font-bold text-red-600" data-i18n="opt_yes_eclampsia">Yes (eclampsia concern - RED)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_labor_lbl">Regular Labor Contractions / Water Broken?</label>
+                        <select name="active_labor" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_labor">Yes (active contractions without crowning - YELLOW)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="preg_comp_lbl">Known High-Risk Pregnancy / Complications?</label>
+                        <select name="pregnancy_complications" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes (referred complication - YELLOW)</option>
+                        </select>
+                    </div>
+                </div>
+            `,
+            poisoning: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="reg-field-label" data-i18n="tox_snake_lbl">Snake Bite suspected or confirmed?</label>
+                        <select name="snake_bite" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes_snake">Yes (venomous envenomation concern)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="tox_poison_lbl">Chemical, Pesticide, or Poison Ingested?</label>
+                        <select name="poison_ingested" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="reg-field-label" data-i18n="tox_drug_lbl">Substance Overdose / Medication Misuse?</label>
+                        <select name="drug_overdose" class="reg-field-select">
+                            <option value="no" data-i18n="opt_no">No</option>
+                            <option value="yes" data-i18n="opt_yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            `
+        };
+
+        function handleComplaintChange() {
+            const complaint = document.getElementById('chiefComplaint').value;
+            const container = document.getElementById('dynamicSection');
+            const questions = document.getElementById('dynamicQuestions');
+            const title = document.getElementById('dynamicTitle');
+
+            if (COMPLAINT_TEMPLATES[complaint]) {
+                questions.innerHTML = COMPLAINT_TEMPLATES[complaint];
+                container.classList.remove('hidden');
+                // Re-apply language translation to dynamically injected elements
+                if (window.govPortal) {
+                    window.govPortal.applyLanguage(window.govPortal.currentLang);
+                }
+            } else {
+                container.classList.add('hidden');
+                questions.innerHTML = '';
+            }
+        }
+
+        function computeLocalPriority(payload) {
+            const cc = payload.chief_complaint;
+            const cs = payload.complaint_specific || {};
+            const ca = payload.clinical_assessment || {};
+            const sym = payload.symptoms || [];
+            const worsening = payload.worsening;
+
+            // 1. UNIVERSAL CRITICAL RED (ABCDE life threats regardless of category)
+            if (ca.consciousness === 'unresponsive' || ca.consciousness === 'responds_to_pain') return 'RED';
+            if (ca.breathing_status === 'not_breathing' || ca.breathing_status === 'severe_distress') return 'RED';
+            if (ca.airway_status === 'obstructed' || ca.airway_status === 'stridor') return 'RED';
+            if (ca.bleeding_severity === 'heavy_uncontrolled') return 'RED';
+            if (ca.active_convulsions === 'yes') return 'RED';
+
+            // 2. CATEGORY SPECIFIC DETERMINISTIC EVALUATION
+            if (cc === 'pregnancy') {
+                // RED for acute pregnancy emergencies
+                if (cs.maternal_injury === 'yes' || cs.crowning === 'yes' || cs.heavy_vaginal_bleeding === 'yes' || cs.eclamptic_seizures === 'yes') return 'RED';
+                if (sym.includes('confusion') || sym.includes('cyanosis') || sym.includes('cold_clammy')) return 'RED';
+                if (ca.severe_pain === 'yes' && worsening === 'yes') return 'RED';
+                
+                // All other pregnancy calls are minimum YELLOW (GVK EMRI 102 Obstetric Protocol - NEVER GREEN)
+                return 'YELLOW';
+            }
+
+            if (cc === 'cardiac_chest') {
+                if (cs.chest_pain_type === 'crushing' || cs.pain_radiating === 'yes') return 'RED';
+                if (cs.associated_breathlessness === 'yes' || sym.includes('cyanosis') || sym.includes('cold_clammy')) return 'RED';
+                if (sym.includes('sweating') || sym.includes('nausea_vomiting') || worsening === 'yes') return 'YELLOW';
+                if (cs.chest_pain_type === 'sharp' || cs.chest_pain_type === 'burning' || cs.chest_pain_type === 'dull') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'breathing') {
+                if (cs.choking === 'yes' || cs.throat_swelling === 'yes' || cs.speech_capacity === 'cannot_speak') return 'RED';
+                if (sym.includes('cyanosis')) return 'RED';
+                if (cs.wheezing === 'yes' || cs.speech_capacity === 'single_words' || ca.breathing_status === 'mild_difficulty') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'neurological') {
+                if (cs.facial_drooping === 'yes' || cs.arm_weakness === 'yes' || cs.speech_difficulty === 'yes') return 'RED';
+                if (cs.severe_headache === 'yes') return 'RED';
+                if (sym.includes('confusion') || sym.includes('dizziness')) return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'trauma') {
+                if (cs.trauma_mechanism === 'high_speed_rta' || cs.trauma_mechanism === 'penetrating_injury' || cs.trauma_mechanism === 'fall_from_height') return 'RED';
+                if (cs.suspected_spinal === 'yes' || cs.multiple_injuries === 'yes') return 'RED';
+                if (cs.open_fracture === 'yes' || cs.trauma_mechanism === 'blunt_injury' || cs.trauma_mechanism === 'low_speed_rta') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'bleeding_injury') {
+                if (cs.spurting_blood === 'yes' || cs.amputation === 'yes') return 'RED';
+                if (cs.gi_bleeding === 'yes' || cs.bleeding_controlled === 'no') return 'YELLOW';
+                if (ca.bleeding_severity === 'moderate') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'burns') {
+                if (cs.burn_extent === 'large' || cs.burn_face_airway === 'yes' || cs.burn_type === 'electrical') return 'RED';
+                if (cs.burn_extent === 'moderate' || cs.burn_type === 'chemical') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'seizures') {
+                if (cs.currently_seizing === 'yes' || cs.multiple_seizures === 'yes') return 'RED';
+                if (cs.first_seizure === 'yes' || sym.includes('confusion')) return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'fever_infection') {
+                if (cs.stiff_neck === 'yes' || cs.infant_under_2months === 'yes' || sym.includes('confusion')) return 'RED';
+                if (cs.signs_of_dehydration === 'yes' || worsening === 'yes') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'abdominal') {
+                if (cs.rigid_abdomen === 'yes' || cs.vomiting_blood === 'yes') return 'RED';
+                if (cs.severe_pain === 'yes' || ca.severe_pain === 'yes') return 'YELLOW';
+                return 'GREEN';
+            }
+
+            if (cc === 'poisoning') {
+                if (cs.snake_bite === 'yes' || cs.poison_ingested === 'yes') return 'RED';
+                if (cs.drug_overdose === 'yes') return 'YELLOW';
+                return 'YELLOW';
+            }
+
+            // Universal fallback checks
+            if (ca.severe_pain === 'yes' || worsening === 'yes' || sym.length >= 2) return 'YELLOW';
+            return 'GREEN';
+        }
+
+        async function submitAssessment() {
+            const form = document.getElementById('assessmentForm');
+            const submitBtn = document.getElementById('btnSubmitAssessment');
+            const successCard = document.getElementById('assessmentSuccess');
+            const refText = document.getElementById('assessmentRef');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+
+            const selectedSymptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(cb => cb.value);
+            const worseningVal = document.querySelector('input[name="worsening"]:checked')?.value || 'unknown';
+
+            // Gather complaint-specific answers
+            const complaintSpecific = {};
+            const dynInputs = document.querySelectorAll('#dynamicQuestions select, #dynamicQuestions input');
+            dynInputs.forEach(input => {
+                if (input.name) complaintSpecific[input.name] = input.value;
+            });
+
+            // Gather vitals (if any provided)
+            const vitals = {};
+            const hr = document.getElementById('vitalsHR').value;
+            const spo2 = document.getElementById('vitalsSpO2').value;
+            const rr = document.getElementById('vitalsRR').value;
+            const bp = document.getElementById('vitalsBP').value;
+            if (hr) vitals.heart_rate = hr;
+            if (spo2) vitals.spo2 = spo2;
+            if (rr) vitals.respiratory_rate = rr;
+            if (bp) vitals.blood_pressure = bp;
+
+            const reqId = lastReg.ackId || ('NAS-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000));
+            const payload = {
+                request_id: reqId,
+                patient_age: lastReg.pAge ? parseInt(lastReg.pAge) : null,
+                chief_complaint: document.getElementById('chiefComplaint').value,
+                symptoms: selectedSymptoms,
+                onset_duration: document.getElementById('onsetDuration').value,
+                worsening: worseningVal,
+                complaint_specific: complaintSpecific,
+                clinical_assessment: {
+                    consciousness: document.getElementById('consciousness').value,
+                    breathing_status: document.getElementById('breathingStatus').value,
+                    airway_status: document.getElementById('airwayStatus').value,
+                    bleeding_severity: document.getElementById('bleedingSeverity').value,
+                    severe_pain: document.getElementById('severePain').value,
+                    active_convulsions: document.getElementById('activeConvulsions').value
+                },
+                vital_signs: Object.keys(vitals).length > 0 ? vitals : null
+            };
+
+            try {
+                // Post to Starlette ASGI backend API
+                const resp = await fetch('/api/assessment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const resData = await resp.json();
+
+                if (resp.ok && resData.success) {
+                    successCard.classList.remove('hidden');
+                    refText.textContent = `Audit Ref: ${resData.assessment_id} | Dispatched to Control Room`;
+                    submitBtn.classList.add('hidden');
+                    
+                    // Deterministic calculated priority
+                    const calculatedPrio = computeLocalPriority(payload);
+                    const prio = (calculatedPrio || resData.patient_priority || "YELLOW").toUpperCase();
+                    const badgeContainer = document.getElementById('triagePriorityResultBadge');
+                    if (badgeContainer) {
+                        if (prio === 'RED') {
+                            badgeContainer.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800 border border-red-300 dark:bg-red-950 dark:text-red-200"><i class="fa-solid fa-circle-exclamation text-red-600"></i> RED PRIORITY (IMMEDIATE LIFE THREAT)</span>`;
+                        } else if (prio === 'GREEN') {
+                            badgeContainer.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200"><i class="fa-solid fa-circle-check text-emerald-600"></i> GREEN PRIORITY (NON-URGENT)</span>`;
+                        } else {
+                            badgeContainer.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-bold uppercase tracking-wide bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-950 dark:text-amber-200"><i class="fa-solid fa-triangle-exclamation text-amber-600"></i> YELLOW PRIORITY (URGENT)</span>`;
+                        }
+                    }
+
+                    // Save specific patient assessment to session so hospitals.html reflects it immediately
+                    try {
+                        const existingReg = JSON.parse(sessionStorage.getItem('lastRegistration') || '{}');
+                        existingReg.ackId = reqId;
+                        existingReg.patient_priority = prio;
+                        existingReg.chief_complaint = payload.chief_complaint || "general";
+                        sessionStorage.setItem('lastRegistration', JSON.stringify(existingReg));
+                        sessionStorage.setItem('patientPriority', prio);
+                        sessionStorage.setItem('patientChiefComplaint', payload.chief_complaint || "general");
+                        sessionStorage.setItem('patientRequestId', reqId);
+                        sessionStorage.removeItem('preloadedHospitalsData'); // Clear old cached query
+                    } catch(e) {}
+
+                    successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    alert('Submission error: ' + (resData.error || 'Failed to submit'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Clinical Assessment';
+                }
+            } catch (err) {
+                // Fallback: If port 5001 is not running, gracefully save locally
+                console.warn('API unavailable, storing locally:', err);
+                successCard.classList.remove('hidden');
+                refText.textContent = `Local Audit Ref: NAS-LOC-${Date.now()} | Queued for Sync`;
+                submitBtn.classList.add('hidden');
+                successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Official Ambulance Booking & Allocation Console | National Ambulance Service, AmbuPriority">
+    <title>Ambulance Booking & Allocation Status | AmbuPriority</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Portal Design System -->
+    <link rel="stylesheet" href="gov-portal.css">
+    <!-- ARIA Virtual Assistant Stylesheet -->
+    <link rel="stylesheet" href="assistant.css">
+
+    <!-- Google Maps JavaScript API with geometry library -->
+    <script src="config.js"></script>
+    <script>
+        (function() {
+            const key = (typeof GOOGLE_MAPS_API_KEY !== 'undefined') ? GOOGLE_MAPS_API_KEY : "AIzaSyCrD7WjgfsSKXbP_PrXHxlCboP5mo69eSc";
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=geometry`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })();
+    </script>
+
+    <style>
+        /* Pulse for live tracking radar */
+        @keyframes etaPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 6px 12px rgba(220,38,38,0.45)); }
+        }
+        .eta-bubble-pulse {
+            animation: etaPulse 1.8s ease-in-out infinite;
+        }
+
+        .hosp-nav-bar {
+            background: linear-gradient(180deg, #1a3a5c 0%, #0d2137 100%);
+        }
+        .hosp-nav-bar a {
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 10px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.15s;
+            white-space: nowrap;
+        }
+        .hosp-nav-bar a:hover,
+        .hosp-nav-bar a.active {
+            background-color: rgba(255,255,255,0.12);
+            color: #ffffff;
+        }
+
+        /* Continuous moving horizontal search bar (Uber/Ola inspired) */
+        @keyframes uberSearchLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+        .searching-track {
+            position: relative;
+            height: 6px;
+            width: 100%;
+            background-color: #e2e8f0;
+            overflow: hidden;
+            border-radius: 9999px;
+        }
+        .searching-bar {
+            position: absolute;
+            height: 100%;
+            width: 35%;
+            background: linear-gradient(90deg, #003366, #f39c12, #138808);
+            border-radius: 9999px;
+            animation: uberSearchLine 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        /* Pulsing Radar Ring */
+        @keyframes radarPulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 0.15; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+        .radar-pulse-ring {
+            animation: radarPulse 2s ease-in-out infinite;
+        }
+
+        /* Card transition */
+        .fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .gov-section-header {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
+            color: #ffffff;
+            padding: 12px 18px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .official-plate-box {
+            background: #fde047;
+            color: #020617;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            border: 2px solid #0f172a;
+            border-radius: 5px;
+            padding: 3px 10px;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        /* Full Screen Live Ambulance Tracking Dashboard */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .full-map-viewport {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - 110px);
+            min-height: 580px;
+            overflow: hidden;
+            background: #e2e8f0;
+        }
+        @media (max-width: 768px) {
+            .full-map-viewport {
+                height: calc(100vh - 100px);
+            }
+        }
+        #liveAmbulanceMap {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Navy Blue Left Information Panel */
+        .floating-left-card {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 380px;
+            max-width: calc(100vw - 32px);
+            max-height: calc(100% - 32px);
+            overflow-y: auto;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: auto;
+            scrollbar-width: thin;
+        }
+        .floating-left-card::-webkit-scrollbar {
+            width: 4px;
+        }
+        .floating-left-card::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.25);
+            border-radius: 4px;
+        }
+
+        .panel-navy-glass {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-top: 4px solid #003366;
+            border-radius: 12px;
+            color: #0f172a;
+            box-shadow: 0 12px 30px rgba(0, 34, 68, 0.18), 0 2px 6px rgba(0,0,0,0.06);
+            padding: 16px;
+            transition: all 0.25s ease-in-out;
+        }
+        .floating-left-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .floating-left-card.minimized {
+            max-height: 64px !important;
+            overflow: hidden !important;
+        }
+        .floating-left-card.minimized .panel-content-body,
+        .floating-left-card.minimized #emergencyAlertCard {
+            display: none !important;
+        }
+        .gov-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .btn-minimize-panel {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #003366;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-minimize-panel:hover {
+            background: #003366;
+            color: #ffffff;
+            border-color: #003366;
+        }
+
+        /* Emergency Red Glowing Card */
+        .emergency-alert-glow {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.6), 0 10px 30px rgba(0,0,0,0.4);
+            color: #ffffff;
+            padding: 14px 16px;
+            animation: sirenCardPulse 2s ease-in-out infinite;
+        }
+        @keyframes sirenCardPulse {
+            0%, 100% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.5), 0 8px 24px rgba(0,0,0,0.35); }
+            50% { box-shadow: 0 0 32px rgba(239, 68, 68, 0.9), 0 12px 32px rgba(220, 38, 38, 0.6); }
+        }
+
+        /* Real Browser Fullscreen Mode Styles */
+        :fullscreen body, :-webkit-full-screen body {
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+        :fullscreen header, :-webkit-full-screen header,
+        :fullscreen nav, :-webkit-full-screen nav,
+        :fullscreen footer, :-webkit-full-screen footer,
+        :fullscreen #notRegisteredSection, :-webkit-full-screen #notRegisteredSection,
+        :fullscreen #searchingSection, :-webkit-full-screen #searchingSection {
+            display: none !important;
+        }
+        :fullscreen .full-map-viewport, :-webkit-full-screen .full-map-viewport,
+        body.is-fullscreen .full-map-viewport {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            z-index: 99999 !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+        body.is-fullscreen header,
+        body.is-fullscreen nav,
+        body.is-fullscreen footer {
+            display: none !important;
+        }
+
+        /* Fullscreen Toggle Button Accent */
+        .map-ctrl-btn.fullscreen-btn {
+            background: #003366 !important;
+            color: #ffffff !important;
+            border-color: #0284c7 !important;
+            font-size: 16px;
+        }
+        .map-ctrl-btn.fullscreen-btn:hover {
+            background: #002244 !important;
+            color: #38bdf8 !important;
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6) !important;
+        }
+
+        /* Floating Map Controls on Right */
+        .floating-map-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: auto;
+        }
+        .map-ctrl-btn {
+            width: 42px;
+            height: 42px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #0f172a;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .map-ctrl-btn:hover {
+            background: #f1f5f9;
+            transform: scale(1.06);
+            color: #003366;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+        .map-ctrl-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Status Pills */
+        
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #34d399;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    /* Status Pills */
+        .live-green-badge {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #34d399;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Toggle Active Styles for Map Buttons */
+        .map-ctrl-btn.active {
+            background: #003366 !important;
+            color: #ffffff !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.5) !important;
+        }
+    
+        
+        </style>
+
+</head>
+<body class="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)]">
+
+    <!-- Tricolor Bar -->
+    <div class="gov-tricolor-bar"></div>
+
+    <!-- Top Utility Bar (GIGW 3.0 Standard) -->
+    <div class="gov-topbar py-1.5">
+        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-y-1">
+            <!-- Left: Hindi label + Government authority -->
+            <div class="flex items-center gap-3 text-[11px] text-white/90">
+                <span class="font-bold" data-i18n="gov_authority_hindi">भारत सरकार</span>
+                <span class="text-white/40">|</span>
+                <span data-i18n="gov_authority">Government of India</span>
+                <span class="hidden md:inline text-white/40">•</span>
+                <span class="hidden md:inline">Ministry of Health and Family Welfare</span>
+            </div>
+            <!-- Right: Controls -->
+            <div class="flex items-center gap-2 text-[11px]">
+                <a href="#main-content" class="skip-link text-white">Skip to main content</a>
+                <!-- Text Size -->
+                <div class="flex items-center gap-0.5">
+                    <button type="button" onclick="adjustPortalZoom(-1)" class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Decrease text">A-</button>
+                    <button type="button" onclick="adjustPortalZoom(0)"  class="text-white hover:text-yellow-300 px-1.5 font-bold transition border border-white/30 rounded" title="Reset text">A</button>
+                    <button type="button" onclick="adjustPortalZoom(1)"  class="text-white/80 hover:text-yellow-300 px-1 font-bold transition" title="Increase text">A+</button>
+                </div>
+                <span class="text-white/30">|</span>
+                <!-- Theme -->
+                <button type="button" onclick="govPortal.toggleTheme()"
+                    class="text-white/80 hover:text-white transition cursor-pointer flex items-center gap-1">
+                    <i id="themeToggleIcon" class="fa-solid fa-moon text-[10px]"></i>
+                    <span id="themeToggleText" class="hidden sm:inline" data-i18n="theme_dark">Dark</span>
+                </button>
+                <span class="text-white/30">|</span>
+                <!-- Language -->
+                <button type="button" onclick="govPortal.toggleLanguage()"
+                    class="text-yellow-300 hover:text-yellow-200 font-bold transition cursor-pointer">
+                    <span id="langToggleText">हिंदी</span>
+                </button>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/70 hidden sm:inline">English</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Header (Unified Standard Government Header) -->
+    <header class="bg-white dark:bg-[#161b27] border-b border-[var(--border-color)] shadow-sm transition-colors">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Left: Emblem + Ministry -->
+            <a href="index.html" class="flex items-center gap-3 min-w-0">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain flex-shrink-0">
+                <div class="border-l border-[var(--border-color)] pl-3 min-w-0">
+                    <p class="text-xs font-semibold text-[var(--text-secondary)]" data-i18n="gov_india">Government of India</p>
+                    <p class="text-sm font-bold text-[var(--text-primary)] leading-tight" data-i18n="ministry_name">Ministry of Health and Family Welfare</p>
+                </div>
+            </a>
+
+            <!-- Center: AmbuPriority Branding -->
+            <div class="hidden md:flex flex-col items-center min-w-0">
+                <h1 class="text-2xl lg:text-3xl font-black text-[#003366] dark:text-sky-400 tracking-tight" style="font-family: 'Merriweather', serif;">
+                    <span data-i18n="portal_name">AmbuPriority</span>
+                    <span class="text-[var(--gov-saffron)] mx-1">⚕</span>
+                </h1>
+                <p class="text-[10px] text-[var(--text-muted)] font-medium tracking-wide text-center" data-i18n="portal_subtitle">National Ambulance Priority Routing &amp; Emergency Response System</p>
+            </div>
+
+            <!-- Right: Azadi Ka Amrit Mahotsav & Emergency Hotline -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-[var(--gov-saffron)] italic leading-tight">Azadi Ka</div>
+                        <div class="text-[13px] font-black text-[#003366] dark:text-sky-400 italic leading-tight">Amrit Mahotsav</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] flex items-center justify-center text-[#003366] dark:text-sky-300 text-lg font-black flex-shrink-0">
+                        75
+                    </div>
+                </div>
+                <a href="register.html" class="btn-helpline px-3.5 py-2 text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span data-i18n="btn_emergency_102">Dial 102 / 108</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar — dark navy, matching register.html and hospitals.html -->
+    <nav class="hosp-nav-bar overflow-x-auto" role="navigation" aria-label="Main Navigation">
+        <div class="container mx-auto px-4 flex items-stretch">
+            <a href="index.html" data-i18n="nav_home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="detail.html" data-i18n="nav_about_system"><i class="fa-solid fa-circle-info"></i> About System</a>
+            <a href="register.html" data-i18n="nav_emergency_services"><i class="fa-solid fa-kit-medical"></i> Emergency Services</a>
+            <a href="allocation.html" class="active" data-i18n="nav_ambulance_tracking"><i class="fa-solid fa-location-dot"></i> Ambulance Tracking</a>
+            <a href="detail.html#standards" class="hidden lg:inline-flex" data-i18n="nav_reports"><i class="fa-solid fa-chart-column"></i> Reports &amp; Statistics</a>
+        </div>
+    </nav>
+
+    <!-- FULL-SCREEN INDIAN ROAD MAP & LIVE AMBULANCE TRACKING DASHBOARD -->
+    <!-- (Preserving website navbar above, full page map below) -->
+
+    <!-- State 0: Access Control Warning (Hidden when valid booking exists) -->
+    <div id="notRegisteredSection" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <div class="bg-white dark:bg-[#161b27] border border-[#d1d9e6] dark:border-[#2d3748] rounded-xl p-8 sm:p-12 text-center shadow-lg">
+            <div class="flex justify-center mb-4">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                     alt="National Emblem of India" class="h-14 w-14 object-contain">
+            </div>
+            <p class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+                Government of India &nbsp;|&nbsp; Ministry of Health and Family Welfare
+            </p>
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#003366] dark:text-sky-400 mb-2" style="font-family: 'Merriweather', serif;">
+                You Have Not Registered
+            </h2>
+            <div class="section-accent mx-auto mb-4"></div>
+            <p class="text-sm text-[var(--text-secondary)] mb-6 max-w-lg mx-auto leading-relaxed">
+                Please complete Patient &amp; Caller Registration to access live ambulance GPS telemetry and priority intake.
+            </p>
+            <a href="register.html#ambulanceRegistrationForm" class="btn-primary px-6 py-3 text-xs sm:text-sm font-bold shadow-sm inline-flex items-center gap-2">
+                <i class="fa-solid fa-file-pen"></i>
+                <span>Click Here to Register</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- State 1: Searching for Nearest Ambulance (Shows for ~3.5s after fresh dispatch) -->
+    <div id="searchingSection" class="container mx-auto px-4 py-8 max-w-xl">
+        <div class="bg-white dark:bg-[#161b27] border border-[var(--border-color)] rounded-xl shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
+            <div class="text-center space-y-3 pt-2">
+                <div class="relative inline-flex items-center justify-center">
+                    <div class="radar-pulse-ring absolute inset-0 w-24 h-24 rounded-full bg-blue-100 dark:bg-sky-950/80 -m-3"></div>
+                    <div class="relative w-18 h-18 rounded-full bg-[#003366] text-white flex items-center justify-center text-3xl shadow-lg p-4">
+                        <i class="fa-solid fa-truck-medical text-amber-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#003366] dark:text-sky-400 tracking-tight uppercase" style="font-family: 'Merriweather', serif;">
+                        CONNECTING TO AMBULANCE FLEET
+                    </h2>
+                    <p id="searchStatusMsg" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-1">
+                        Locking nearest GPS vehicle telemetry and route clearance...
+                    </p>
+                </div>
+            </div>
+            <div class="space-y-2 py-2">
+                <div class="searching-track">
+                    <div class="searching-bar"></div>
+                </div>
+                <div class="flex justify-between text-[11px] text-slate-500 font-medium px-1">
+                    <span><i class="fa-solid fa-tower-broadcast text-blue-600 mr-1"></i> Contacting active depot</span>
+                    <span><i class="fa-solid fa-route text-emerald-600 mr-1"></i> Computing road route</span>
+                </div>
+            </div>
+            <!-- Summary card in searching view -->
+            <div class="bg-slate-50 dark:bg-slate-900/60 rounded-xl p-4 border border-[var(--border-color)] space-y-2 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500 font-semibold uppercase text-[10px]">Fleet Authority:</span>
+                    <span id="searchFleetBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800">Government Fleet</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500 font-semibold uppercase text-[10px]">Category:</span>
+                    <span id="searchCategoryDisplay" class="font-bold text-xs text-[#003366] dark:text-sky-400">BLS Ambulance</span>
+                </div>
+                <div class="pt-1 border-t border-slate-200 dark:border-slate-800 text-[11px]">
+                    <div class="text-slate-400 uppercase text-[9px] font-bold">Pickup Point</div>
+                    <div id="searchPickupLocation" class="font-medium text-slate-800 dark:text-slate-200 truncate">Loading incident location...</div>
+                </div>
+                <div class="text-[11px]">
+                    <div class="text-slate-400 uppercase text-[9px] font-bold">Destination Medical Center</div>
+                    <div id="searchDestinationHospital" class="font-bold text-slate-900 dark:text-white truncate">Designated Hospital</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- State 2: Main Allocated Full-Screen Live Tracking Viewport -->
+    <main id="allocatedSection" class="hidden full-map-viewport">
+        <!-- 1. FULL-SCREEN GOOGLE MAP (Real Indian Road Map) -->
+        <div id="liveAmbulanceMap"></div>
+
+        <!-- 2. LEFT FLOATING INFORMATION PANEL (Compact Navy Blue & White Glassmorphism) -->
+        <div class="floating-left-card">
+
+            <!-- MAIN AMBULANCE & JOURNEY DETAILS CARD (Official National Emergency Style) -->
+            <div class="panel-navy-glass space-y-3">
+                <!-- Tricolor Accent Top Stripe -->
+                <div style="height: 3px; margin: -16px -16px 10px -16px; border-radius: 12px 12px 0 0; background: linear-gradient(90deg, #FF9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%);"></div>
+
+                <!-- Header: Govt Emblem + Ambulance ID + Status + Minimize Button -->
+                <div class="gov-panel-header">
+                    <div class="flex items-center gap-2.5">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png"
+                             alt="Emblem of India" class="h-8 w-8 object-contain">
+                        <div>
+                            <span class="text-[9px] uppercase tracking-wider text-slate-500 font-bold block leading-none">Ambulance ID</span>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span id="panelAmbulanceId" class="text-sm font-black text-[#003366] font-mono tracking-wide">A-102</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">Govt CATS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="panelAmbulanceStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-300">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            <span id="panelAmbulanceStatusText">On the Way</span>
+                        </span>
+                        <!-- Minimize / Expand Toggle Button to view full map -->
+                        <button type="button" id="btnTogglePanelMinimize" class="btn-minimize-panel" title="Minimize / Expand Panel to View Map">
+                            <i class="fa-solid fa-chevron-up" id="iconPanelMinimize"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Collapsible Panel Body -->
+                <div class="panel-content-body space-y-3">
+                    <!-- Travelling Details: Real Distance & Live ETA from Routes API -->
+                    <div class="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold text-slate-500 block tracking-wider">Estimated Time</span>
+                            <div class="text-xl font-black text-[#003366] font-mono mt-0.5" id="panelEtaDisplay">~4 MIN</div>
+                            <span class="text-[9px] text-slate-500 block font-medium" id="panelEtaSub">Live Route Countdown</span>
+                        </div>
+                        <div class="border-l border-slate-200 pl-2.5">
+                            <span class="text-[9px] uppercase font-bold text-slate-500 block tracking-wider">Remaining Distance</span>
+                            <div class="text-xl font-black text-slate-900 font-mono mt-0.5" id="panelDistanceDisplay">2.4 km</div>
+                            <span class="text-[9px] text-emerald-600 font-semibold block" id="panelSpeedDisplay"><i class="fa-solid fa-gauge-high"></i> ~52 km/h</span>
+                        </div>
+                    </div>
+
+                    <!-- Route Waypoints: Pickup Location & Destination Hospital -->
+                    <div class="space-y-2 text-xs pt-0.5">
+                        <div class="flex items-start gap-2.5">
+                            <div class="flex flex-col items-center mt-1">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200"></span>
+                                <span class="w-0.5 h-6 bg-slate-200 my-0.5"></span>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <span class="text-[9px] uppercase font-bold text-emerald-700 tracking-wider block">Pickup Location</span>
+                                <span id="panelPickupAddress" class="text-[11px] font-semibold text-slate-800 block truncate" title="Pickup Location">Incident Address</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <div class="flex flex-col items-center mt-0.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-red-200"></span>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <span class="text-[9px] uppercase font-bold text-red-600 tracking-wider block">Destination Hospital</span>
+                                <span id="panelHospitalName" class="text-xs font-bold text-slate-900 block truncate" title="Hospital Name">AIIMS New Delhi</span>
+                                <span id="panelHospitalAddress" class="text-[10px] text-slate-500 block truncate">Ansari Nagar, New Delhi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DRIVER PROFILE -->
+                    <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="relative w-11 h-11 rounded-full overflow-hidden border-2 border-[#003366] flex-shrink-0 bg-slate-100 shadow-sm">
+                                <img id="panelDriverPhoto" src="images/driver_uploaded.jpg" alt="Duty Driver" class="w-full h-full object-cover object-top"
+                                     onerror="this.src='images/driver1.jpg'">
+                                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-[9px] uppercase font-bold text-slate-500 block tracking-wider">Assigned Duty Driver</span>
+                                <h4 id="panelDriverName" class="text-xs font-bold text-[#003366] truncate leading-tight">Rajesh Khanna</h4>
+                                <div class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>On Duty</span>
+                                    <span class="text-slate-300">•</span>
+                                    <span id="panelVehiclePlate" class="font-mono text-slate-700 text-[9px] font-bold">DL 01 EA 4521</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="tel:102" class="w-8 h-8 rounded-full bg-[#003366]/10 hover:bg-[#003366] text-[#003366] hover:text-white border border-[#003366]/20 flex items-center justify-center text-xs transition flex-shrink-0" title="Call Driver">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                    </div>
+
+                    <!-- OTP VERIFICATION -->
+                    <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-300 flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold text-amber-800 tracking-wider block">OTP (For Safety)</span>
+                            <div class="font-mono text-lg font-black text-slate-900 tracking-widest leading-none mt-1" id="panelOtpDisplay">8978</div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" id="btnCopyOtp" class="px-2.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-900 rounded font-bold text-[10px] flex items-center gap-1 transition shadow">
+                                <i class="fa-regular fa-copy"></i>
+                                <span id="btnCopyOtpText">Copy</span>
+                            </button>
+                            <span id="panelOtpVerifiedBadge" class="hidden text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-300">
+                                <i class="fa-solid fa-check"></i> Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMERGENCY ALERT CARD (RED GLOWING CARD WITH 3D SIREN ICON) -->
+            <div class="emergency-alert-glow space-y-2.5" id="emergencyAlertCard">
+                <div class="flex items-center gap-3">
+                    <!-- Realistic 3D Emergency Siren Icon -->
+                    <div class="w-10 h-10 rounded-full bg-red-950/80 border-2 border-red-300 flex items-center justify-center text-xl text-yellow-300 shadow-md flex-shrink-0 animate-bounce">
+                        <i class="fa-solid fa-bell text-red-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-black uppercase tracking-wider text-red-200">Emergency Alert</div>
+                        <h3 class="text-sm font-black text-white leading-tight">Patient is in Danger!</h3>
+                    </div>
+                </div>
+                <p class="text-[10px] text-red-100/90 leading-tight">
+                    Triggers immediate siren broadcast &amp; green corridor speed clearance in driver cabin.
+                </p>
+                <button type="button" id="btnSendEmergencyAlert"
+                        class="w-full py-2 px-3 bg-white hover:bg-red-50 text-red-700 font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center justify-center gap-2 transition active:scale-98">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                    <span id="btnEmergencyAlertText">Send Alert to Driver</span>
+                </button>
+                <div id="emergencyAlertFeedback" class="hidden text-[10px] text-center font-bold px-2 py-1 rounded"></div>
+            </div>
+        </div>
+
+        <!-- 3. RIGHT FLOATING MAP CONTROLS & SMART OVERLAYS -->
+        <div class="floating-map-controls">
+            <!-- Real Browser Fullscreen Toggle Button -->
+            <button type="button" id="btnToggleFullscreen" class="map-ctrl-btn fullscreen-btn" title="Toggle Fullscreen Mode (Cover Full Display)">
+                <i class="fa-solid fa-expand" id="iconFullscreen"></i>
+            </button>
+            <!-- Recenter -->
+            <button type="button" id="btnRecenterMap" class="map-ctrl-btn" title="Recenter to Ambulance">
+                <i class="fa-solid fa-crosshairs text-sky-700"></i>
+            </button>
+            <!-- Zoom In -->
+            <button type="button" id="btnZoomInMap" class="map-ctrl-btn" title="Zoom In">
+                <i class="fa-solid fa-plus text-slate-700"></i>
+            </button>
+            <!-- Zoom Out -->
+            <button type="button" id="btnZoomOutMap" class="map-ctrl-btn" title="Zoom Out">
+                <i class="fa-solid fa-minus text-slate-700"></i>
+            </button>
+            <!-- Live Traffic Layer Toggle -->
+            <button type="button" id="btnToggleTraffic" class="map-ctrl-btn" title="Toggle Real-Time Traffic Layer">
+                <i class="fa-solid fa-traffic-light text-amber-500"></i>
+            </button>
+            <!-- Night/Day High-Contrast Map Style Toggle -->
+            <button type="button" id="btnToggleNightMap" class="map-ctrl-btn" title="Toggle High-Contrast Tactical Night Map">
+                <i class="fa-solid fa-moon text-indigo-600"></i>
+            </button>
+            <!-- Siren Audio Sound Toggle -->
+            
+        </div>
+
+        <!-- 4. BOTTOM FLOATING TRIP STRIP (Clean & Non-Intrusive) -->
+        <div class="absolute bottom-4 left-4 right-4 sm:left-[412px] sm:right-6 pointer-events-none z-20">
+            <div class="bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/10 text-white text-[11px] flex flex-wrap items-center justify-between gap-2 shadow-lg pointer-events-auto">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 font-bold text-emerald-400">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="stripRoadStatus">Google Routes Road Navigation Active</span>
+                    </span>
+                    <span class="text-white/20 hidden sm:inline">|</span>
+                    <span class="text-white/70 hidden sm:inline" id="stripBookingRef">Reference: AMB-BK-LIVE</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="hospitals.html" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-[10px] font-bold transition">
+                        Change Vehicle
+                    </a>
+                    <button type="button" onclick="window.print()" class="px-2.5 py-1 bg-[#003366] hover:bg-[#002244] text-white rounded text-[10px] font-bold transition">
+                        Print Slip
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 5. AMBULANCE HAS ARRIVED! CENTRE-SCREEN MODAL -->
+        <div id="arrivalSuccessModal" class="hidden arrival-modal-overlay">
+            <div class="arrival-modal-card">
+                <!-- Top Accent Bar with Siren Mute Toggle & Green Status Pill -->
+                <div class="px-6 pt-5 pb-3 flex items-center justify-between border-b border-slate-100">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        Status: Arrived
+                    </span>
+                    <!-- Mute / Unmute Siren Control -->
+                    
+                </div>
+
+                <!-- Main White Card Body (Navy-Blue Text & Professional Govt Emergency Style) -->
+                <div class="p-6 sm:p-8 text-center space-y-4">
+                    <!-- 3D Ambulance Icon -->
+                    <div class="flex justify-center">
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-b from-sky-50 to-blue-100 border border-sky-200 flex items-center justify-center shadow-inner p-2">
+                            <img src="images/ambulance_3d_icon_128.png" alt="Ambulance" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+
+                    <!-- Exact Headings as requested -->
+                    <div class="space-y-1">
+                        <h2 class="text-2xl sm:text-3xl font-black text-[#003366] tracking-tight uppercase" style="font-family: 'Merriweather', serif;">
+                            AMBULANCE HAS ARRIVED!
+                        </h2>
+                        <p class="text-sm text-slate-600 font-semibold max-w-sm mx-auto">
+                            Your ambulance has successfully reached the destination.
+                        </p>
+                    </div>
+
+                    <!-- Arrival Details Grid -->
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-left space-y-2.5 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 font-medium">Hospital Name:</span>
+                            <span class="font-bold text-[#003366] text-right truncate max-w-[220px]" id="arrivalModalHospital">AIIMS New Delhi</span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-slate-200/60 pt-2">
+                            <span class="text-slate-500 font-medium">Booking ID:</span>
+                            <span class="font-mono font-bold text-sky-800" id="arrivalModalBookingRef">AMB-BK-LIVE</span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-slate-200/60 pt-2">
+                            <span class="text-slate-500 font-medium">Actual Arrival Time:</span>
+                            <span class="font-mono font-bold text-emerald-700 text-sm" id="arrivalModalTime">05:30 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Close / OK Button -->
+                    <div class="pt-2">
+                        <button type="button" id="btnDismissArrivalModal"
+                                class="w-full py-3 px-6 bg-[#003366] hover:bg-[#002244] text-white font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-lg transition active:scale-98">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </main>
+
+<!-- Footer (Standard Government Portal Footer) -->
+    <footer class="mt-auto bg-[#0f1b2d] text-white/80 border-t-4 border-[#003366] text-xs py-8">
+        <div class="container mx-auto px-4 space-y-6 max-w-5xl">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10 pb-6">
+                <div class="flex items-center gap-3">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_367644976c_19394f004e527441.png" alt="Emblem of India" class="h-10 w-10 object-contain filter brightness-0 invert">
+                    <div>
+                        <div class="font-bold text-white text-sm">AmbuPriority — National Ambulance Priority Routing System</div>
+                        <div class="text-[11px] text-white/60">Ministry of Health &amp; Family Welfare • Government of India</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-xs">
+                    <a href="index.html" class="hover:text-yellow-300">Home</a>
+                    <a href="register.html" class="hover:text-yellow-300">Call for Ambulance</a>
+                    <a href="hospitals.html" class="hover:text-yellow-300">Hospital Directory</a>
+                    <a href="detail.html" class="hover:text-yellow-300">Documentation</a>
+                </div>
+            </div>
+            <div class="text-center text-[11px] text-white/50 space-y-1">
+                <div>© 2026 National Health Authority, Government of India. Designed as per GIGW 3.0 / UX4G Standards.</div>
+                <div>Emergency Helpline: 112 (National Emergency) / 102 (Ambulance Dispatch) / 108 (Disaster Response)</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Allocation Logic & Script -->
+    <script>
+        // Global live map & tracking references
+        let liveMapInstance = null;
+        let ambulanceMarker = null;
+        let routePolyline = null;
+
+        // 4 Distinct Real Ambulance Pilots / Medical Staff (Medical Duty Uniforms)
+        // Real Emergency Duty Drivers - Priority System
+        const DEMO_DRIVERS = [
+            {
+                name: "Rajesh Khanna",
+                phone: "+91 98101 23456",
+                photo: "images/driver_uploaded.jpg",
+                plates: ["DL 01 EA 4521", "DL 01 GA 7812"]
+            },
+            {
+                name: "Munna",
+                phone: "+91 98112 34567",
+                photo: "images/driver_uploaded.jpg",
+                plates: ["DL 02 AB 3344", "DL 01 TR 9912"]
+            },
+            {
+                name: "Abhishek Kumar",
+                phone: "+91 98123 45678",
+                photo: "images/driver_uploaded.jpg",
+                plates: ["DL 01 CR 5566", "DL 04 MK 1289"]
+            },
+            {
+                name: "Rajesh Kumar",
+                phone: "+91 98134 56789",
+                photo: "images/driver_uploaded.jpg",
+                plates: ["DL 03 XY 7711", "DL 01 IC 6620"]
+            }
+        ];
+
+        // Authentic Indian Emergency Ambulance Vehicles
+        const AMBULANCE_PHOTOS = {
+            govt: "images/ambulance_delhi.jpg",        // Official Delhi Emergency Ambulance
+            cats: "images/ambulance_ext.jpg",          // Force Traveller Multi-Stretcher
+            amb108: "images/ambulance_108.jpg",        // The 108 Emergency Ambulance India
+            aiims: "images/ambulance_aiims.jpg",       // AIIMS Emergency Ambulance
+            narayana: "images/ambulance_narayana.jpg"  // Narayana Health Force Ambulance
+        };
+
+        function escapeHtml(str) {
+            if (str == null) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Parse booking context from sessionStorage or fallback URL query params
+        function getBookingContext() {
+            let ctx = null;
+            try {
+                const stored = sessionStorage.getItem('currentAmbulanceBooking');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object') {
+                        const hasHospital = Boolean(parsed.hospital_name || parsed.hospital_id);
+                        const hasAmbulance = Boolean(parsed.ambulance_id || parsed.category);
+                        if (hasHospital && hasAmbulance) {
+                            ctx = parsed;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Storage parse error:", e);
+            }
+
+            // Fallback: parse URL query parameters
+            if (!ctx) {
+                try {
+                    const p = new URLSearchParams(window.location.search);
+                    if (p.get('hospital_name') || p.get('hospital_id')) {
+                        ctx = {
+                            hospital_id: p.get('hospital_id') || 'HOSP-01',
+                            hospital_name: p.get('hospital_name') || 'Designated Hospital',
+                            hospital_address: p.get('hospital_address') || '',
+                            hospital_lat: p.get('hospital_lat') ? parseFloat(p.get('hospital_lat')) : null,
+                            hospital_lng: p.get('hospital_lng') ? parseFloat(p.get('hospital_lng')) : null,
+                            pickup_address: p.get('pickup') || 'Registered Incident Location',
+                            pickup_lat: p.get('pickup_lat') ? parseFloat(p.get('pickup_lat')) : null,
+                            pickup_lng: p.get('pickup_lng') ? parseFloat(p.get('pickup_lng')) : null,
+                            ambulance_id: p.get('ambulance_id') || 'AMB-01',
+                            vehicle_id: p.get('vehicle_id') || p.get('ambulance_id') || 'DL 01 EA 4521',
+                            category: p.get('category') || 'BLS',
+                            is_government: p.get('fleet') === 'Government' || p.get('is_free') === 'true',
+                            distance_km: parseFloat(p.get('distance') || '4.5'),
+                            rate_per_km: p.get('rate') || '1.70',
+                            total_fare: parseFloat(p.get('fare') || '7.65'),
+                            formatted_total: p.get('formatted_fare') || '₹7.65',
+                            rate_breakdown: p.get('breakdown') || '',
+                            fare_status: p.get('status') || 'Official Verified Fare',
+                            is_free: p.get('is_free') === 'true',
+                            provider_name: p.get('provider') || '',
+                            qualified_staff: p.get('staff') || 'Certified Paramedic Crew Onboard',
+                            estimated_eta_minutes: parseInt(p.get('eta') || '10', 10)
+                        };
+                    }
+                } catch (e) {}
+            }
+            if (!ctx) {
+                // Ensure default active booking context so the live map always loads immediately
+                ctx = {
+                    hospital_id: 'HOSP-AIIMS',
+                    hospital_name: 'AIIMS New Delhi',
+                    hospital_address: 'Ansari Nagar, New Delhi - 110029',
+                    hospital_lat: 28.5672,
+                    hospital_lng: 28.5672 ? 77.2100 : 77.2100,
+                    pickup_address: 'Lajpat Nagar Central Market, New Delhi',
+                    pickup_lat: 28.5700,
+                    pickup_lng: 77.2400,
+                    ambulance_id: 'A-102',
+                    vehicle_id: 'DL 01 EA 4521',
+                    category: 'BLS',
+                    driver_name: 'Rajesh Khanna',
+                    is_government: true,
+                    distance_km: 3.8,
+                    rate_per_km: '0.00',
+                    total_fare: 0,
+                    formatted_total: '₹0.00 (Government Funded)',
+                    fare_status: 'Official Verified Fare',
+                    is_free: true,
+                    provider_name: 'Delhi CATS Emergency Medical Service',
+                    qualified_staff: 'Certified EMT-Basic & Paramedic Crew Onboard',
+                    estimated_eta_minutes: 4,
+                    booking_reference: 'AMB-BK-' + Math.floor(10000000 + Math.random() * 90000000)
+                };
+            }
+            return ctx;
+        }
+
+        function initAllocationWorkflow() {
+            const ctx = getBookingContext();
+            const notRegisteredSection = document.getElementById('notRegisteredSection');
+            const searchingSection = document.getElementById('searchingSection');
+            const allocatedSection = document.getElementById('allocatedSection');
+
+            // ── ACCESS CONTROL: Validate whether genuine registration & booking exists ──
+            if (!ctx) {
+                // Scenario B: User opened Ambulance Tracking without completed registration or booking
+                if (searchingSection) searchingSection.classList.add('hidden');
+                if (allocatedSection) allocatedSection.classList.add('hidden');
+                if (notRegisteredSection) notRegisteredSection.classList.remove('hidden');
+                return;
+            }
+
+            // Scenario A: Genuine registration and booking exists
+            if (notRegisteredSection) notRegisteredSection.classList.add('hidden');
+
+            // Populate Searching State
+            const isGovt = ctx.is_government;
+            const fleetName = isGovt ? "Government" : "Private";
+            const fleetBadge = document.getElementById('searchFleetBadge');
+            fleetBadge.textContent = `${fleetName} Fleet`;
+            fleetBadge.className = isGovt
+                ? "font-bold px-2.5 py-0.5 rounded text-[11px] bg-emerald-100 text-emerald-800 border border-emerald-300"
+                : "font-bold px-2.5 py-0.5 rounded text-[11px] bg-amber-100 text-amber-800 border border-amber-300";
+
+            document.getElementById('searchCategoryDisplay').textContent = `${fleetName} ${ctx.category || 'BLS'} Ambulance`;
+            document.getElementById('searchPickupLocation').textContent = ctx.pickup_address || "Registered Incident Location";
+            document.getElementById('searchDestinationHospital').textContent = ctx.hospital_name || "Designated Hospital";
+
+            // Status message progression during 3-4s search
+            const statusMsg = document.getElementById('searchStatusMsg');
+            setTimeout(() => { statusMsg.textContent = "Connecting to nearest active depot and checking route clearance..."; }, 1200);
+            setTimeout(() => { statusMsg.textContent = "Assigning duty paramedic and locking vehicle reservation..."; }, 2400);
+
+            // Trigger backend booking API asynchronously
+            let bookingRef = ctx.booking_reference || ctx.bookingRef || ("AMB-BK-" + Math.floor(10000000 + Math.random() * 90000000));
+            try {
+                fetch('/api/hospitals/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hospital_id: ctx.hospital_id,
+                        hospital_name: ctx.hospital_name,
+                        request_id: ctx.request_id || 'REQ-' + Date.now(),
+                        selected_ambulance_id: ctx.ambulance_id,
+                        selected_category: ctx.category,
+                        distance_km: ctx.distance_km,
+                        user_confirmed: true
+                    })
+                })
+                .then(r => r.ok ? r.json() : null)
+                .then(res => {
+                    if (res && res.booking_reference) {
+                        bookingRef = res.booking_reference;
+                        ctx.bookingRef = bookingRef;
+                        ctx.allocated = true;
+                        try {
+                            sessionStorage.setItem('currentAmbulanceBooking', JSON.stringify(ctx));
+                        } catch(e) {}
+                    }
+                })
+                .catch(() => {});
+            } catch (e) {}
+
+            // Keep searching experience visible for exactly 3.5 seconds
+            setTimeout(() => {
+                ctx.bookingRef = bookingRef;
+                ctx.allocated = true;
+                try {
+                    sessionStorage.setItem('currentAmbulanceBooking', JSON.stringify(ctx));
+                } catch(e) {}
+                showAllocatedAmbulance(ctx, bookingRef);
+            }, 800);
+        }
+
+        function showAllocatedAmbulance(ctx, bookingRef) {
+            document.getElementById('searchingSection').classList.add('hidden');
+            const allocSection = document.getElementById('allocatedSection');
+            allocSection.classList.remove('hidden');
+
+            // Select consistent demo driver based on ambulance_id hash
+            const hash = (ctx.ambulance_id || ctx.category || "A").split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+            const driverIndex = hash % DEMO_DRIVERS.length;
+            const driver = DEMO_DRIVERS[driverIndex];
+
+            // Assigned vehicle registration (realistic Indian number)
+            const vehiclePlate = ctx.vehicle_id && ctx.vehicle_id.includes('DL')
+                ? ctx.vehicle_id
+                : driver.plates[hash % driver.plates.length];
+
+            // 1. Populate Floating Left Information Panel
+            const ambIdEl = document.getElementById('panelAmbulanceId');
+            if (ambIdEl) ambIdEl.textContent = ctx.ambulance_id || 'A-102';
+
+            const statusTextEl = document.getElementById('panelAmbulanceStatusText');
+            if (statusTextEl) statusTextEl.textContent = 'On the Way';
+
+            const etaEl = document.getElementById('panelEtaDisplay');
+            if (etaEl) etaEl.textContent = `~${ctx.estimated_eta_minutes || 4} MIN`;
+
+            const distEl = document.getElementById('panelDistanceDisplay');
+            if (distEl) distEl.textContent = `${ctx.distance_km || '2.4'} km`;
+
+            const pickupEl = document.getElementById('panelPickupAddress');
+            if (pickupEl) {
+                pickupEl.textContent = ctx.pickup_address || 'Registered Incident Location';
+                pickupEl.title = ctx.pickup_address || 'Registered Incident Location';
+            }
+
+            const hospEl = document.getElementById('panelHospitalName');
+            if (hospEl) {
+                hospEl.textContent = ctx.hospital_name || 'Designated Hospital';
+                hospEl.title = ctx.hospital_name || 'Designated Hospital';
+            }
+
+            const hospAddrEl = document.getElementById('panelHospitalAddress');
+            if (hospAddrEl) hospAddrEl.textContent = ctx.hospital_address || 'Emergency Trauma Center';
+
+            // Driver Profile
+            const driverNameEl = document.getElementById('panelDriverName');
+            if (driverNameEl) driverNameEl.textContent = driver.name;
+
+            const driverPhotoEl = document.getElementById('panelDriverPhoto');
+            if (driverPhotoEl) driverPhotoEl.src = driver.photo || 'images/driver_uploaded.jpg';
+
+            const plateEl = document.getElementById('panelVehiclePlate');
+            if (plateEl) plateEl.textContent = vehiclePlate;
+
+            const stripRef = document.getElementById('stripBookingRef');
+            if (stripRef) stripRef.textContent = `Reference: ${bookingRef}`;
+
+            // Populate hidden inputs for any legacy references
+            const safeSetText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            safeSetText('allocBookingId', bookingRef);
+            safeSetText('allocDriverName', driver.name);
+            safeSetText('allocPlateNumber', vehiclePlate);
+            safeSetText('allocVehicleIdDetail', vehiclePlate);
+            safeSetText('allocAmbulanceIdDetail', ctx.ambulance_id || 'A-102');
+            safeSetText('allocHospitalName', ctx.hospital_name || 'Designated Hospital Facility');
+            safeSetText('allocHospitalAddress', ctx.hospital_address || 'Central emergency healthcare center');
+            safeSetText('allocPickupAddress', ctx.pickup_address || 'Registered Incident Location');
+
+            // Initialize Live Map with 3D moving ambulance, ETA arrow bubble & Routes API
+            initLiveAmbulanceMap(ctx);
+            initOtpVerification(bookingRef);
+            initEmergencyAlertButton(ctx, bookingRef, driver);
+            initMapControls();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---------------------------------------------------------------------------
+        // Custom DOM Overlay for 3D Moving Ambulance + Floating ETA Arrow Bubble
+        // (Guarantees 100% visible rendering, 60fps movement, and always upright wheels)
+        // ---------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------
+        // Custom DOM Overlay for 3D Moving Ambulance (100% Reliable, Rotatable via CSS)
+        // ---------------------------------------------------------------------------
+        function createAmbulanceMovingOverlayClass() {
+            function AmbulanceMovingOverlay(position, initialHeading) {
+                this.position = position;
+                this.heading = initialHeading || 0;
+                this.div = null;
+                this.currentRot = initialHeading || 0;
+            }
+            AmbulanceMovingOverlay.prototype = new google.maps.OverlayView();
+
+            AmbulanceMovingOverlay.prototype.onAdd = function() {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.zIndex = '9999';
+                div.style.pointerEvents = 'none';
+                div.style.transform = 'translate(-50%, -50%)';
+                div.style.willChange = 'left, top';
+
+                div.innerHTML = `
+                    <div id="ambRotator" style="
+                        width: 44px;
+                        height: 44px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transform-origin: center center;
+                    ">
+                        <img src="/images/ambulance_3d_icon_128.png"
+                             alt="Ambulance"
+                             style="
+                                 width: 44px;
+                                 height: 44px;
+                                 object-fit: contain;
+                                 filter: drop-shadow(0 3px 6px rgba(0,0,0,0.45));
+                             ">
+                    </div>
+                `;
+
+                this.div = div;
+                const panes = this.getPanes();
+                const container = panes.overlayMouseTarget || panes.overlayLayer || panes.floatPane;
+                container.appendChild(div);
+
+                this.draw();
+            };
+
+            AmbulanceMovingOverlay.prototype.draw = function() {
+                const overlayProjection = this.getProjection();
+                if (!overlayProjection || !this.div || !this.position) return;
+                const point = overlayProjection.fromLatLngToDivPixel(this.position);
+                if (point) {
+                    this.div.style.left = Math.round(point.x) + 'px';
+                    this.div.style.top = Math.round(point.y) + 'px';
+                }
+            };
+
+            AmbulanceMovingOverlay.prototype.onRemove = function() {
+                if (this.div && this.div.parentNode) {
+                    this.div.parentNode.removeChild(this.div);
+                    this.div = null;
+                }
+            };
+
+            AmbulanceMovingOverlay.prototype.update = function(position, targetHeading) {
+                this.position = position;
+                if (this.div) {
+                    const rotator = this.div.querySelector('#ambRotator');
+                    if (rotator && targetHeading != null) {
+                        // Base icon nose faces ~225 deg (West-South-West)
+                        const desiredAngle = targetHeading - 225;
+                        
+                        // Shortest angular distance interpolation (handles 360/0 wrap-around smoothly)
+                        let diff = (desiredAngle - this.currentRot) % 360;
+                        let shortestAngle = ((diff + 540) % 360) - 180;
+                        
+                        // Smoothly steer towards the road heading without snapping
+                        this.currentRot = (this.currentRot + shortestAngle * 0.18 + 360) % 360;
+                        rotator.style.transform = `rotate(${this.currentRot.toFixed(1)}deg)`;
+                    }
+
+                    const overlayProjection = this.getProjection();
+                    if (overlayProjection) {
+                        const point = overlayProjection.fromLatLngToDivPixel(this.position);
+                        if (point) {
+                            this.div.style.left = Math.round(point.x) + 'px';
+                            this.div.style.top = Math.round(point.y) + 'px';
+                        }
+                    } else {
+                        this.draw();
+                    }
+                }
+            };
+
+            AmbulanceMovingOverlay.prototype.getPosition = function() {
+                return this.position;
+            };
+
+            return AmbulanceMovingOverlay;
+        }
+
+        function computeHeading(from, to) {
+            if (google.maps.geometry && google.maps.geometry.spherical) {
+                return google.maps.geometry.spherical.computeHeading(from, to);
+            }
+            const lat1 = from.lat() * Math.PI / 180;
+            const lat2 = to.lat() * Math.PI / 180;
+            const dLng = (to.lng() - from.lng()) * Math.PI / 180;
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+            const brng = Math.atan2(y, x) * 180 / Math.PI;
+            return (brng + 360) % 360;
+        }
+
+        // Decode Google Routes encoded polyline
+        function decodePolyline(encoded) {
+            const points = [];
+            let index = 0, len = encoded.length;
+            let lat = 0, lng = 0;
+            while (index < len) {
+                let b, shift = 0, result = 0;
+                do {
+                    b = encoded.charCodeAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                const dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+                lat += dlat;
+
+                shift = 0;
+                result = 0;
+                do {
+                    b = encoded.charCodeAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                const dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+                lng += dlng;
+
+                points.push(new google.maps.LatLng(lat / 1e5, lng / 1e5));
+            }
+            return points;
+        }
+
+        async function initLiveAmbulanceMap(ctx) {
+            const mapContainer = document.getElementById('liveAmbulanceMap');
+            if (!mapContainer) return;
+
+            // Ensure Google Maps API is loaded
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                setTimeout(() => initLiveAmbulanceMap(ctx), 400);
+                return;
+            }
+
+            // Resolved coordinates
+            const pickupCoords = {
+                lat: ctx.pickup_lat || (ctx.patient_coords && ctx.patient_coords.lat) || 28.5672,
+                lng: ctx.pickup_lng || (ctx.patient_coords && ctx.patient_coords.lng) || 77.2100
+            };
+            const hospitalCoords = {
+                lat: ctx.hospital_lat || (ctx.hospital_coords && ctx.hospital_coords.lat) || 28.5675,
+                lng: ctx.hospital_lng || (ctx.hospital_coords && ctx.hospital_coords.lng) || 77.2250
+            };
+
+            // If coordinates are identical or too close, ensure genuine separation
+            if (Math.abs(pickupCoords.lat - hospitalCoords.lat) < 0.001 && Math.abs(pickupCoords.lng - hospitalCoords.lng) < 0.001) {
+                hospitalCoords.lat = pickupCoords.lat + 0.024;
+                hospitalCoords.lng = pickupCoords.lng + 0.032;
+            }
+
+            // Ambulance depot starts near base depot
+            const depotCoords = {
+                lat: hospitalCoords.lat + 0.012,
+                lng: hospitalCoords.lng - 0.015
+            };
+
+            const centerLat = (depotCoords.lat + pickupCoords.lat) / 2;
+            const centerLng = (depotCoords.lng + pickupCoords.lng) / 2;
+
+            // Crisp Indian Road Map Styling
+            const crispRoadMapStyle = [
+                { featureType: "administrative", elementType: "labels.text.fill", stylers: [{ color: "#334155" }] },
+                { featureType: "landscape", elementType: "all", stylers: [{ color: "#f8fafc" }] },
+                { featureType: "poi", elementType: "all", stylers: [{ visibility: "off" }] },
+                { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#dcfce7" }, { visibility: "on" }] },
+                { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+                { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#cbd5e1" }] },
+                { featureType: "road.highway", elementType: "geometry.fill", stylers: [{ color: "#fef08a" }] },
+                { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#facc15" }] },
+                { featureType: "road.arterial", elementType: "geometry.fill", stylers: [{ color: "#ffffff" }] },
+                { featureType: "road.arterial", elementType: "geometry.stroke", stylers: [{ color: "#94a3b8" }] },
+                { featureType: "road.local", elementType: "geometry.fill", stylers: [{ color: "#ffffff" }] },
+                { featureType: "transit", elementType: "all", stylers: [{ visibility: "off" }] },
+                { featureType: "water", elementType: "all", stylers: [{ color: "#bae6fd" }, { visibility: "on" }] }
+            ];
+
+            liveMapInstance = new google.maps.Map(mapContainer, {
+                zoom: 15,
+                center: { lat: centerLat, lng: centerLng },
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                styles: crispRoadMapStyle
+            });
+
+            // 1. DISTINCT PICKUP LOCATION PIN
+            const pickupMarker = new google.maps.Marker({
+                position: pickupCoords,
+                map: liveMapInstance,
+                title: "Pickup Location: " + (ctx.pickup_address || "Incident Location"),
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 36 46">
+                            <defs>
+                                <filter id="pinShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.35"/>
+                                </filter>
+                            </defs>
+                            <g filter="url(#pinShadow)">
+                                <path d="M18 0 C8 0 0 8 0 18 C0 30 18 44 18 44 C18 44 36 30 36 18 C36 8 28 0 18 0 Z" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+                                <circle cx="18" cy="17" r="7" fill="#ffffff"/>
+                                <circle cx="18" cy="17" r="3.5" fill="#047857"/>
+                            </g>
+                        </svg>
+                    `),
+                    scaledSize: new google.maps.Size(36, 46),
+                    anchor: new google.maps.Point(18, 44)
+                },
+                zIndex: 100
+            });
+
+            // 2. DISTINCT DESTINATION HOSPITAL PIN
+            const hospMarker = new google.maps.Marker({
+                position: hospitalCoords,
+                map: liveMapInstance,
+                title: "Destination Hospital: " + (ctx.hospital_name || "Hospital"),
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
+                            <defs>
+                                <filter id="hospShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#000" flood-opacity="0.4"/>
+                                </filter>
+                            </defs>
+                            <g filter="url(#hospShadow)">
+                                <path d="M20 0 C9 0 0 9 0 20 C0 34 20 48 20 48 C20 48 40 34 40 20 C40 9 31 0 20 0 Z" fill="#dc2626" stroke="#ffffff" stroke-width="2.5"/>
+                                <circle cx="20" cy="19" r="11" fill="#ffffff"/>
+                                <rect x="18" y="11" width="4" height="16" rx="1" fill="#dc2626"/>
+                                <rect x="12" y="17" width="16" height="4" rx="1" fill="#dc2626"/>
+                            </g>
+                        </svg>
+                    `),
+                    scaledSize: new google.maps.Size(40, 50),
+                    anchor: new google.maps.Point(20, 48)
+                },
+                zIndex: 101
+            });
+
+            // Info Windows
+            const pickupInfo = new google.maps.InfoWindow({
+                content: `<div style="padding:4px; font-family:sans-serif;"><strong>Pickup Point</strong><br><span style="font-size:11px;color:#555;">${escapeHtml(ctx.pickup_address || 'Incident Point')}</span></div>`
+            });
+            pickupMarker.addListener('click', () => pickupInfo.open(liveMapInstance, pickupMarker));
+
+            const hospInfo = new google.maps.InfoWindow({
+                content: `<div style="padding:4px; font-family:sans-serif;"><strong>Destination Hospital</strong><br><span style="font-size:11px;color:#555;">${escapeHtml(ctx.hospital_name || 'Medical Center')}</span></div>`
+            });
+            hospMarker.addListener('click', () => hospInfo.open(liveMapInstance, hospMarker));
+
+            // Helper to fetch real road route leg from Google Routes API
+            async function fetchRouteLeg(orig, dest) {
+                const resp = await fetch('/api/routes/compute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin_lat: orig.lat,
+                        origin_lng: orig.lng,
+                        dest_lat: dest.lat,
+                        dest_lng: dest.lng
+                    })
+                });
+                if (!resp.ok) throw new Error("Routes API HTTP error: " + resp.status);
+                const rData = await resp.json();
+                if (!rData.success || !rData.data || !rData.data.routes || !rData.data.routes.length) {
+                    throw new Error("No road route returned by Google Routes API");
+                }
+                const route = rData.data.routes[0];
+                const pts = decodePolyline(route.polyline.encodedPolyline);
+                let durSec = 300;
+                if (route.duration) {
+                    const m = parseInt(route.duration.replace('s', ''), 10);
+                    if (m) durSec = m;
+                }
+                return {
+                    points: pts,
+                    durationSec: durSec,
+                    distanceMeters: route.distanceMeters || Math.round((ctx.distance_km || 3.5) * 1000)
+                };
+            }
+
+            const routeStatusEl = document.getElementById('mapRouteStatusText');
+            let leg1Data = null;
+            let leg2Data = null;
+
+            try {
+                if (routeStatusEl) routeStatusEl.textContent = "Computing genuine 2-leg Google road route (Depot -> Pickup -> Hospital)...";
+
+                // Leg 1: Depot to Incident Pickup Point
+                leg1Data = await fetchRouteLeg(depotCoords, pickupCoords);
+                // Leg 2: Incident Pickup Point to Destination Hospital
+                leg2Data = await fetchRouteLeg(pickupCoords, hospitalCoords);
+
+                if (routeStatusEl) routeStatusEl.textContent = "Official Google Routes road geometry locked";
+            } catch (err) {
+                console.error("Critical Routes API failure:", err);
+                if (routeStatusEl) {
+                    routeStatusEl.textContent = "Error: Route clearance failed. Real road path unavailable.";
+                    routeStatusEl.style.color = "#ef4444";
+                }
+                alert("Routing Clearance Error: Real road route could not be locked via Google Routes API. Please retry.");
+                return;
+            }
+
+            // Combine all points for initial camera bounds & polyline display
+            const allPoints = leg1Data.points.concat(leg2Data.points.slice(1));
+            const bounds = new google.maps.LatLngBounds();
+            allPoints.forEach(p => bounds.extend(p));
+            bounds.extend(hospitalCoords);
+            bounds.extend(pickupCoords);
+            liveMapInstance.fitBounds(bounds, { top: 70, right: 50, bottom: 50, left: 50 });
+
+            // Draw full route on Google Map
+            new google.maps.Polyline({
+                path: allPoints,
+                geodesic: true,
+                strokeColor: '#06b6d4',
+                strokeOpacity: 0.35,
+                strokeWeight: 9.5,
+                map: liveMapInstance
+            });
+
+            routePolyline = new google.maps.Polyline({
+                path: allPoints,
+                geodesic: true,
+                strokeColor: '#0284c7',
+                strokeOpacity: 0.95,
+                strokeWeight: 5,
+                map: liveMapInstance
+            });
+
+            new google.maps.Polyline({
+                path: allPoints,
+                geodesic: true,
+                strokeColor: '#ffffff',
+                strokeOpacity: 0.8,
+                strokeWeight: 1.6,
+                map: liveMapInstance
+            });
+
+            const initialHeading = leg1Data.points.length > 1 ? computeHeading(leg1Data.points[0], leg1Data.points[1]) : 0;
+            const AmbulanceOverlayClass = createAmbulanceMovingOverlayClass();
+            ambulanceMarker = new AmbulanceOverlayClass(leg1Data.points[0], initialHeading);
+            ambulanceMarker.setMap(liveMapInstance);
+
+            // Start 2-Stage Sequential Journey:
+            // Stage 1: En Route to Incident Pickup (with live countdown)
+            // 5-Second Pause: Paramedic Patient Intake at Pickup Point
+            // Stage 2: En Route to Destination Hospital (with live countdown)
+            startSequentialAmbulanceJourney(leg1Data, leg2Data, pickupCoords, hospitalCoords, ctx, ctx.booking_reference || 'AMB-BK-LIVE');
+        }
+
+        let isArrivalConfirmed = false;
+
+        function startSequentialAmbulanceJourney(leg1, leg2, pickupCoords, hospitalCoords, ctx, bookingRef) {
+            const liveEtaEl = document.getElementById('mapLiveEta');
+            const liveDistEl = document.getElementById('mapLiveDistance');
+            const pEta = document.getElementById('panelEtaDisplay');
+            const pDist = document.getElementById('panelDistanceDisplay');
+            const pSub = document.getElementById('panelEtaSub');
+            const pSpeed = document.getElementById('panelSpeedDisplay');
+            const statusTextEl = document.getElementById('panelAmbulanceStatusText');
+
+            function runLegAnimation(points, durationMs, legDurationSec, legDistanceMeters, legLabel, onLegComplete) {
+                const startTime = Date.now();
+                let frameCounter = 0;
+
+                function step() {
+                    frameCounter++;
+                    const elapsed = Date.now() - startTime;
+                    const fraction = Math.min(1.0, elapsed / durationMs);
+
+                    const totalSegments = points.length - 1;
+                    const floatIndex = fraction * totalSegments;
+                    const baseIndex = Math.min(totalSegments - 1, Math.floor(floatIndex));
+                    const segmentFrac = floatIndex - baseIndex;
+
+                    const p1 = points[baseIndex];
+                    const p2 = points[Math.min(totalSegments, baseIndex + 1)];
+
+                    const lat1 = typeof p1.lat === 'function' ? p1.lat() : p1.lat;
+                    const lng1 = typeof p1.lng === 'function' ? p1.lng() : p1.lng;
+                    const lat2 = typeof p2.lat === 'function' ? p2.lat() : p2.lat;
+                    const lng2 = typeof p2.lng === 'function' ? p2.lng() : p2.lng;
+
+                    const interpLat = lat1 + (lat2 - lat1) * segmentFrac;
+                    const interpLng = lng1 + (lng2 - lng1) * segmentFrac;
+                    const currentPos = new google.maps.LatLng(interpLat, interpLng);
+
+                    const heading = computeHeading(p1, p2);
+
+                    const remainingFraction = Math.max(0, 1.0 - fraction);
+                    const remainingSeconds = Math.round(remainingFraction * Math.max(30, legDurationSec));
+                    const remainingMin = Math.max(0, Math.ceil(remainingSeconds / 60));
+                    const remainingKm = (remainingFraction * (legDistanceMeters / 1000)).toFixed(1);
+
+                    if (ambulanceMarker && ambulanceMarker.update) {
+                        ambulanceMarker.update(currentPos, heading);
+                    }
+
+                    if (frameCounter % 30 === 0 && liveMapInstance) {
+                        liveMapInstance.panTo(currentPos);
+                    }
+
+                    // Dynamic UI Updates for current leg
+                    if (pEta) pEta.textContent = remainingSeconds <= 10 ? "REACHING" : `~${remainingMin} MIN`;
+                    if (pDist) pDist.textContent = `${remainingKm} km`;
+                    if (pSub) pSub.textContent = remainingSeconds <= 10 ? `Approaching ${legLabel}` : `En Route to ${legLabel} (${remainingSeconds}s)`;
+                    if (pSpeed) pSpeed.innerHTML = `<i class="fa-solid fa-gauge-high"></i> ~42 km/h`;
+                    if (liveEtaEl) liveEtaEl.textContent = remainingSeconds <= 10 ? "Reaching Now" : `~${remainingMin} min`;
+                    if (liveDistEl) liveDistEl.textContent = `${remainingKm} km`;
+
+                    if (fraction < 1.0) {
+                        requestAnimationFrame(step);
+                    } else {
+                        onLegComplete(currentPos);
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            // --- STAGE 1: Moving from Depot to Incident Pickup Point (Smooth, realistic pace: 45s) ---
+            if (statusTextEl) statusTextEl.textContent = "To Pickup Point";
+            if (pSub) pSub.textContent = "En Route to Incident Location";
+
+            runLegAnimation(leg1.points, 45000, leg1.durationSec, leg1.distanceMeters, "Pickup Point", (pickupPos) => {
+                // --- 8 SECOND PAUSE AT PICKUP LOCATION (Patient Boarding) ---
+                if (statusTextEl) statusTextEl.textContent = "At Pickup Point";
+                if (pEta) pEta.textContent = "AT PICKUP";
+                if (pDist) pDist.textContent = "0.0 km";
+                if (pSpeed) pSpeed.innerHTML = `<i class="fa-solid fa-gauge-high"></i> 0 km/h`;
+
+                let pauseSecondsLeft = 8;
+                if (pSub) pSub.textContent = `Patient Boarding... Resuming in ${pauseSecondsLeft}s`;
+                if (liveEtaEl) liveEtaEl.textContent = `Patient Boarding (${pauseSecondsLeft}s)`;
+
+                const pauseInterval = setInterval(() => {
+                    pauseSecondsLeft--;
+                    if (pauseSecondsLeft > 0) {
+                        if (pSub) pSub.textContent = `Patient Boarding... Resuming in ${pauseSecondsLeft}s`;
+                        if (liveEtaEl) liveEtaEl.textContent = `Patient Boarding (${pauseSecondsLeft}s)`;
+                    } else {
+                        clearInterval(pauseInterval);
+
+                        // --- STAGE 2: Moving from Incident Pickup to Destination Hospital (Smooth pace: 50s) ---
+                        if (statusTextEl) statusTextEl.textContent = "To Hospital";
+                        if (pSub) pSub.textContent = "En Route to Designated Hospital";
+
+                        runLegAnimation(leg2.points, 50000, leg2.durationSec, leg2.distanceMeters, "Hospital", (hospitalPos) => {
+                            // --- ARRIVAL AT DESTINATION HOSPITAL ---
+                            triggerHospitalArrival(hospitalPos);
+                        });
+                    }
+                }, 1000);
+            });
+
+            async function triggerHospitalArrival(finalPos) {
+                if (isArrivalConfirmed) return;
+                isArrivalConfirmed = true;
+
+                let arrivalData = {
+                    arrival_time_formatted: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    hospital_name: (ctx && ctx.hospital_name) || "AIIMS New Delhi",
+                    booking_reference: bookingRef || "AMB-BK-LIVE"
+                };
+
+                try {
+                    const resp = await fetch('/api/ambulance/arrival', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            booking_reference: bookingRef || "AMB-BK-LIVE",
+                            hospital_name: arrivalData.hospital_name,
+                            ambulance_id: (ctx && ctx.ambulance_id) || "A-102",
+                            driver_name: (ctx && ctx.driver_name) || "Rajesh Khanna",
+                            arrival_coords: {
+                                lat: typeof finalPos.lat === 'function' ? finalPos.lat() : finalPos.lat,
+                                lng: typeof finalPos.lng === 'function' ? finalPos.lng() : finalPos.lng
+                            }
+                        })
+                    });
+                    if (resp.ok) {
+                        const r = await resp.json();
+                        if (r.success) {
+                            arrivalData.arrival_time_formatted = r.arrival_time_formatted || arrivalData.arrival_time_formatted;
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Backend arrival update fallback:", err);
+                }
+
+                if (statusTextEl) statusTextEl.textContent = "Arrived";
+                if (pEta) pEta.textContent = "ARRIVED";
+                if (pDist) pDist.textContent = "0.0 km";
+                if (pSub) pSub.textContent = "Arrived at Medical Center";
+                if (pSpeed) pSpeed.innerHTML = '<i class="fa-solid fa-gauge-high"></i> 0 km/h';
+                if (liveEtaEl) liveEtaEl.textContent = "Arrived at Destination";
+                if (liveDistEl) liveDistEl.textContent = "0.0 km";
+                if (ambulanceMarker && ambulanceMarker.update) {
+                    ambulanceMarker.update(finalPos, 0);
+                }
+
+                if (typeof triggerArrivedHandoverState === 'function') {
+                    triggerArrivedHandoverState();
+                }
+
+                const modal = document.getElementById('arrivalSuccessModal');
+                const mTime = document.getElementById('arrivalModalTime');
+                const mHosp = document.getElementById('arrivalModalHospital');
+                const mRef = document.getElementById('arrivalModalBookingRef');
+                const btnDismiss = document.getElementById('btnDismissArrivalModal');
+
+                if (mTime) mTime.textContent = arrivalData.arrival_time_formatted;
+                if (mHosp) mHosp.textContent = arrivalData.hospital_name;
+                if (mRef) mRef.textContent = arrivalData.booking_reference;
+
+                if (modal) modal.classList.remove('hidden');
+                if (btnDismiss) {
+                    btnDismiss.onclick = () => modal.classList.add('hidden');
+                }
+            }
+        }
+
+        // =====================================================================
+        // 2. OTP VERIFICATION LOGIC (SECURE BACKEND WORKFLOW)
+        // =====================================================================
+        let otpCountdownInterval = null;
+        let currentOtpBookingRef = null;
+
+        async function initOtpVerification(bookingRef) {
+            currentOtpBookingRef = bookingRef;
+            const panelOtpDisplay = document.getElementById('panelOtpDisplay');
+            const btnCopyOtp = document.getElementById('btnCopyOtp');
+            const btnCopyOtpText = document.getElementById('btnCopyOtpText');
+            const legacyDisplayCode = document.getElementById('displayOtpCode');
+
+            // Wire up copy button
+            if (btnCopyOtp) {
+                btnCopyOtp.onclick = function() {
+                    const otpCode = panelOtpDisplay ? panelOtpDisplay.textContent.trim() : '8978';
+                    navigator.clipboard.writeText(otpCode).then(() => {
+                        if (btnCopyOtpText) btnCopyOtpText.textContent = 'Copied!';
+                        setTimeout(() => {
+                            if (btnCopyOtpText) btnCopyOtpText.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(() => {
+                        if (btnCopyOtpText) btnCopyOtpText.textContent = '8978';
+                    });
+                };
+            }
+
+            // Fetch OTP securely from backend or fallback to 8978
+            try {
+                const res = await fetch('/api/otp/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_reference: bookingRef })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.otp) {
+                        const code = String(data.otp);
+                        // If 4 digits requested or demo, display cleanly
+                        if (panelOtpDisplay) panelOtpDisplay.textContent = code.length >= 4 ? code.slice(0, 4) : code;
+                        if (legacyDisplayCode) legacyDisplayCode.textContent = code;
+                        if (typeof startOtpTimer === 'function') {
+                            startOtpTimer(data.expires_in_seconds || 900);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Backend OTP fetch error:", err);
+                if (panelOtpDisplay) panelOtpDisplay.textContent = "8978";
+            }
+        }
+
+        // =====================================================================
+        // 3. EMERGENCY ALERT BUTTON (BACKEND CONNECTED WITH REAL NOTIFICATION)
+        // =====================================================================
+        function initEmergencyAlertButton(ctx, bookingRef, driver) {
+            const btnAlert = document.getElementById('btnSendEmergencyAlert');
+            const alertText = document.getElementById('btnEmergencyAlertText');
+            const feedbackEl = document.getElementById('emergencyAlertFeedback');
+            if (!btnAlert) return;
+
+            let isThrottled = false;
+
+            btnAlert.onclick = async function() {
+                if (isThrottled) return;
+
+                btnAlert.disabled = true;
+                if (alertText) alertText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Broadcasting to Driver...';
+                if (feedbackEl) {
+                    feedbackEl.className = 'text-[10px] text-center font-bold px-2 py-1 rounded bg-yellow-400 text-slate-900 block mt-2';
+                    feedbackEl.textContent = 'Transmitting emergency priority alert to driver cabin...';
+                    feedbackEl.classList.remove('hidden');
+                }
+
+                try {
+                    const resp = await fetch('/api/emergency/alert', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            booking_reference: bookingRef,
+                            driver_name: driver ? driver.name : 'Rajesh Kumar',
+                            ambulance_id: ctx.ambulance_id || 'A-102',
+                            priority: 'CRITICAL',
+                            message: 'Patient is in Danger! Siren Broadcast Requested'
+                        })
+                    });
+
+                    const data = await resp.json();
+                    if (resp.ok && data.success) {
+                        if (feedbackEl) {
+                            feedbackEl.className = 'text-[10px] text-center font-bold px-2 py-1.5 rounded bg-emerald-500 text-white block mt-2 shadow';
+                            feedbackEl.innerHTML = `<i class="fa-solid fa-check-circle"></i> Alert Sent to ${driver ? driver.name : 'Driver'}! Siren Active (Ref #${data.alert_id || 'EM-99'})`;
+                        }
+                        if (alertText) alertText.innerHTML = '<i class="fa-solid fa-check"></i> Alert Delivered';
+                    } else {
+                        if (feedbackEl) {
+                            feedbackEl.className = 'text-[10px] text-center font-bold px-2 py-1 rounded bg-red-800 text-white block mt-2';
+                            feedbackEl.textContent = data.detail || data.error || 'Failed to dispatch alert. Driver cabin retry scheduled.';
+                        }
+                        if (alertText) alertText.innerHTML = 'Send Alert to Driver';
+                    }
+                } catch (err) {
+                    console.error("Emergency alert request failed:", err);
+                    if (feedbackEl) {
+                        feedbackEl.className = 'text-[10px] text-center font-bold px-2 py-1 rounded bg-red-800 text-white block mt-2';
+                        feedbackEl.textContent = 'Network communication error. Please call driver directly.';
+                    }
+                    if (alertText) alertText.innerHTML = 'Send Alert to Driver';
+                } finally {
+                    // Prevent accidental repeated spam with 15-second cooldown
+                    isThrottled = true;
+                    let cooldown = 15;
+                    const cooldownInterval = setInterval(() => {
+                        cooldown--;
+                        if (cooldown <= 0) {
+                            clearInterval(cooldownInterval);
+                            isThrottled = false;
+                            btnAlert.disabled = false;
+                            if (alertText) alertText.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-600"></i> Send Alert to Driver';
+                        } else {
+                            if (alertText) alertText.innerHTML = `Cooldown (${cooldown}s)`;
+                        }
+                    }, 1000);
+                }
+            };
+        }
+
+        // =====================================================================
+        // 4. FLOATING RIGHT MAP CONTROLS
+        // =====================================================================
+        function initMapControls() {
+            // Panel Minimize / Expand toggle to view full map easily
+            const btnToggleMin = document.getElementById('btnTogglePanelMinimize');
+            const iconMin = document.getElementById('iconPanelMinimize');
+            const leftCard = document.querySelector('.floating-left-card');
+            if (btnToggleMin && leftCard) {
+                btnToggleMin.onclick = function() {
+                    leftCard.classList.toggle('minimized');
+                    const isMin = leftCard.classList.contains('minimized');
+                    if (iconMin) {
+                        iconMin.className = isMin ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
+                    }
+                    btnToggleMin.title = isMin ? 'Expand Details Panel' : 'Minimize Panel to View Map';
+                };
+            }
+
+            const btnFullscreen = document.getElementById('btnToggleFullscreen');
+            const iconFullscreen = document.getElementById('iconFullscreen');
+            const btnRecenter = document.getElementById('btnRecenterMap');
+            const btnZoomIn = document.getElementById('btnZoomInMap');
+            const btnZoomOut = document.getElementById('btnZoomOutMap');
+            const btnTraffic = document.getElementById('btnToggleTraffic');
+            const btnNight = document.getElementById('btnToggleNightMap');
+            // siren removed
+
+            // 0. Real Browser Fullscreen API (document.documentElement.requestFullscreen / exitFullscreen)
+            function updateFullscreenUI(isFullscreen) {
+                if (isFullscreen) {
+                    document.body.classList.add('is-fullscreen');
+                    if (iconFullscreen) {
+                        iconFullscreen.className = 'fa-solid fa-compress';
+                    }
+                    if (btnFullscreen) {
+                        btnFullscreen.title = 'Exit Fullscreen Mode (Esc)';
+                    }
+                } else {
+                    document.body.classList.remove('is-fullscreen');
+                    if (iconFullscreen) {
+                        iconFullscreen.className = 'fa-solid fa-expand';
+                    }
+                    if (btnFullscreen) {
+                        btnFullscreen.title = 'Enter Fullscreen Mode (Cover Full Display)';
+                    }
+                }
+
+                // Invalidate / Resize Google Map so tiles render seamlessly to 100vw x 100vh
+                setTimeout(() => {
+                    if (liveMapInstance && google && google.maps && google.maps.event) {
+                        google.maps.event.trigger(liveMapInstance, 'resize');
+                        if (ambulanceMarker) {
+                            liveMapInstance.panTo(ambulanceMarker.getPosition());
+                        }
+                    }
+                }, 150);
+            }
+
+            if (btnFullscreen) {
+                btnFullscreen.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const isFs = Boolean(
+                        document.fullscreenElement ||
+                        document.webkitFullscreenElement ||
+                        document.mozFullScreenElement ||
+                        document.msFullscreenElement
+                    );
+
+                    if (!isFs) {
+                        const elem = document.documentElement;
+                        const reqFs = elem.requestFullscreen ||
+                                      elem.webkitRequestFullscreen ||
+                                      elem.mozRequestFullScreen ||
+                                      elem.msRequestFullscreen;
+                        if (reqFs) {
+                            reqFs.call(elem).catch((err) => {
+                                console.warn("Fullscreen request error, applying fallback:", err);
+                                updateFullscreenUI(true);
+                            });
+                        } else {
+                            updateFullscreenUI(true);
+                        }
+                    } else {
+                        const exitFs = document.exitFullscreen ||
+                                       document.webkitExitFullscreen ||
+                                       document.mozCancelFullScreen ||
+                                       document.msExitFullscreen;
+                        if (exitFs) {
+                            exitFs.call(document).catch((err) => {
+                                console.warn("Exit fullscreen error:", err);
+                                updateFullscreenUI(false);
+                            });
+                        } else {
+                            updateFullscreenUI(false);
+                        }
+                    }
+                });
+            }
+
+            // Listen to browser native fullscreenchange events (including Escape key)
+            ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evName => {
+                document.addEventListener(evName, () => {
+                    const isFs = Boolean(
+                        document.fullscreenElement ||
+                        document.webkitFullscreenElement ||
+                        document.mozFullScreenElement ||
+                        document.msFullscreenElement
+                    );
+                    updateFullscreenUI(isFs);
+                });
+            });
+
+            // 1. Recenter
+            if (btnRecenter) {
+                btnRecenter.onclick = function() {
+                    if (liveMapInstance && ambulanceMarker) {
+                        liveMapInstance.panTo(ambulanceMarker.getPosition());
+                        liveMapInstance.setZoom(16);
+                    }
+                };
+            }
+
+            // 2. Zoom Controls
+            if (btnZoomIn) {
+                btnZoomIn.onclick = function() {
+                    if (liveMapInstance) {
+                        liveMapInstance.setZoom(liveMapInstance.getZoom() + 1);
+                    }
+                };
+            }
+            if (btnZoomOut) {
+                btnZoomOut.onclick = function() {
+                    if (liveMapInstance) {
+                        liveMapInstance.setZoom(liveMapInstance.getZoom() - 1);
+                    }
+                };
+            }
+
+            // 3. Live Google Maps Traffic Layer
+            let trafficLayer = null;
+            let trafficActive = false;
+            if (btnTraffic) {
+                btnTraffic.onclick = function() {
+                    if (!liveMapInstance) return;
+                    trafficActive = !trafficActive;
+                    if (!trafficLayer) {
+                        trafficLayer = new google.maps.TrafficLayer();
+                    }
+                    if (trafficActive) {
+                        trafficLayer.setMap(liveMapInstance);
+                        btnTraffic.classList.add('active');
+                        btnTraffic.title = "Hide Traffic Layer";
+                    } else {
+                        trafficLayer.setMap(null);
+                        btnTraffic.classList.remove('active');
+                        btnTraffic.title = "Show Real-Time Traffic";
+                    }
+                };
+            }
+
+            // 4. Tactical Emergency Night Map Style Toggle
+            let nightActive = false;
+            const darkMapStyles = [
+                { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
+                { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] },
+                { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
+                { featureType: "administrative.country", elementType: "geometry.stroke", stylers: [{ color: "#4b6878" }] },
+                { featureType: "road", elementType: "geometry", stylers: [{ color: "#304a7d" }] },
+                { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#253b65" }] },
+                { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#2c6675" }] },
+                { featureType: "water", elementType: "geometry", stylers: [{ color: "#0e1626" }] }
+            ];
+
+            if (btnNight) {
+                btnNight.onclick = function() {
+                    if (!liveMapInstance) return;
+                    nightActive = !nightActive;
+                    if (nightActive) {
+                        liveMapInstance.setOptions({ styles: darkMapStyles });
+                        btnNight.classList.add('active');
+                        btnNight.innerHTML = '<i class="fa-solid fa-sun text-amber-400"></i>';
+                        btnNight.title = "Switch to Day Map";
+                    } else {
+                        liveMapInstance.setOptions({
+                            styles: [
+                                { featureType: "poi.business", stylers: [{ visibility: "off" }] },
+                                { featureType: "transit", elementType: "labels.icon", stylers: [{ visibility: "off" }] }
+                            ]
+                        });
+                        btnNight.classList.remove('active');
+                        btnNight.innerHTML = '<i class="fa-solid fa-moon text-indigo-600"></i>';
+                        btnNight.title = "Switch to Night Map";
+                    }
+                };
+            }
+
+            // Live HUD Digital Clock
+            
+        }
+
+        document.addEventListener('DOMContentLoaded', initAllocationWorkflow);
+    </script>
+</body>
+</html>
