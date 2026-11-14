@@ -169,13 +169,6 @@ The entire user interface conforms to the **Guidelines for Indian Government Web
 
 ---
 
-## 👤 Author & Project Credits
-
-* **Project Lead, Architect & Developer:** **Saanvi Monga** ([@mongasaanvi11-lgtm](https://github.com/mongasaanvi11-lgtm))
-* **System Architecture:** Emergency Medical Triage Algorithm & AIS-125 Automated Allocation System.
-
----
-
 ## 📄 License & Attribution
 
 Developed under open-source educational guidelines. Clinical protocols referenced from:
