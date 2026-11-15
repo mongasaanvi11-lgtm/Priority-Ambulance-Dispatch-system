@@ -31,7 +31,7 @@ const translations = {
         "lang_current": "English",
         
         // Brand & Header
-        "portal_name": "AmbuPriority",
+        "portal_name": "E-Sanjeevni",
         "portal_subtitle": "National Ambulance Priority Routing & Dispatch System",
         "ministry_name": "Ministry of Health and Family Welfare",
         "nav_home": "Home",
@@ -43,7 +43,7 @@ const translations = {
 
         // Ticker
         "ticker_latest": "LATEST DISPATCH UPDATE",
-        "ticker_news": "AmbuPriority green-corridor priority integrated across 48 major metropolitan hospitals. | Real-time traffic signal preemption operational at 120 key junctions. | Multilingual emergency hotline 102 & 108 operating 24x7 nationwide.",
+        "ticker_news": "E-Sanjeevni green-corridor priority integrated across 48 major metropolitan hospitals. | Real-time traffic signal preemption operational at 120 key junctions. | Multilingual emergency hotline 102 & 108 operating 24x7 nationwide.",
 
         // Hero Section
         "hero_tag": "NATIONAL HEALTH EMERGENCY CORRIDOR",
@@ -79,7 +79,7 @@ const translations = {
         "gallery_next": "Next Photo",
 
         // Footer
-        "footer_title": "AmbuPriority National Portal",
+        "footer_title": "E-Sanjeevni National Portal",
         "footer_dept": "National Health Authority • Ministry of Health and Family Welfare, Government of India",
         "footer_disclaimer": "Official Central Citizen Emergency Health Corridor System. All ambulances are monitored under Real-Time Priority Routing Protocol (AIS-125 Compliant).",
         "footer_links_home": "Home",
@@ -501,7 +501,7 @@ const translations = {
         "lang_current": "हिंदी (Hindi)",
         
         // Brand & Header
-        "portal_name": "एम्बुप्राथमिकता",
+        "portal_name": "ई-संजीवनी",
         "portal_subtitle": "राष्ट्रीय एम्बुलेंस प्राथमिकता रूटिंग एवं प्रेषण प्रणाली",
         "ministry_name": "स्वास्थ्य एवं परिवार कल्याण मंत्रालय",
         "nav_home": "होम",
@@ -513,7 +513,7 @@ const translations = {
 
         // Ticker
         "ticker_latest": "ताज़ा प्रेषण सूचना",
-        "ticker_news": "एम्बुप्राथमिकता ग्रीन-कॉरिडोर देश के 48 बड़े महानगर अस्पतालों से एकीकृत। | 120 प्रमुख चौराहों पर रीयल-टाइम ट्रैफिक सिग्नल प्राथमिकता चालू। | चौबीसों घंटे बहुभाषी आपातकालीन हेल्पलाइन 102 एवं 108 सक्रिय।",
+        "ticker_news": "ई-संजीवनी ग्रीन-कॉरिडोर देश के 48 बड़े महानगर अस्पतालों से एकीकृत। | 120 प्रमुख चौराहों पर रीयल-टाइम ट्रैफिक सिग्नल प्राथमिकता चालू। | चौबीसों घंटे बहुभाषी आपातकालीन हेल्पलाइन 102 एवं 108 सक्रिय।",
 
         // Hero Section
         "hero_tag": "राष्ट्रीय स्वास्थ्य आपातकालीन गलियारा",
@@ -549,7 +549,7 @@ const translations = {
         "gallery_next": "अगली तस्वीर",
 
         // Footer
-        "footer_title": "एम्बुप्राथमिकता राष्ट्रीय पोर्टल",
+        "footer_title": "ई-संजीवनी राष्ट्रीय पोर्टल",
         "footer_dept": "राष्ट्रीय स्वास्थ्य प्राधिकरण • स्वास्थ्य एवं परिवार कल्याण मंत्रालय, भारत सरकार",
         "footer_disclaimer": "आधिकारिक केंद्रीय नागरिक आपातकालीन स्वास्थ्य कॉरिडोर प्रणाली। सभी एम्बुलेंस रीयल-टाइम प्राथमिकता रूटिंग प्रोटोकॉल (AIS-125 अनुपालन) के तहत ट्रैक की जाती हैं।",
         "footer_links_home": "होम",
