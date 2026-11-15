@@ -39301,5 +39301,380 @@
       ],
       "qualified_staff": "Advanced Paramedic & Emergency Nurse"
     }
+  ],
+  "bm_gupta_hospital_pvt_lt_57b8fd": [
+    {
+      "ambulance_id": "PVT-AMB-541-ALS",
+      "hospital_id": "bm_gupta_hospital_pvt_lt_57b8fd",
+      "type": "ALS",
+      "availability_status": "ASSIGNED",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "B.M. Gupta Hospital Pvt. Ltd. Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0541",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-542-BLS",
+      "hospital_id": "bm_gupta_hospital_pvt_lt_57b8fd",
+      "type": "BLS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "B.M. Gupta Hospital Pvt. Ltd. Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0542",
+      "verified_capabilities": [
+        "Automated External Defibrillator (AED)",
+        "Portable Oxygen Cylinder & Masks",
+        "Suction Unit",
+        "Immobilization Spine Board",
+        "Cervical Collars",
+        "Vital Signs Monitor"
+      ],
+      "qualified_staff": "Certified Emergency Medical Technician (EMT-Basic)"
+    }
+  ],
+  "mahindru_hospital_a1e716": [
+    {
+      "ambulance_id": "PVT-AMB-697-ICU",
+      "hospital_id": "mahindru_hospital_a1e716",
+      "type": "ICU",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Mahindru Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0697",
+      "verified_capabilities": [
+        "ICU Multi-channel Ventilator",
+        "Invasive Arterial / CVP Pressure Monitoring",
+        "Dual Syringe Infusion Pumps",
+        "Portable Blood Gas & Point-of-Care Lab",
+        "Defibrillator / External Pacer",
+        "Suction Unit"
+      ],
+      "qualified_staff": "Critical Care Physician / Intensivist & ICU Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-698-ALS",
+      "hospital_id": "mahindru_hospital_a1e716",
+      "type": "ALS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Mahindru Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0698",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    }
+  ],
+  "asha_hospital_4e6bd3": [
+    {
+      "ambulance_id": "PVT-AMB-915-Cardiac",
+      "hospital_id": "asha_hospital_4e6bd3",
+      "type": "Cardiac",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Asha Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0915",
+      "verified_capabilities": [
+        "12-Lead Diagnostic ECG Machine",
+        "Bi-phasic Defibrillator with External Transcutaneous Pacer",
+        "Oxygen & Nitric Delivery",
+        "Cardiac Emergency Meds (Thrombolytics / Antiarrhythmics)",
+        "Syringe Infusion Pumps"
+      ],
+      "qualified_staff": "Cardiology Fellow / Specialist Nurse & ACLS Paramedic"
+    },
+    {
+      "ambulance_id": "PVT-AMB-916-ALS",
+      "hospital_id": "asha_hospital_4e6bd3",
+      "type": "ALS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Asha Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0916",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    }
+  ],
+  "deepan_hospital_433de7": [
+    {
+      "ambulance_id": "PVT-AMB-1176-ICU",
+      "hospital_id": "deepan_hospital_433de7",
+      "type": "ICU",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Deepan Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1176",
+      "verified_capabilities": [
+        "ICU Multi-channel Ventilator",
+        "Invasive Arterial / CVP Pressure Monitoring",
+        "Dual Syringe Infusion Pumps",
+        "Portable Blood Gas & Point-of-Care Lab",
+        "Defibrillator / External Pacer",
+        "Suction Unit"
+      ],
+      "qualified_staff": "Critical Care Physician / Intensivist & ICU Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-1177-ALS",
+      "hospital_id": "deepan_hospital_433de7",
+      "type": "ALS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Deepan Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1177",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    }
+  ],
+  "satya_multi_speciality_h_fb429c": [
+    {
+      "ambulance_id": "PVT-AMB-1177-ALS",
+      "hospital_id": "satya_multi_speciality_h_fb429c",
+      "type": "ALS",
+      "availability_status": "ASSIGNED",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Satya Multi Speciality Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1177",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-1178-BLS",
+      "hospital_id": "satya_multi_speciality_h_fb429c",
+      "type": "BLS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Satya Multi Speciality Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1178",
+      "verified_capabilities": [
+        "Automated External Defibrillator (AED)",
+        "Portable Oxygen Cylinder & Masks",
+        "Suction Unit",
+        "Immobilization Spine Board",
+        "Cervical Collars",
+        "Vital Signs Monitor"
+      ],
+      "qualified_staff": "Certified Emergency Medical Technician (EMT-Basic)"
+    }
+  ],
+  "konarc_hospital_f87e06": [
+    {
+      "ambulance_id": "PVT-AMB-409-ALS",
+      "hospital_id": "konarc_hospital_f87e06",
+      "type": "ALS",
+      "availability_status": "ASSIGNED",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Konarc Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0409",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-410-BLS",
+      "hospital_id": "konarc_hospital_f87e06",
+      "type": "BLS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Konarc Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0410",
+      "verified_capabilities": [
+        "Automated External Defibrillator (AED)",
+        "Portable Oxygen Cylinder & Masks",
+        "Suction Unit",
+        "Immobilization Spine Board",
+        "Cervical Collars",
+        "Vital Signs Monitor"
+      ],
+      "qualified_staff": "Certified Emergency Medical Technician (EMT-Basic)"
+    }
+  ],
+  "vardaan_hospital_288884": [
+    {
+      "ambulance_id": "PVT-AMB-1236-ICU",
+      "hospital_id": "vardaan_hospital_288884",
+      "type": "ICU",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Vardaan Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1236",
+      "verified_capabilities": [
+        "ICU Multi-channel Ventilator",
+        "Invasive Arterial / CVP Pressure Monitoring",
+        "Dual Syringe Infusion Pumps",
+        "Portable Blood Gas & Point-of-Care Lab",
+        "Defibrillator / External Pacer",
+        "Suction Unit"
+      ],
+      "qualified_staff": "Critical Care Physician / Intensivist & ICU Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-1237-ALS",
+      "hospital_id": "vardaan_hospital_288884",
+      "type": "ALS",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Vardaan Hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-1237",
+      "verified_capabilities": [
+        "Multipara Cardiac Monitor / Defibrillator",
+        "Transport Mechanical Ventilator",
+        "Advanced Airway & Endotracheal Intubation Kit",
+        "Syringe Infusion Pump",
+        "Emergency Resuscitation Drugs",
+        "IV Fluids"
+      ],
+      "qualified_staff": "Advanced Paramedic & Emergency Nurse"
+    }
+  ],
+  "narayana_multispeciaity__d29d77": [
+    {
+      "ambulance_id": "PVT-AMB-488-Neonatal",
+      "hospital_id": "narayana_multispeciaity__d29d77",
+      "type": "Neonatal",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "RED",
+        "YELLOW",
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Narayana multispeciaity hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0488",
+      "verified_capabilities": [
+        "Transport Infant Incubator",
+        "Neonatal Specialized Resuscitator",
+        "Pulse Oximeter with Neonatal Sensors",
+        "Infant IV Infusion Pump",
+        "Temperature Servo-Control",
+        "Micro-airway Equipment"
+      ],
+      "qualified_staff": "Neonatal Intensivist / NICU Specialized Nurse"
+    },
+    {
+      "ambulance_id": "PVT-AMB-489-PTV",
+      "hospital_id": "narayana_multispeciaity__d29d77",
+      "type": "PTV",
+      "availability_status": "AVAILABLE",
+      "supported_priorities": [
+        "GREEN"
+      ],
+      "ownership": "Private",
+      "provider_name": "Narayana multispeciaity hospital Emergency Fleet",
+      "vehicle_id": "DL-04-EA-0489",
+      "verified_capabilities": [
+        "Patient Stretcher",
+        "Basic First Aid Kit",
+        "Manual Wheelchair Access"
+      ],
+      "qualified_staff": "Trained Transport Driver & Attendant"
+    }
   ]
 }
