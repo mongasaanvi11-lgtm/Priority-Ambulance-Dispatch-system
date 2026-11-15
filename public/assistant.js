@@ -1,13 +1,12 @@
 /**
  * AmbuPriority — ARIA (Ambulance Response Intelligent Assistant)
- * 3D AI Virtual Assistant powered by Three.js
+ * 3D Procedural AI Virtual Assistant powered by Canvas/Three.js
  * 
- * Architecture:
- *  - Three.js WebGL scene with procedurally animated 3D character
- *  - State machine: idle → greeting → thinking → responding → error
- *  - Domain-specific AmbuPriority knowledge base
- *  - Bilingual support (EN/HI) synced with govPortal language state
- *  - Fully self-contained, no server required
+ * Purely Client-Side Form Assistance Engine:
+ *  - 100% Offline / Standalone (No external API or backend calls)
+ *  - Dedicated Expert Guide for All Portal Forms (Registration, Clinical Triage Assessment, Hospital Search)
+ *  - Interactive Hindi / English Language Selector on Initial Greeting ("Namaste! Do you want to continue in Hindi or English?")
+ *  - Deep Domain Knowledge of form fields, mandatory rules, GPS geolocation, dynamic questions, and errors
  */
 
 (function () {
@@ -19,257 +18,159 @@
     const ARIA_CONFIG = {
         name: 'ARIA',
         fullName: 'Ambulance Response Intelligent Assistant',
-        version: '2.0',
-        typingDelay: { min: 50, max: 150 },   // Instant real-time response
-        characterThinkTime: 100,
-        apiBase: '',        // Backend API base URL
+        version: '3.0-FormExpert',
+        typingDelay: { min: 30, max: 80 },
+        characterThinkTime: 60
     };
 
     /* ============================================================
-       KNOWLEDGE BASE — AmbuPriority Domain
+       COMPREHENSIVE FORM KNOWLEDGE BASE (HINDI & ENGLISH)
     ============================================================ */
-    const KB = {
-        en: {
-            greetings: [
-                "Namaste! I'm ARIA, your AmbuPriority assistant. I can help you request an ambulance, understand our emergency services, or navigate the portal. How can I assist you today?",
-                "Welcome to AmbuPriority! I'm ARIA. Whether you need an ambulance, information about our dispatch system, or portal guidance — I'm here to help. What can I do for you?"
-            ],
-            intents: [
-                {
-                    // HINDI FORM HELP
-                    phrases: ['form kaise bhare', 'form bharne me madad', 'form bharna', 'form kaise bharna hai', 'form samjh nahi aa raha', 'form me kya bhare', 'kaise bhare'],
-                    patterns: ['form', 'मदद', 'सहायता', 'भरें', 'फॉर्म'],
-                    response: "एम्बुलेंस पंजीकरण फ़ॉर्म (Registration Form) भरने की चरणबद्ध गाइड:",
-                    followUp: "1. **मरीज का नाम:** मरीज का पूरा कानूनी नाम दर्ज करें।\n2. **उम्र व लिंग:** उम्र (वर्षों में) दर्ज करें और Male/Female/Other चुनें।\n3. **मोबाइल नंबर:** 10 अंकों का सक्रिय मोबाइल नंबर दर्ज करें ताकि पैरामेडिक सीधे संपर्क कर सकें।\n4. **पिकअप का पता:** पता टाइप करें या **\"Use My Current Location\"** बटन दबाएं (जीपीएस से पता अपने आप भर जाएगा)।\n5. **लैंडमार्क (ऐच्छिक):** कोई नजदीकी प्रसिद्ध जगह लिखें (जैसे: मेट्रो पिलर 142 के पास, सिटी मॉल के सामने)।\n6. **आवेदक का नाम व संबंध:** अपना नाम लिखें और मरीज से संबंध (स्वयं, माता/पिता, भाई आदि) चुनें।\n\nसब भरने के बाद नीचे **\"Request Ambulance\"** बटन दबाएं!",
-                    suggestions: ['अनिवार्य फ़ील्ड कौन सी हैं?', 'जीपीएस का उपयोग कैसे करें?', 'लैंडमार्क क्या लिखें?'],
-                    priority: 11
-                },
-                {
-                    // HINDI MANDATORY FIELDS
-                    phrases: ['anivarya field', 'zaruri field', 'kya bharna zaruri hai', 'konsi field zaruri hai'],
-                    patterns: ['जरूरी', 'अनिवार्य'],
-                    response: "फॉर्म में लाल तारे (*) वाली ये फ़ील्ड भरना अनिवार्य है:",
-                    followUp: "• **मरीज का नाम**\n• **उम्र**\n• **लिंग (Gender)**\n• **मोबाइल नंबर**\n• **पिकअप का पूरा पता**\n• **अनुरोधकर्ता का नाम व मरीज से संबंध**\n\n(वैकल्पिक: वैकल्पिक मोबाइल नंबर और लैंडमार्क)",
-                    suggestions: ['फॉर्म कैसे भरें?', 'जीपीएस का उपयोग कैसे करें?'],
-                    priority: 11
-                },
-                {
-                    // HINDI GPS HELP
-                    phrases: ['gps kaise use kare', 'location kaise daale', 'location nahi aa rahi', 'gps kaam nahi kar raha'],
-                    patterns: ['लोकेशन', 'जीपीएस'],
-                    response: "अपने वर्तमान स्थान (GPS) का उपयोग करने का तरीका:",
-                    followUp: "1. फॉर्म में **\"Use My Current Location\"** बटन पर क्लिक करें।\n2. आपका ब्राउज़र लोकेशन परमिशन मांगेगा — **\"Allow\"** या **\"अनुमति दें\"** पर क्लिक करें।\n3. सिस्टम उपग्रह जीपीएस से सटीक अक्षांश-देशांतर लॉक करके आपका पता अपने आप फ़ील्ड में भर देगा।\n\n**टिप:** यदि आप कमरे के अंदर हैं तो बालकनी या खिड़की के पास से जीपीएस बेहतर काम करता है।",
-                    suggestions: ['फॉर्म कैसे भरें?', 'लैंडमार्क क्या लिखें?'],
-                    priority: 11
-                },
-                {
-                    // HINDI LANDMARK HELP
-                    phrases: ['landmark kya likhe', 'landmark me kya aayega', 'landmark ka matlab'],
-                    patterns: ['लैंडमार्क'],
-                    response: "लैंडमार्क (Landmark) का मतलब है आपके घर के पास की प्रसिद्ध पहचान:",
-                    followUp: "जैसे:\n• \"मेट्रो पिलर नंबर 142 के सामने\"\n• \"एसबीआई बैंक के पास, मेन रोड\"\n• \"हनुमान मंदिर के पीछे\"\n• \"रिलायंस फ्रेश के बगल में\"\n\nइससे एम्बुलेंस ड्राइवर को बिना समय गंवाए आप तक पहुंचने में बहुत आसानी होती है।",
-                    suggestions: ['फॉर्म कैसे भरें?'],
-                    priority: 11
-                },
-                {
-                    // GENERAL HELP — catches generic "help", "assist" etc. before ambulance
-                    phrases: ['help me', 'what can you do', 'how to use', 'i need help', 'please help', 'help please', 'how does this work'],
-                    patterns: ['help', 'assist', 'guide', 'options', 'menu'],
-                    response: "I can help you with the following:",
-                    followUp: "1. 🚑 **Ambulance Request** — How to call or register for an ambulance\n2. 📋 **Form Filling Guide** — Step-by-step help filling the registration form\n3. 📍 **GPS Location** — Auto-detect your address using GPS\n4. 📞 **Emergency Helplines** — Dial 102 / 108 / 112 (toll-free)\n5. ℹ️ **About AmbuPriority** — System features and documentation\n\nJust ask about any of these topics!",
-                    suggestions: ['Form Filling Help', 'Request Ambulance', 'Emergency Numbers', 'GPS Location Help'],
-                    priority: 0 // lowest — only wins if nothing more specific matches
-                },
-                {
-                    // FORM FILLING — must win for "help in form filling", "how to fill", etc.
-                    phrases: ['form filling', 'fill form', 'help fill', 'help in form', 'how to fill', 'form help', 'fill the form', 'filling form', 'help me fill', 'form guide', 'step by step', 'how do i register', 'how to register', 'registration help', 'help with registration', 'what to enter', 'what should i fill', 'guide me'],
-                    patterns: ['register', 'registration', 'patient', 'form', 'fill', 'filling', 'step', 'instructions', 'field', 'submit'],
-                    response: "Here's how to fill the Patient Registration Form:",
-                    followUp: "**Step 1 — Patient Details:**\n• **Full Name** — Enter patient's full name\n• **Age** — Enter age in years\n• **Gender** — Select from dropdown\n\n**Step 2 — Contact Information:**\n• **Mobile Number** — 10-digit number (required)\n• **Alternate Number** — Optional backup contact\n\n**Step 3 — Pickup Address:**\n• Type your address OR click **\"Use My Current Location\"** for GPS\n• **Landmark** — Nearby landmark (optional but helpful)\n\n**Step 4 — Requestor Details:**\n• **Your Name** — Person requesting the ambulance\n• **Relationship** — Your relationship to the patient\n\nClick **Submit Emergency Registration** when done. You'll receive a reference number (NAS-XXXX).",
-                    suggestions: ['What Fields are Mandatory?', 'GPS Location Help', 'What is Landmark?'],
-                    priority: 10
-                },
-                {
-                    // MANDATORY FIELDS
-                    phrases: ['mandatory fields', 'required fields', 'which fields', 'compulsory', 'what is required', 'fields are required'],
-                    patterns: ['mandatory', 'required', 'compulsory', 'star', 'asterisk'],
-                    response: "The following fields are mandatory (marked with *):",
-                    followUp: "• **Patient Name** — Full name of the patient\n• **Age** — Age in years\n• **Gender** — Select Male / Female / Other\n• **Mobile Number** — 10-digit contact number\n• **Complete Address** — Pickup location\n• **Requesting Person** — Who is making the request\n• **Relationship** — Relation to patient\n\nOptional fields: Alternate Mobile, Landmark",
-                    suggestions: ['Form Filling Help', 'GPS Location Help'],
-                    priority: 10
-                },
-                {
-                    // LANDMARK
-                    phrases: ['what is landmark', 'landmark field', 'landmark meaning', 'what to write in landmark', 'nearby landmark'],
-                    patterns: ['landmark'],
-                    response: "The Landmark field helps the ambulance driver find you faster:",
-                    followUp: "Enter a well-known nearby reference point, for example:\n• \"Near Metro Pillar 142\"\n• \"Opposite SBI Bank, Main Road\"\n• \"Behind Shiv Mandir\"\n• \"Next to Reliance Mall\"\n\nThis field is **optional** but highly recommended — it helps the driver reach you quickly.",
-                    suggestions: ['Form Filling Help'],
-                    priority: 10
-                },
-                {
-                    // RELATIONSHIP FIELD
-                    phrases: ['what is relationship', 'relationship field', 'relationship dropdown', 'who is requesting'],
-                    patterns: ['relationship', 'requestor', 'requesting person', 'who is calling'],
-                    response: "The Relationship field identifies who is requesting the ambulance:",
-                    followUp: "Select your relationship to the patient:\n• **Self** — You are the patient\n• **Family Member** — Parent, sibling, spouse, child\n• **Friend / Neighbour** — Known to the patient\n• **Bystander** — Witness / passerby helping\n• **Other** — Any other relationship\n\nThis helps the dispatch team verify and coordinate.",
-                    suggestions: ['Form Filling Help'],
-                    priority: 10
-                },
-                {
-                    // REFERENCE / NAS NUMBER
-                    phrases: ['reference number', 'nas number', 'tracking number', 'acknowledgment', 'registration id', 'what is nas'],
-                    patterns: ['reference', 'nas', 'tracking', 'acknowledgment', 'ack'],
-                    response: "After submitting the form, you receive a Reference Number:",
-                    followUp: "Format: **NAS-YEAR-XXXXXX** (e.g., NAS-2026-483921)\n\nThis number can be used to:\n• Track your ambulance request status\n• Communicate with the dispatch centre\n• Reference in follow-up calls to 102/108\n\nPlease save this number — it appears on screen after successful submission.",
-                    suggestions: ['Form Filling Help', 'Emergency Numbers'],
-                    priority: 10
-                },
-                {
-                    // RESET FORM
-                    phrases: ['reset form', 'clear form', 'start over', 'cancel registration', 'cancel form'],
-                    patterns: ['reset', 'clear', 'cancel', 'start over'],
-                    response: "To reset or clear the registration form:",
-                    followUp: "Click the **Reset Form** button at the bottom of the registration page. This will:\n• Clear all entered data\n• Remove the acknowledgment card\n• Scroll back to the top\n\nNote: If you've already submitted, your previous registration is saved. Resetting only clears the current form.",
-                    suggestions: ['Form Filling Help'],
-                    priority: 5
-                },
-                {
-                    // AMBULANCE REQUEST — requires more specific phrases now
-                    phrases: ['call ambulance', 'book ambulance', 'need ambulance', 'request ambulance', 'send ambulance', 'want ambulance', 'ambulance chahiye', 'emergency ambulance', 'urgent ambulance'],
-                    patterns: ['ambulance'],
-                    response: "To request an ambulance immediately:",
-                    followUp: "1. Click **Call for Ambulance** at the top of this page, OR\n2. Dial **102** (National Ambulance) or **108** (State EMS) or **112** (Universal Emergency)\n\nPlease provide the patient's name, address, and contact number. Our GPS dispatch system will assign the nearest unit.",
-                    suggestions: ['Register Patient', 'Call 102', 'Call 108'],
-                    isEmergency: true,
-                    priority: 8
-                },
-                {
-                    // EMERGENCY — only for true emergency keywords
-                    phrases: ['i have an emergency', 'someone is dying', 'accident happened', 'medical emergency', 'heart attack', 'bleeding', 'unconscious', 'serious injury'],
-                    patterns: ['emergency', 'dying', 'accident', 'attack', 'unconscious', 'bleeding', 'critical', 'serious'],
-                    response: "🚨 This sounds like a medical emergency!",
-                    followUp: "**CALL IMMEDIATELY:**\n📞 **112** — Universal Emergency Number\n📞 **102** — National Ambulance Service\n📞 **108** — Emergency Medical Services\n\nAll numbers are toll-free, 24×7, from any phone.\n\nWhile waiting:\n• Keep the patient still and calm\n• Do not move them if there's a spinal injury\n• Apply pressure to any bleeding wounds\n• Note the exact location for the dispatcher",
-                    suggestions: ['Call 102', 'Call 108'],
-                    isEmergency: true,
-                    priority: 9
-                },
-                {
-                    phrases: ['gps location', 'use my location', 'current location', 'detect location', 'auto detect address', 'use gps', 'location button', 'how to use gps', 'gps help', 'location help', 'how to use location'],
-                    patterns: ['gps', 'location', 'detect', 'current location', 'where am i', 'address'],
-                    response: "Our smart location system can automatically detect your address:",
-                    followUp: "On the registration form, click **\"Use My Current Location\"**. Your browser will request GPS permission — allow it, and your address will be filled automatically.\n\nThis uses the browser's built-in GPS sensor. No special app is required.\n\n**Tip:** For best accuracy, use the GPS feature outdoors or near a window.",
-                    suggestions: ['Open Registration Form'],
-                    priority: 5
-                },
-                {
-                    phrases: ['emergency numbers', 'helpline numbers', 'phone numbers', 'which number to call', 'ambulance number'],
-                    patterns: ['helpline', 'number', 'phone', 'hotline', '102', '108', '112'],
-                    response: "National Emergency Helplines (Toll-Free, 24×7):",
-                    followUp: "📞 **102** — National Ambulance Service (NAS)\n📞 **108** — Emergency Medical Services (EMS)\n📞 **112** — Universal Emergency (Police/Fire/Medical)\n\nAll numbers are free from any phone, any network, anytime.",
-                    suggestions: ['Request Ambulance Online', 'Registration Form'],
-                    priority: 5
-                },
-                {
-                    phrases: ['how long', 'arrival time', 'response time', 'how fast', 'how many minutes', 'when will ambulance come'],
-                    patterns: ['time', 'arrival', 'long', 'wait', 'eta', 'fast', 'quick', 'minutes'],
-                    response: "AmbuPriority's average response time:",
-                    followUp: "⏱ **Average: 6.8 minutes** in covered metropolitan areas\n\nOur system uses:\n• Real-time GPS routing to the nearest idle unit\n• Traffic signal preemption (green corridors)\n• Pre-alert to destination hospital ICU\n\nResponse times vary based on location and traffic conditions.",
-                    suggestions: ['How it Works', 'Request Ambulance'],
-                    priority: 5
-                },
-                {
-                    phrases: ['hospital integration', 'which hospitals', 'hospital list', 'icu bed'],
-                    patterns: ['hospital', 'icu', 'bed', 'trauma', 'facility'],
-                    response: "AmbuPriority integrates with 48+ hospitals across India:",
-                    followUp: "Our system automatically:\n• Pre-alerts destination trauma centres\n• Transmits patient vitals via FHIR-compliant API\n• Reserves ICU/emergency bay before arrival\n\nThis eliminates critical delays at the emergency entrance.",
-                    suggestions: ['View Documentation', 'Request Ambulance'],
-                    priority: 5
-                },
-                {
-                    phrases: ['green corridor', 'signal preemption', 'traffic signals', 'smart signal'],
-                    patterns: ['signal', 'traffic', 'green', 'corridor', 'preemption'],
-                    response: "Smart Signal Preemption — a core AmbuPriority feature:",
-                    followUp: "When an ambulance is dispatched, our RF signal system turns traffic signals GREEN on the route — up to 500m ahead of the vehicle.\n\nThis system is operational at **120+ major junctions** across covered cities.",
-                    suggestions: ['View Documentation'],
-                    priority: 5
-                },
-                {
-                    phrases: ['dark mode', 'light mode', 'switch theme', 'change theme', 'night mode'],
-                    patterns: ['dark', 'theme', 'mode', 'color'],
-                    response: "To switch between Light and Dark mode:",
-                    followUp: "Click the **🌙 Dark Mode** button in the top utility bar (blue bar at the very top of the page). Your preference is saved automatically.",
-                    suggestions: [],
-                    priority: 3
-                },
-                {
-                    phrases: ['switch to hindi', 'hindi me', 'change language', 'bhasha'],
-                    patterns: ['hindi', 'हिंदी', 'language', 'भाषा', 'translate'],
-                    response: "AmbuPriority supports Hindi and English:",
-                    followUp: "Click the **हिंदी** button in the top utility bar to switch the entire portal to Hindi. Click again to return to English.",
-                    suggestions: [],
-                    priority: 3
-                },
-                {
-                    phrases: ['ais 125', 'compliance', 'certification', 'standards'],
-                    patterns: ['ais', '125', 'standard', 'compliant', 'certification', 'iso'],
-                    response: "AmbuPriority complies with multiple national standards:",
-                    followUp: "• **AIS-125** — Ambulance construction & equipment\n• **GIGW 3.0** — Government web portal standards\n• **HL7 FHIR R4** — Health data exchange\n• **DPDPA 2023** — Data privacy\n• **ISO 9001:2015** — Quality management\n\nSee the Documentation page for full details.",
-                    suggestions: ['View Documentation'],
-                    priority: 5
-                },
-                {
-                    phrases: ['is my data safe', 'data security', 'privacy policy', 'personal data'],
-                    patterns: ['safe', 'secure', 'privacy', 'data', 'personal'],
-                    response: "Your data is protected under India's digital framework:",
-                    followUp: "• All data protected under **DPDPA 2023**\n• TLS 1.3 encrypted transmission\n• No login required for emergency registration\n• Data processed on government (NIC) infrastructure\n• Registration data used solely for dispatch",
-                    suggestions: [],
-                    priority: 5
-                },
-                {
-                    phrases: ['what is ambupriority', 'about this portal', 'about ambupriority', 'what does this do', 'tell me about'],
-                    patterns: ['about', 'ambupriority', 'explain', 'system', 'portal'],
-                    response: "AmbuPriority is India's National Emergency Ambulance Priority System:",
-                    followUp: "It connects three systems in real-time:\n1. **GPS Ambulances** — nearest unit dispatch\n2. **Smart Traffic Signals** — green corridor creation\n3. **Hospital ICU dashboards** — pre-arrival alerts\n\nOperated by the National Health Authority under the Ministry of Health & Family Welfare.",
-                    suggestions: ['Request Ambulance', 'View Documentation', 'Emergency Numbers'],
-                    priority: 3
-                },
-                {
-                    // GREETINGS
-                    phrases: ['hi', 'hello', 'hey', 'namaste', 'good morning', 'good evening', 'good afternoon', 'hii', 'hiii'],
-                    patterns: ['hi', 'hello', 'hey', 'namaste'],
-                    response: "Namaste! 🙏 Welcome to AmbuPriority.",
-                    followUp: "I'm ARIA, your emergency services assistant. I can help you with:\n\n🚑 Request an ambulance\n📋 Guide you through form filling\n📍 Help with GPS location\n📞 Share emergency helplines\n\nWhat would you like help with?",
-                    suggestions: ['Request Ambulance', 'Form Filling Help', 'Emergency Numbers', 'GPS Location Help'],
-                    priority: 2
-                },
-                {
-                    // THANKS
-                    phrases: ['thank you', 'thanks', 'dhanyavaad', 'shukriya', 'thank u'],
-                    patterns: ['thank', 'thanks', 'dhanyavaad', 'shukriya'],
-                    response: "You're welcome! 🙏",
-                    followUp: "I'm always here to help. If you need anything else — ambulance request, form guidance, or emergency helplines — just ask.\n\nStay safe!",
-                    suggestions: ['Request Ambulance', 'Emergency Numbers'],
-                    priority: 2
-                }
-            ],
-            fallback: [
-                "I'm designed to assist with AmbuPriority emergency services. Could you rephrase your question? You can ask about requesting an ambulance, our system features, emergency helplines, or portal navigation.",
-                "I didn't quite catch that. I can help with ambulance registration, emergency helplines (102/108/112), our dispatch system, or portal guidance. What would you like to know?"
-            ],
-            hiName: 'ARIA (एरिया)',
-        },
+    const FORM_KNOWLEDGE = {
         hi: {
-            greetings: [
-                "नमस्ते! मैं ARIA हूं, आपकी AmbuPriority सहायक। मैं आपको एम्बुलेंस बुलाने, हमारी सेवाओं के बारे में जानकारी देने या पोर्टल में मदद करने के लिए यहाँ हूं। आज मैं आपकी कैसे सहायता कर सकती हूं?",
-            ],
-            fallback: [
-                "मैं AmbuPriority की आपातकालीन सेवाओं के बारे में सहायता के लिए यहाँ हूं। कृपया एम्बुलेंस अनुरोध, हेल्पलाइन नंबर, या सिस्टम के बारे में पूछें।"
-            ]
+            greeting: "नमस्ते! 🙏 मैं **ARIA (एरिया)** हूँ, आपकी AmbuPriority सहायक।\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
+            greetingChips: ["हिंदी (Hindi)", "English", "फॉर्म कैसे भरें?", "कौन सा फॉर्म भरें?"],
+            
+            whichForm: {
+                title: "AmbuPriority पोर्टल पर मुख्य रूप से 3 फॉर्म उपलब्ध हैं:",
+                body: "1. 📝 **एम्बुलेंस पंजीकरण फ़ॉर्म (Registration Form - register.html):**\n• जब किसी मरीज के लिए तत्काल सरकारी/प्राइवेट एम्बुलेंस बुलानी हो।\n• इसमें मरीज का नाम, पता, संपर्क नंबर और GPS लोकेशन भरी जाती है।\n\n2. 🩺 **क्लिनिकल असेसमेंट / ट्रायज फ़ॉर्म (Clinical Assessment - assessment.html):**\n• मरीज की स्वास्थ्य स्थिति और लक्षणों (सीने में दर्द, सांस लेने में तकलीफ, स्ट्रोक आदि) का मूल्यांकन करने के लिए।\n• इससे सिस्टम तय करता है कि ALS (Advanced Life Support) चाहिए या BLS।\n\n3. 🔍 **अस्पताल खोज फ़ॉर्म (Hospital Search - hospitals.html):**\n• नजदीकी पैनल (आयुष्मान PM-JAY, CGHS, ECHS, बीमा) और आपातकालीन बेड खोजने के लिए।\n\n👉 आपको इनमें से किस फॉर्म के बारे में जानकारी चाहिए?",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स कौन सी हैं?", "GPS लोकेशन कैसे डालें?"]
+            },
+            
+            registrationGuide: {
+                title: "🚑 एम्बुलेंस पंजीकरण फ़ॉर्म (Registration Form) भरने की पूरी प्रक्रिया:",
+                body: "**भाग 1 — मरीज की जानकारी (Patient Information):**\n• **मरीज का पूरा नाम (*):** मरीज का कानूनी नाम लिखें।\n• **उम्र (*):** मरीज की उम्र (वर्षों में) दर्ज करें (जैसे: 45)।\n• **लिंग (*):** Male (पुरुष), Female (महिला) या Other चुनें।\n\n**भाग 2 — संपर्क नंबर (Emergency Contact):**\n• **मोबाइल नंबर (*):** 10 अंकों का सक्रिय मोबाइल नंबर डालें ताकि ड्राइवर व पैरामेडिक संपर्क कर सकें।\n• **वैकल्पिक नंबर:** दूसरा फोन नंबर (यदि उपलब्ध हो)।\n\n**भाग 3 — पिकअप का पता (Pickup Location & GeoTagging):**\n• **\"Use My Current Location\"** बटन दबाएं — यह उपग्रह GPS से आपका सटीक पता और अक्षांश-देशांतर लॉक कर देगा।\n• **पूरा पता (*):** मकान नंबर, गली या इलाका लिखें।\n• **लैंडमार्क (पहचान):** पास का प्रसिद्ध स्थान (जैसे: मेट्रो पिलर 142 के पास, हनुमान मंदिर के सामने)।\n\n**भाग 4 — आवेदक का विवरण (Requestor Information):**\n• **आपका नाम (*):** जो व्यक्ति एम्बुलेंस बुला रहा है।\n• **मरीज से संबंध (*):** स्वयं (Self), परिवार (Family), पड़ोसी (Neighbour) आदि चुनें।\n\nसब भरने के बाद नीचे लाल बटन **\"Request Ambulance\"** पर क्लिक करें। आपको **NAS-XXXXXX** रेफरेंस नंबर मिलेगा!",
+                chips: ["अनिवार्य फ़ील्ड्स (*)", "GPS कैसे काम करता है?", "असेसमेंट फॉर्म कैसे भरें?", "रजिस्ट्रेशन फॉर्म खोलें"]
+            },
+            
+            assessmentGuide: {
+                title: "🩺 क्लिनिकल ट्रायज असेसमेंट फ़ॉर्म (Clinical Assessment) भरने की गाइड:",
+                body: "यह फॉर्म मरीज की गंभीरता का स्तर (Priority Tier) निर्धारित करता है:\n\n**1. मुख्य आपातकालीन श्रेणी (Chief Complaint Category *):**\n• Cardiac / Chest Pain (सीने में दर्द या दिल का दौरा)\n• Severe Breathing (सांस लेने में भारी तकलीफ या अस्थमा)\n• Stroke Signs / Paralysis (चेहरा लटकना, हाथ कमजोर होना)\n• Trauma / Accident (सड़क दुर्घटना, गंभीर चोट)\n• अन्य आपातकालीन विकल्प ड्रॉपडाउन से चुनें।\n\n**2. शुरुआत का समय (Onset & Duration *):**\n• यह समस्या कब शुरू हुई (15 मिनट के अंदर, 1-6 घंटे पहले आदि)।\n\n**3. संबंधित लक्षण (Associated Symptoms):**\n• पसीना आना, चक्कर आना, उल्टी, होंठ नीले पड़ना (चेकबॉक्स चुनें)।\n\n**4. चेतना का स्तर (AVPU Mental Status *):**\n• Alert (पूरी तरह होश में)\n• Voice (आवाज देने पर प्रतिक्रिया)\n• Pain (दर्द पर प्रतिक्रिया)\n• Unresponsive (बेहोश — उच्चतम प्राथमिकता RED Tier-1)।\n\n**5. वाइटल साइन्स (वैकल्पिक):**\n• यदि पल्स या बीपी नापा हुआ हो तो भरें, अन्यथा खाली छोड़ दें।\n\nसबमिट करने पर सिस्टम तुरंत उचित एम्बुलेंस और अस्पताल असाइन करता है!",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "AVPU क्या होता है?", "हार्ट अटैक के लक्षण?", "असेसमेंट फॉर्म खोलें"]
+            },
+            
+            mandatoryFields: {
+                title: "📌 फ़ॉर्म में अनिवार्य (Mandatory *) फ़ील्ड्स की सूची:",
+                body: "जिन फ़ील्ड्स के आगे लाल तारा (*) बना है, उन्हें भरना अनिवार्य है:\n\n**पंजीकरण फॉर्म में:**\n1. मरीज का पूरा नाम (Patient Full Name)\n2. मरीज की उम्र (Patient Age)\n3. मरीज का लिंग (Gender)\n4. 10 अंकों का सक्रिय मोबाइल नंबर\n5. पिकअप का पूरा पता (Complete Address)\n6. अनुरोधकर्ता का नाम व मरीज से संबंध (Relationship)\n\n*(वैकल्पिक: दूसरा फोन नंबर और लैंडमार्क)*\n\n**असेसमेंट फॉर्म में:**\n1. मुख्य आपातकाल श्रेणी (Chief Complaint)\n2. शुरुआत का समय (Onset & Duration)\n3. चेतना का स्तर (AVPU Consciousness Status)",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "GPS लोकेशन कैसे डालें?", "फॉर्म सबमिट नहीं हो रहा"]
+            },
+            
+            gpsHelp: {
+                title: "📍 GPS ऑटो-लोकेशन का उपयोग कैसे करें:",
+                body: "1. फॉर्म में **\"Use My Current Location\"** बटन पर क्लिक करें।\n2. आपका ब्राउज़र लोकेशन परमिशन मांगेगा — **\"Allow\" (अनुमति दें)** पर क्लिक करें।\n3. सिस्टम तुरंत उपग्रह GPS से सटीक अक्षांश (Latitude) व देशांतर (Longitude) लॉक करके आपका पता अपने आप भर देगा।\n\n💡 **महत्वपूर्ण टिप्स:**\n• यदि आप घर के अंदर हैं तो बालकनी या खिड़की के पास जाएं।\n• फोन या कंप्यूटर में Location / GPS ऑन रखें।\n• यदि GPS काम न करे, तो हाथ से मैन्युअल पता और लैंडमार्क टाइप कर दें।",
+                chips: ["लैंडमार्क क्या लिखें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स"]
+            },
+            
+            landmarkHelp: {
+                title: "🏛️ लैंडमार्क (Landmark) फ़ील्ड में क्या लिखें?",
+                body: "लैंडमार्क का अर्थ है आपके घर या घटना स्थल के पास की कोई प्रसिद्ध पहचान:\n\n**उदाहरण:**\n• \"मेट्रो पिलर नंबर 142 के सामने\"\n• \"एसबीआई बैंक के पास, मेन मार्केट रोड\"\n• \"हनुमान मंदिर के ठीक पीछे\"\n• \"रिलायंस फ्रेश मॉल के बगल में\"\n\nइससे एम्बुलेंस चालक को गली या कॉलोनी में बिना समय गंवाए आप तक पहुंचने में सबसे ज्यादा आसानी होती है।",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स"]
+            },
+            
+            avpuHelp: {
+                title: "🧠 AVPU स्केल का क्या अर्थ है?",
+                body: "AVPU मरीज की मानसिक चेतना को जांचने का अंतरराष्ट्रीय पैमाना है:\n\n• **A (Alert):** मरीज पूरी तरह होश में है और सामान्य बातचीत कर रहा है।\n• **V (Voice):** मरीज आवाज देने पर आंखें खोलता है या जवाब देता है।\n• **P (Pain):** मरीज केवल चुटकी काटने या दर्द देने पर हरकत करता है।\n• **U (Unresponsive):** मरीज बिल्कुल बेहोश है और कोई हरकत नहीं कर रहा (अति गंभीर - Red Tier-1 Immediate Dispatch)।",
+                chips: ["असेसमेंट फॉर्म कैसे भरें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?"]
+            },
+            
+            referenceHelp: {
+                title: "🔢 NAS रेफरेंस नंबर और पावती (Acknowledgment):",
+                body: "फॉर्म सफलतापूर्वक सबमिट करने के बाद आपको एक संदर्भ संख्या मिलती है:\n\n• प्रारूप: **NAS-2026-XXXXXX**\n• इसका उपयोग एम्बुलेंस की लाइव लोकेशन ट्रैक करने और आपातकालीन कॉल (102/108/112) में संदर्भ देने के लिए किया जाता है।\n• कृपया सबमिट करने के बाद स्क्रीन पर आए इस नंबर को नोट कर लें!",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "हेल्पलाइन नंबर"]
+            },
+            
+            formErrors: {
+                title: "⚠️ यदि फ़ॉर्म सबमिट न हो रहा हो तो क्या करें?",
+                body: "1. जांचें कि क्या कोई लाल तारे (*) वाली अनिवार्य फ़ील्ड खाली तो नहीं रह गई।\n2. मोबाइल नंबर पूरे 10 अंकों का होना चाहिए।\n3. उम्र 0 से 125 के बीच होनी चाहिए।\n4. यदि GPS नहीं चल रहा तो मैन्युअल पता टाइप करें।\n5. किसी भी तकनीकी समस्या की स्थिति में सीधे **102** या **108** या **112** पर कॉल करें!",
+                chips: ["अनिवार्य फ़ील्ड्स", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "हेल्पलाइन नंबर"]
+            },
+            
+            resetHelp: {
+                title: "🔄 फ़ॉर्म रीसेट / खाली कैसे करें?",
+                body: "फॉर्म के नीचे **\"Reset Form\"** बटन दिया गया है।\nउस पर क्लिक करते ही फॉर्म की सभी फ़ील्ड्स खाली हो जाएंगी और आप नए सिरे से जानकारी भर सकते हैं।",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?"]
+            },
+            
+            helpline: {
+                title: "📞 24×7 राष्ट्रीय आपातकालीन हेल्पलाइन नंबर:",
+                body: "• **112** — सार्वभौमिक आपातकालीन नंबर (पुलिस, फायर, मेडिकल)\n• **102** — राष्ट्रीय एम्बुलेंस सेवा (National Ambulance Service)\n• **108** — आपातकालीन चिकित्सा व आपदा प्रतिक्रिया\n\nसभी नंबर किसी भी फोन से बिल्कुल निःशुल्क (Toll-Free) हैं।",
+                chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?"]
+            }
+        },
+
+        en: {
+            greeting: "Namaste! 🙏 I am **ARIA**, your AmbuPriority Virtual Assistant.\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
+            greetingChips: ["English", "हिंदी (Hindi)", "How to fill form?", "Which form to fill?"],
+            
+            whichForm: {
+                title: "There are 3 main forms available on AmbuPriority:",
+                body: "1. 📝 **Ambulance Registration Form (register.html):**\n• Use this when you urgently need to call or dispatch an ambulance for a patient.\n• Captures patient identity, 10-digit mobile, pickup address, and GPS coordinates.\n\n2. 🩺 **Clinical Triage Assessment Form (assessment.html):**\n• Evaluates medical urgency (cardiac chest pain, stroke FAST symptoms, trauma, respiratory arrest).\n• Categorizes urgency into RED (Immediate ALS), YELLOW, or GREEN tier.\n\n3. 🔍 **Hospital Search Form (hospitals.html):**\n• Search for empanelled hospitals under Ayushman PM-JAY, CGHS, ECHS, or private insurance.\n\n👉 Which of these forms do you need assistance with?",
+                chips: ["How to fill Registration Form?", "How to fill Assessment Form?", "What fields are mandatory?", "How to use GPS?"]
+            },
+            
+            registrationGuide: {
+                title: "🚑 Step-by-Step Ambulance Registration Form Guide:",
+                body: "**Section 1 — Patient Information:**\n• **Patient Full Name (*):** Enter patient's full legal name.\n• **Age (*):** Enter age in years (e.g., 45).\n• **Gender (*):** Select Male, Female, or Other.\n\n**Section 2 — Contact Numbers:**\n• **Mobile Number (*):** Active 10-digit phone number for paramedic & driver contact.\n• **Alternate Mobile:** Secondary contact number (optional).\n\n**Section 3 — Pickup Location & GeoTagging:**\n• Click **\"Use My Current Location\"** — Locks GPS coordinates & auto-fills address.\n• **Complete Address (*):** House/Flat no., street, colony or sector.\n• **Landmark (Optional):** Prominent nearby landmark (e.g., near Metro Pillar 142).\n\n**Section 4 — Requestor Information:**\n• **Requestor Name (*):** Name of person requesting the ambulance.\n• **Relationship (*):** Select Self, Family Member, Neighbour, Bystander, etc.\n\nOnce done, click **\"Request Ambulance\"**. You will receive a **NAS-XXXXXX** tracking reference number!",
+                chips: ["Mandatory Fields (*)", "GPS Geolocation Help", "Assessment Form Guide", "Open Registration Form"]
+            },
+            
+            assessmentGuide: {
+                title: "🩺 Clinical Triage Assessment Form Step-by-Step Guide:",
+                body: "This form determines clinical urgency and ambulance dispatch priority:\n\n**1. Chief Complaint Category (*):**\n• Cardiac / Chest Pain / Heart Condition\n• Severe Breathing Difficulty / Asthma\n• Stroke Signs / Paralysis / FAST signs\n• Road Traffic Accident / Major Trauma\n• Burns, Seizures, Pregnancy, or Other acute emergencies.\n\n**2. Onset & Duration (*):**\n• When did symptoms begin (<15 mins, 15-60 mins, 1-6 hours, days).\n\n**3. Associated Symptoms (Checkboxes):**\n• Profuse sweating, vomiting, dizziness, cold clammy skin, bluish lips.\n\n**4. Mental Status / AVPU (*):**\n• Alert (Conscious & responsive)\n• Voice (Responds to verbal stimulus)\n• Pain (Responds only to physical pain)\n• Unresponsive (Comatose / unconscious — Immediate RED Tier-1).\n\n**5. Vital Signs (Optional):**\n• Pulse, Blood Pressure, SpO2, Blood Sugar (Leave blank if not measured).\n\nSubmitting instantly routes the case to the appropriate emergency hospital!",
+                chips: ["How to fill Registration Form?", "What is AVPU?", "Heart attack symptoms?", "Open Assessment Form"]
+            },
+            
+            mandatoryFields: {
+                title: "📌 Mandatory Fields (Marked with Red Asterisk *):",
+                body: "Fields with a red asterisk (*) must be filled before submission:\n\n**On Registration Form:**\n1. Patient Full Name\n2. Patient Age (in years)\n3. Gender (Male / Female / Other)\n4. Active 10-digit Mobile Number\n5. Complete Pickup Address\n6. Requestor Name & Relationship to Patient\n\n*(Optional: Alternate Mobile & Landmark)*\n\n**On Clinical Assessment Form:**\n1. Chief Complaint Category\n2. Onset & Duration\n3. AVPU Consciousness Status",
+                chips: ["Registration Form Guide", "How to use GPS?", "Troubleshoot Form Submission"]
+            },
+            
+            gpsHelp: {
+                title: "📍 How to Use Auto-GPS Geolocation:",
+                body: "1. Click the **\"Use My Current Location\"** button on the registration form.\n2. When prompted by your browser, click **\"Allow\"** for location access.\n3. The system locks your satellite GPS coordinates and automatically populates your street address.\n\n💡 **Tips for GPS Accuracy:**\n• If indoors, move near a balcony or window.\n• Ensure location/GPS services are toggled ON in your device settings.\n• If GPS is unavailable, you can manually type your full address and nearest landmark.",
+                chips: ["What is Landmark?", "Registration Form Guide", "Mandatory Fields"]
+            },
+            
+            landmarkHelp: {
+                title: "🏛️ What Should I Enter in the Landmark Field?",
+                body: "A landmark is a prominent, well-known spot close to your pickup location:\n\n**Examples:**\n• \"Opposite Metro Pillar No. 142\"\n• \"Near SBI Bank ATM, Main Market\"\n• \"Behind Shiv Temple\"\n• \"Next to City Mall Gate No. 2\"\n\nThis field is optional but helps the ambulance pilot find your exact location without delay.",
+                chips: ["Registration Form Guide", "Mandatory Fields"]
+            },
+            
+            avpuHelp: {
+                title: "🧠 Understanding the AVPU Consciousness Scale:",
+                body: "AVPU is the international standard to measure conscious state in an emergency:\n\n• **Alert (A):** Fully awake, answers questions, oriented.\n• **Voice (V):** Responds only when spoken or shouted to.\n• **Pain (P):** Responds only to painful stimuli (pinch/sternal rub).\n• **Unresponsive (U):** Completely comatose or unconscious (triggers emergency RED Tier dispatch).",
+                chips: ["Assessment Form Guide", "Registration Form Guide"]
+            },
+            
+            referenceHelp: {
+                title: "🔢 NAS Reference Tracking Number:",
+                body: "Upon submitting the registration form, you receive an acknowledgment reference:\n\n• Format: **NAS-2026-XXXXXX**\n• Use this number to track your ambulance arrival or give to the 102/108 dispatcher during follow-up calls.\n• Please note or screenshot this reference number from the screen.",
+                chips: ["Registration Form Guide", "Emergency Helplines"]
+            },
+            
+            formErrors: {
+                title: "⚠️ Cannot Submit Form? Troubleshooting Checklist:",
+                body: "1. Check that all fields with a red asterisk (*) have valid data.\n2. Ensure the mobile number is exactly 10 digits.\n3. Ensure age is between 0 and 125.\n4. If GPS address didn't load, manually type the address.\n5. For life-threatening emergencies where you cannot type, dial **112** or **102** directly!",
+                chips: ["Mandatory Fields", "Registration Form Guide", "Emergency Helplines"]
+            },
+            
+            resetHelp: {
+                title: "🔄 How to Reset or Clear the Form:",
+                body: "Click the **\"Reset Form\"** button at the bottom of the page.\nThis will clear all entered input fields and allow you to restart fresh.",
+                chips: ["Registration Form Guide"]
+            },
+            
+            helpline: {
+                title: "📞 24×7 National Emergency Helplines:",
+                body: "• **112** — Universal National Emergency Number (Police, Fire, Medical)\n• **102** — National Ambulance Service (NAS)\n• **108** — Emergency Medical & Disaster Relief Services\n\nAll numbers are toll-free and accessible from any phone without recharge balance.",
+                chips: ["Registration Form Guide", "Assessment Form Guide"]
+            }
         }
     };
 
-    /* ============================================================
+/* ============================================================
        THREE.JS 3D CHARACTER RENDERER
     ============================================================ */
     class ARIACharacter3D {
@@ -681,416 +582,200 @@
     // Simple lerp helper
     function lerp(a, b, t) { return a + (b - a) * Math.min(t, 1); }
 
+    // Simple lerp helper
+    function lerp(a, b, t) { return a + (b - a) * Math.min(t, 1); }
+
     /* ============================================================
-       CHAT ENGINE — Augmented with Hospital Panel & Insurance AI
+       FORM-FOCUSED CHAT ENGINE (PURE LOCAL / NO EXTERNAL APIS)
     ============================================================ */
     class ARIAChatEngine {
         constructor() {
-            this.isHindi = false;
-            // Conversation Memory for Panel & Insurance
-            this.sessionPanel = {
-                schemeCode: null,    // 'pmjay', 'cghs', 'echs', 'esic', 'state_govt', 'tpa_insurance'
-                schemeName: null,    // 'Ayushman Bharat PM-JAY', 'CGHS', etc.
-                insurerOrPlan: null, // 'Star Health', 'HDFC ERGO', etc.
-                searchLocation: null // 'Delhi', 'Jaipur', etc.
-            };
-            // AI conversation history (sent to backend for context)
-            this.conversationHistory = [];
+            // Default language is unselected until user chooses, or synced from portal
+            const portalLang = (window.govPortal && window.govPortal.currentLang === 'hi') ? 'hi' : null;
+            this.lang = portalLang || null; // null triggers language choice prompt
         }
 
         getGreeting() {
-            const greets = KB.en.greetings;
-            return greets[Math.floor(Math.random() * greets.length)];
-        }
-
-        // Helper to query the ARIA AI backend (/api/chat via Gemini Flash)
-        async askAI(userMessage) {
-            try {
-                // Get patient location from page if available
-                let lat = null, lon = null, address = '';
-                try {
-                    if (window.patientLat && window.patientLon) {
-                        lat = window.patientLat;
-                        lon = window.patientLon;
-                    }
-                    if (window.patientAddress) address = window.patientAddress;
-                } catch (_) {}
-
-                const payload = {
-                    message: userMessage,
-                    session: this.conversationHistory.slice(-10), // Last 10 turns
-                    lat: lat,
-                    lon: lon,
-                    address: address
-                };
-
-                const resp = await fetch(`${ARIA_CONFIG.apiBase}/api/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: AbortSignal.timeout(18000) // 18 second timeout
-                });
-
-                if (!resp.ok) return null;
-                const data = await resp.json();
-
-                // If backend encountered an AI error, let frontend fall back to verified local panel logic
-                if (data.source === 'error' || data.model === 'all_failed') {
-                    return null;
-                }
-
-                if (data.reply) {
-                    // Update conversation history
-                    this.conversationHistory.push({ role: 'user', content: userMessage });
-                    this.conversationHistory.push({ role: 'assistant', content: data.reply });
-                    // Keep last 20 entries (10 turns)
-                    if (this.conversationHistory.length > 20) {
-                        this.conversationHistory = this.conversationHistory.slice(-20);
-                    }
-                    return data.reply;
-                }
-                return null;
-            } catch (err) {
-                console.warn('ARIA AI backend unavailable:', err.message);
-                return null;
-            }
-        }
-
-        // Helper to query backend hospital discovery and panel data
-        async fetchHospitalsForPanel(locationQuery, panelCode) {
-            try {
-                // If specific location mentioned, use search endpoint; otherwise nearby
-                let url;
-                let postBody = null;
-                if (locationQuery && locationQuery.trim()) {
-                    url = `/api/hospitals/search?q=${encodeURIComponent(locationQuery)}&lat=28.5672&lon=77.2100`;
-                    const resp = await fetch(url);
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        return data.hospitals || [];
-                    }
-                } else {
-                    url = '/api/hospitals/nearby';
-                    postBody = {
-                        request_id: 'ARIA-PANEL-LOOKUP',
-                        address: 'AIIMS Delhi',
-                        latitude: 28.5672,
-                        longitude: 77.2100,
-                        radius_km: 15.0
-                    };
-                    const resp = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(postBody)
-                    });
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        return data.hospitals || [];
-                    }
-                }
-            } catch (e) {
-                console.warn('ARIA panel fetch error:', e);
-            }
-            return [];
-        }
-
-        async processPanelQuery(lower, rawText) {
-            // Check if user specifically asked in Devanagari Hindi or Hinglish
-            const isDevanagari = /[\u0900-\u097F]/.test(rawText);
-            const isHinglish = lower.includes('mere paas') || lower.includes('hai') || lower.includes('kya') || lower.includes('kaise') || lower.includes('batao') || lower.includes('kahan');
-            const isEn = !isDevanagari && !isHinglish;
-
-            // 1. Detect City / Location in user message
-            const cities = ['jaipur', 'mumbai', 'delhi', 'chennai', 'kolkata', 'bengaluru', 'bangalore', 'pune', 'hyderabad', 'lucknow', 'chandigarh', 'ahmedabad', 'gurgaon', 'gurugram', 'noida'];
-            for (const c of cities) {
-                if (lower.includes(c)) {
-                    this.sessionPanel.searchLocation = c.charAt(0).toUpperCase() + c.slice(1);
-                    break;
-                }
-            }
-
-            // 2. Identify Health Scheme / Insurance Provider
-            let matchedScheme = null;
-            let schemeDisplayName = null;
-            let insurerName = null;
-
-            if (lower.includes('ayushman') || lower.includes('pmjay') || lower.includes('pm-jay') || lower.includes('pm jay') || lower.includes('golden card') || lower.includes('ayushman card')) {
-                matchedScheme = 'pmjay';
-                schemeDisplayName = 'Ayushman Bharat – PM-JAY';
-            } else if (lower.includes('cghs') || lower.includes('central govt') || lower.includes('central government health')) {
-                matchedScheme = 'cghs';
-                schemeDisplayName = 'CGHS (Central Government Health Scheme)';
-            } else if (lower.includes('echs') || lower.includes('ex-servicemen') || lower.includes('fauji') || lower.includes('defence') || lower.includes('army card')) {
-                matchedScheme = 'echs';
-                schemeDisplayName = 'ECHS (Ex-Servicemen Contributory Health Scheme)';
-            } else if (lower.includes('esic') || lower.includes('esi card') || lower.includes('esi hospital') || lower.includes('peon') || lower.includes('factory insurance')) {
-                matchedScheme = 'esic';
-                schemeDisplayName = 'ESIC (Employees State Insurance Corporation)';
-            } else if (lower.includes('rghs') || lower.includes('mjpjay') || lower.includes('aarogyasri') || lower.includes('swasthya sathi') || lower.includes('state govt') || lower.includes('state scheme')) {
-                matchedScheme = 'state_govt';
-                schemeDisplayName = 'State Government Health Scheme';
-            } else if (lower.includes('star health') || lower.includes('star health insurance')) {
-                matchedScheme = 'tpa_insurance';
-                schemeDisplayName = 'Star Health Insurance Network';
-                insurerName = 'Star Health';
-            } else if (lower.includes('hdfc ergo') || lower.includes('hdfc')) {
-                matchedScheme = 'tpa_insurance';
-                schemeDisplayName = 'HDFC ERGO Health Insurance';
-                insurerName = 'HDFC ERGO';
-            } else if (lower.includes('icici lombard') || lower.includes('icici')) {
-                matchedScheme = 'tpa_insurance';
-                schemeDisplayName = 'ICICI Lombard Health Network';
-                insurerName = 'ICICI Lombard';
-            } else if (lower.includes('care health') || lower.includes('religare') || lower.includes('max bupa') || lower.includes('niva bupa') || lower.includes('tata aig') || lower.includes('bajaj allianz')) {
-                matchedScheme = 'tpa_insurance';
-                schemeDisplayName = 'Private Health Insurance Network';
-                insurerName = 'Private Insurer';
-            } else if (lower.includes('company') || lower.includes('corporate') || lower.includes('office') || lower.includes('group insurance')) {
-                matchedScheme = 'tpa_insurance';
-                schemeDisplayName = 'Corporate / Employer Group Health Insurance';
-                insurerName = 'Corporate TPA';
-            } else if (lower.includes('insurance') || lower.includes('tpa') || lower.includes('cashless') || lower.includes('panel')) {
-                matchedScheme = this.sessionPanel.schemeCode || 'tpa_insurance';
-                schemeDisplayName = this.sessionPanel.schemeName || 'Health Insurance / TPA Panel';
-            }
-
-            // Update session memory
-            if (matchedScheme) {
-                this.sessionPanel.schemeCode = matchedScheme;
-                this.sessionPanel.schemeName = schemeDisplayName;
-                if (insurerName) this.sessionPanel.insurerOrPlan = insurerName;
-            }
-
-            // 3. User says they don't know their panel or plan ("nahi pata", "don't know", etc.)
-            if ((lower.includes('nahi pata') || lower.includes('pata nahi') || lower.includes("don't know") || lower.includes('not sure') || lower.includes('malum nahi')) && !matchedScheme) {
-                if (isEn) {
-                    return {
-                        response: "No problem at all! Let's help identify your healthcare panel.",
-                        followUp: "Please check your health card or policy document for:\n• **Government Scheme:** Ayushman Bharat (PM-JAY), CGHS, ECHS, or ESIC\n• **Insurer Name:** Star Health, HDFC ERGO, Niva Bupa, Care Health, ICICI Lombard\n• **TPA Name:** Medi Assist, Vidal Health, MDIndia, Paramount TPA\n\n*(Note: Never share sensitive numbers, passwords, OTPs, or full policy IDs — just share the insurer or scheme name!)*",
-                        suggestions: ['I have Ayushman Card', 'I have CGHS Card', 'Star Health Policy', 'Corporate Company Policy']
-                    };
-                } else if (isHinglish) {
-                    return {
-                        response: "Koi baat nahi! Main aapka panel identify karne me madad karti hun.",
-                        followUp: "Kripya apna health card ya policy document check karein:\n• Kya us par **Ayushman Bharat (PM-JAY)**, **CGHS**, **ECHS**, ya **ESIC** likha hai?\n• Ya kisi private company ka naam (jaise: Star Health, HDFC ERGO, Care, ICICI Lombard)?\n• Ya TPA ka naam (jaise: Medi Assist, Vidal, Paramount)?\n\n*(Kripya password, OTP ya full policy number share na karein — sirf company ya scheme ka naam batayein!)*",
-                        suggestions: ['Mere paas Ayushman Card hai', 'Mere paas CGHS Card hai', 'Star Health Insurance', 'Company Insurance hai']
-                    };
-                } else {
-                    return {
-                        response: "कोई बात नहीं! मैं आपका पैनल पहचानने में मदद करती हूँ।",
-                        followUp: "कृपया अपने बीमा कार्ड या पॉलिसी दस्तावेज़ की जाँच करें:\n• क्या उस पर **आयुष्मान भारत (PM-JAY)**, **CGHS**, **ECHS**, या **ESIC** लिखा है?\n• या किसी निजी कंपनी का नाम (जैसे: Star Health, HDFC ERGO, Care, ICICI Lombard)?\n• या TPA का नाम (जैसे: Medi Assist, Vidal, Paramount)?\n\n*(कृपया पासवर्ड, ओटीपी या पूरा पॉलिसी नंबर कभी साझा न करें — केवल योजना या कंपनी का नाम बताएं!)*",
-                        suggestions: ['मेरे पास आयुष्मान कार्ड है', 'मेरे पास CGHS कार्ड है', 'Star Health Insurance', 'कंपनी का बीमा है']
-                    };
-                }
-            }
-
-            // If no panel detected in this or past turn, let normal intents handle it
-            if (!this.sessionPanel.schemeCode) {
-                return null;
-            }
-
-            const activeScheme = this.sessionPanel.schemeCode;
-            const activeTitle = this.sessionPanel.schemeName || 'Health Scheme';
-            const loc = this.sessionPanel.searchLocation || (isEn ? 'your selected location' : (isHinglish ? 'aapke chune huye location' : 'आपके चयनित स्थान'));
-
-            // 4. Fetch actual matching hospitals from backend
-            const hospitals = await this.fetchHospitalsForPanel(this.sessionPanel.searchLocation, activeScheme);
-
-            let empanelledHospitals = [];
-            let unverifiedHospitals = [];
-
-            hospitals.forEach(h => {
-                const pInfo = h.panel_info || {};
-                const p = (pInfo.panels || {})[activeScheme];
-                if (p && (p.status === 'Empanelled' || p.badge === 'empanelled')) {
-                    empanelledHospitals.push({
-                        name: h.name,
-                        address: h.address,
-                        distance: h.distance_km,
-                        source: pInfo.source || 'Official Central Registry',
-                        lastVerified: pInfo.last_verified || 'Recent',
-                        details: p.details || 'Empanelled'
-                    });
-                } else {
-                    unverifiedHospitals.push(h.name);
-                }
-            });
-
-            // Format conversational response with verified hospital cards strictly matching language
-            let respHeader = "";
-            let followUpText = "";
-
-            if (isEn) {
-                respHeader = `Understood! Checking verified hospital empanelment for **${activeTitle}** in ${loc}:`;
-                if (empanelledHospitals.length > 0) {
-                    const topHospitals = empanelledHospitals.slice(0, 3);
-                    followUpText = topHospitals.map((h, idx) => {
-                        return `🏥 **${idx + 1}. ${h.name}**\n` +
-                               `📍 ${h.address} (Distance: ~${h.distance} km)\n` +
-                               `✅ **Status:** Empanelled (${activeTitle})\n` +
-                               `📋 **Coverage:** ${h.details}\n` +
-                               `🏛️ **Verification Source:** ${h.source} (Verified: ${h.lastVerified})`;
-                    }).join('\n\n');
-                    followUpText += `\n\n💡 **Important Note:** Cashless treatment depends on active policy status and pre-authorization at hospital TPA desk. Emergency ambulance service will not be delayed for insurance.`;
-                } else {
-                    followUpText = `No directly confirmed **Empanelled** facility was found for this specific area in the central registry. For other facilities: **Empanelment status could not be verified**.\n\nYou can also search for a major city (e.g. 'Delhi' or 'Jaipur') to view regional empanelled hubs.`;
-                }
-            } else if (isHinglish) {
-                respHeader = `Samajh gayi! Main **${activeTitle}** ke tehat ${loc} mein empanelled hospitals check kar rahi hun:`;
-                if (empanelledHospitals.length > 0) {
-                    const topHospitals = empanelledHospitals.slice(0, 3);
-                    followUpText = topHospitals.map((h, idx) => {
-                        return `🏥 **${idx + 1}. ${h.name}**\n` +
-                               `📍 ${h.address} (Doori: ~${h.distance} km)\n` +
-                               `✅ **Status:** Empanelled (${activeTitle})\n` +
-                               `📋 **Suvidha:** ${h.details}\n` +
-                               `🏛️ **Verification Source:** ${h.source}`;
-                    }).join('\n\n');
-                    followUpText += `\n\n💡 **Zaroori Jankari:** Cashless suvidha hospital ke TPA desk par pre-authorization par depend karti hai. Emergency ambulance me bima ke karan koi deri nahi hogi.`;
-                } else {
-                    followUpText = `Is location par abhi koi direct **Empanelled** record nahi mila. Baaki hospitals ka status: **Status Not Verified** hai.\n\nAap kisi bade shehar (jaise 'Delhi' ya 'Jaipur') ka naam likhkar bhi khoj sakte hain!`;
-                }
-            } else {
-                respHeader = `समझ गई! मैं **${activeTitle}** के तहत ${loc} में सूचीबद्ध अस्पतालों की जाँच कर रही हूँ:`;
-                if (empanelledHospitals.length > 0) {
-                    const topHospitals = empanelledHospitals.slice(0, 3);
-                    followUpText = topHospitals.map((h, idx) => {
-                        return `🏥 **${idx + 1}. ${h.name}**\n` +
-                               `📍 ${h.address} (दूरी: ~${h.distance} km)\n` +
-                               `✅ **स्थिति:** Empanelled (${activeTitle})\n` +
-                               `📋 **सुविधा:** ${h.details}\n` +
-                               `🏛️ **सत्यापन स्रोत:** ${h.source} (सत्यापित: ${h.lastVerified})`;
-                    }).join('\n\n');
-                    followUpText += `\n\n💡 **महत्वपूर्ण सूचना:** NABH मान्यता व कैशलेस सुविधा भर्ती समय कार्ड व टीपीए प्री-ऑथराइजेशन पर निर्भर करती है। आपातकालीन एम्बुलेंस सहायता में बीमा के कारण कोई देरी नहीं की जाएगी।`;
-                } else {
-                    followUpText = `इस विशिष्ट स्थान पर अभी कोई सीधा प्रमाणित **Empanelled** रिकॉर्ड नहीं मिला। बाकी सुविधाओं की स्थिति: **Empanelment status could not be verified**।\n\nआप किसी बड़े शहर (जैसे 'Jaipur' या 'Delhi') का नाम लिखकर भी खोज सकते हैं!`;
-                }
-            }
-
-            const chips = isEn
-                ? ['Check CGHS Hospitals', 'Check PM-JAY Hospitals', 'Hospitals in Delhi', 'Hospitals in Jaipur']
-                : (isHinglish ? ['CGHS Hospitals Dekho', 'Ayushman PM-JAY Hospitals', 'Delhi Hospitals', 'Jaipur Hospitals'] : ['CGHS अस्पताल देखें', 'आयुष्मान PM-JAY अस्पताल', 'Delhi में अस्पताल', 'Jaipur में अस्पताल']);
-
             return {
-                response: respHeader,
-                followUp: followUpText,
-                suggestions: chips
+                response: FORM_KNOWLEDGE.en.greeting,
+                chips: ["हिंदी (Hindi)", "English", "फॉर्म कैसे भरें?", "Which form to fill?"]
             };
+        }
+
+        setLanguage(langCode) {
+            this.lang = langCode === 'hi' ? 'hi' : 'en';
+            if (this.lang === 'hi') {
+                return {
+                    response: "बहुत बढ़िया! मैं अब आपसे **हिंदी** में बात करूँगी। 😊\n\nमैं AmbuPriority के सभी फॉर्म भरने में आपकी पूरी सहायता कर सकती हूँ। आप पूछ सकते हैं:\n• कौन सा फॉर्म भरना है?\n• एम्बुलेंस रजिस्ट्रेशन फॉर्म कैसे भरें?\n• क्लिनिकल असेसमेंट फॉर्म कैसे भरें?\n• अनिवार्य फ़ील्ड्स कौन सी हैं?\n• GPS लोकेशन कैसे डालें?",
+                    suggestions: ["कौन सा फॉर्म भरें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स कौन सी हैं?"]
+                };
+            } else {
+                return {
+                    response: "Great! We will continue in **English**. 😊\n\nI can guide you through every form on the AmbuPriority portal:\n• Which form should I fill?\n• How to fill the Ambulance Registration Form?\n• How to fill the Clinical Triage Assessment Form?\n• What fields are mandatory?\n• How does the GPS location button work?",
+                    suggestions: ["Which form to fill?", "How to fill Registration Form?", "How to fill Assessment Form?", "What fields are mandatory?"]
+                };
+            }
         }
 
         async processQuery(text) {
-            const lower = text.toLowerCase().trim();
+            const raw = text.trim();
+            const lower = raw.toLowerCase();
             if (!lower) return null;
 
-            // ----------------------------------------------------------------
-            // STEP 1: EMERGENCY FAST-PATH — always check first
-            // ----------------------------------------------------------------
-            const emergencyKeywords = ['heart attack', 'chest pain', 'breathing problem', 'unconscious', 'accident', 'bleeding', 'stroke', 'faint', 'ambulance chahiye', 'emergency hai', '102', '108', '112'];
-            const isEmergencyQuery = emergencyKeywords.some(kw => lower.includes(kw));
-            if (isEmergencyQuery) {
-                // Show emergency warning immediately, then also query AI in background
-                const isHi = (window.govPortal && window.govPortal.currentLang === 'hi') || lower.includes('chahiye') || lower.includes('hai');
-                const emergencyResponse = {
-                    response: isHi 
-                        ? "⚠️ **Emergency Alert!** TURANT **112, 102, ya 108** par call karein!\n\nAmbuPriority dispatch team ko alert bheja ja sakta hai."
-                        : "⚠️ **Emergency Alert!** Please dial **112, 102, or 108** immediately for urgent emergency assistance!",
-                    suggestions: isHi ? ['Call 102', 'Call 108', 'Call 112', 'Ambulance Request'] : ['Call 102', 'Call 108', 'Call 112', 'Request Ambulance'],
+            // 1. Language Selection Detection
+            if (lower === 'hindi' || lower.includes('हिंदी') || lower.includes('hindi me') || lower.includes('hindi mein')) {
+                return this.setLanguage('hi');
+            }
+            if (lower === 'english' || lower.includes('इंग्लिश') || lower.includes('in english') || lower.includes('continue in english')) {
+                return this.setLanguage('en');
+            }
+
+            // Detect language intent from text if not explicitly set
+            if (!this.lang) {
+                const hasDevanagari = /[\u0900-\u097F]/.test(raw);
+                const hasHinglish = lower.includes('kaise') || lower.includes('kya') || lower.includes('kare') || lower.includes('konsa') || lower.includes('batao') || lower.includes('bhare') || lower.includes('madad');
+                this.lang = (hasDevanagari || hasHinglish) ? 'hi' : 'en';
+            }
+
+            const kb = FORM_KNOWLEDGE[this.lang] || FORM_KNOWLEDGE.hi;
+
+            // 2. Emergency Fast Path
+            const isEmergency = ['heart attack', 'chest pain', 'breathing', 'stroke', 'accident', 'unconscious', 'dying', '102', '108', '112', 'आपातकाल', 'बेहोश', 'दुर्घटना', 'सांस'].some(k => lower.includes(k));
+            if (isEmergency && (lower.includes('emergency') || lower.includes('urgent') || lower.includes('turant') || lower.includes('call') || lower.includes('madad') || lower.includes('helpline'))) {
+                return {
+                    response: this.lang === 'hi' 
+                        ? "🚨 **आपातकालीन सूचना!** यदि मरीज की हालत बहुत गंभीर है, तो बिना देरी किए सीधे **112** या **102** पर कॉल करें!\n\nयदि आप ऑनलाइन एम्बुलेंस बुक करना चाहते हैं, तो कृपया **रजिस्ट्रेशन फॉर्म** भरें।"
+                        : "🚨 **Emergency Alert!** If this is a critical medical emergency, immediately dial **112** or **102**!\n\nTo request an ambulance online, please fill the **Registration Form**.",
+                    followUp: kb.helpline.body,
+                    suggestions: this.lang === 'hi' ? ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "कॉल 102", "कॉल 108", "GPS कैसे डालें?"] : ["How to fill Registration Form?", "Call 102", "Call 108", "GPS Location Help"],
                     isEmergency: true
                 };
-                this.askAI(text).catch(() => {});
-                return emergencyResponse;
             }
 
-            // ----------------------------------------------------------------
-            // STEP 2: AI BACKEND FIRST — Powered by Gemini API
-            // Delivers intelligent, natural responses matching user language
-            // ----------------------------------------------------------------
-            try {
-                const aiReply = await this.askAI(text);
-                if (aiReply) {
+            // 3. WHICH FORM TO FILL? (konsa form / which form / form types)
+            if (lower.includes('konsa form') || lower.includes('kaun sa form') || lower.includes('which form') || lower.includes('what form') || lower.includes('kitne form') || lower.includes('types of form') || lower.includes('form list') || (lower.includes('form') && (lower.includes('choose') || lower.includes('batao')))) {
+                return {
+                    response: kb.whichForm.title,
+                    followUp: kb.whichForm.body,
+                    suggestions: kb.whichForm.chips
+                };
+            }
+
+            // 4. REGISTRATION FORM GUIDE (kaise bhare / registration form / patient form)
+            if (lower.includes('registration') || lower.includes('panjikaran') || (lower.includes('form') && (lower.includes('kaise') || lower.includes('fill') || lower.includes('guide') || lower.includes('bhar') || lower.includes('step') || lower.includes('help'))) || lower.includes('ambulance book') || lower.includes('ambulance request')) {
+                // If query specifically asks about assessment
+                if (!lower.includes('assessment') && !lower.includes('triage') && !lower.includes('laksan') && !lower.includes('symptom')) {
                     return {
-                        response: aiReply,
-                        suggestions: this._suggestionsFromReply(aiReply, lower)
+                        response: kb.registrationGuide.title,
+                        followUp: kb.registrationGuide.body,
+                        suggestions: kb.registrationGuide.chips
                     };
                 }
-            } catch (err) {
-                console.warn('AI query error, falling back to local engine:', err);
             }
 
-            // ----------------------------------------------------------------
-            // STEP 3: FALLBACK LOCAL ENGINE (Only if AI backend is unavailable)
-            // ----------------------------------------------------------------
-
-            // Check panel & insurance queries
-            const panelKeywords = [
-                'ayushman', 'pmjay', 'pm-jay', 'cghs', 'echs', 'esic', 'rghs', 'mjpjay', 
-                'insurance', 'bima', 'card', 'star health', 'hdfc ergo', 'icici lombard', 
-                'tpa', 'cashless', 'panel', 'empanelled', 'empanelment', 'mere paas'
-            ];
-            const hasPanelIntent = panelKeywords.some(kw => lower.includes(kw));
-            if (hasPanelIntent) {
-                const panelResult = await this.processPanelQuery(lower, text);
-                if (panelResult) return panelResult;
-            }
-
-            // Check known portal help intents (Form help, mandatory fields, etc.)
-            const intents = KB.en.intents;
-            let best = null, bestScore = -1;
-            for (const intent of intents) {
-                let score = 0;
-                const priority = intent.priority || 5;
-                if (intent.phrases) {
-                    for (const phrase of intent.phrases) {
-                        if (lower.includes(phrase.toLowerCase())) score += phrase.length * 3;
-                    }
-                }
-                if (intent.patterns) {
-                    for (const pattern of intent.patterns) {
-                        if (lower.includes(pattern.toLowerCase())) score += pattern.length;
-                    }
-                }
-                if (score > 0) score = score + (priority * 2);
-                if (score > bestScore || (score === bestScore && best && priority > (best.priority || 5))) {
-                    bestScore = score;
-                    best = intent;
-                }
-            }
-            if (best && bestScore >= 4) {
+            // 5. ASSESSMENT / TRIAGE FORM GUIDE
+            if (lower.includes('assessment') || lower.includes('triage') || lower.includes('clincial') || lower.includes('complaint') || lower.includes('symptom') || lower.includes('lakshan') || lower.includes('tier') || lower.includes('gambhirta') || lower.includes('als') || lower.includes('bls')) {
                 return {
-                    response: best.response,
-                    followUp: best.followUp,
-                    suggestions: best.suggestions || [],
-                    isEmergency: best.isEmergency || false
+                    response: kb.assessmentGuide.title,
+                    followUp: kb.assessmentGuide.body,
+                    suggestions: kb.assessmentGuide.chips
                 };
             }
 
-            // Offline fallback message matching user language
-            const isHinglishQuery = lower.includes('kya') || lower.includes('kaise') || lower.includes('hai') || lower.includes('mujhe') || lower.includes('batao') || lower.includes('paas') || lower.includes('kare');
-            if (isHinglishQuery) {
+            // 6. MANDATORY FIELDS (anivarya / compulsory / required / star / asterisk)
+            if (lower.includes('mandatory') || lower.includes('anivarya') || lower.includes('zaruri') || lower.includes('zaroori') || lower.includes('required') || lower.includes('compulsory') || lower.includes('star') || lower.includes('tara') || lower.includes('kya bharna zaruri')) {
                 return {
-                    response: "Main ARIA hun, aapki AmbuPriority sahayak. Main aapko hospital panels, cashless insurance claims, ya form bharne me madad kar sakti hun. Kripya apna sawal thoda vistaar se batayein!",
-                    suggestions: ['Hospital Panels (Ayushman/CGHS)', 'Star Health / Private Insurance', 'Form Kaise Bhare?', 'Emergency Helplines']
+                    response: kb.mandatoryFields.title,
+                    followUp: kb.mandatoryFields.body,
+                    suggestions: kb.mandatoryFields.chips
                 };
             }
 
-            return { 
-                response: "I am ARIA, your AmbuPriority assistant. I can guide you regarding hospital empanelment, cashless insurance claims, or help you fill out the registration form. Please let me know how I can help!",
-                suggestions: ['Hospital Panels (Ayushman/CGHS)', 'Health Insurance & Cashless Help', 'Form Filling Help', 'Emergency Numbers (102/108)'] 
+            // 7. GPS & LOCATION AUTO-DETECT
+            if (lower.includes('gps') || lower.includes('location') || lower.includes('address') || lower.includes('pata') || lower.includes('geotag') || lower.includes('current location') || lower.includes('sthan')) {
+                return {
+                    response: kb.gpsHelp.title,
+                    followUp: kb.gpsHelp.body,
+                    suggestions: kb.gpsHelp.chips
+                };
+            }
+
+            // 8. LANDMARK HELP
+            if (lower.includes('landmark') || lower.includes('land mark') || lower.includes('pechan') || lower.includes('reference point')) {
+                return {
+                    response: kb.landmarkHelp.title,
+                    followUp: kb.landmarkHelp.body,
+                    suggestions: kb.landmarkHelp.chips
+                };
+            }
+
+            // 9. AVPU CONSCIOUSNESS SCALE
+            if (lower.includes('avpu') || lower.includes('hosh') || lower.includes('consciousness') || lower.includes('alert') || lower.includes('unresponsive') || lower.includes('behos')) {
+                return {
+                    response: kb.avpuHelp.title,
+                    followUp: kb.avpuHelp.body,
+                    suggestions: kb.avpuHelp.chips
+                };
+            }
+
+            // 10. REFERENCE NUMBER / ACKNOWLEDGMENT (nas / tracking / receipt)
+            if (lower.includes('reference') || lower.includes('nas') || lower.includes('tracking') || lower.includes('receipt') || lower.includes('number') || lower.includes('pawati')) {
+                return {
+                    response: kb.referenceHelp.title,
+                    followUp: kb.referenceHelp.body,
+                    suggestions: kb.referenceHelp.chips
+                };
+            }
+
+            // 11. RESET / CLEAR FORM
+            if (lower.includes('reset') || lower.includes('clear') || lower.includes('hatao') || lower.includes('khali') || lower.includes('cancel')) {
+                return {
+                    response: kb.resetHelp.title,
+                    followUp: kb.resetHelp.body,
+                    suggestions: kb.resetHelp.chips
+                };
+            }
+
+            // 12. SUBMISSION ERRORS / TROUBLESHOOTING
+            if (lower.includes('error') || lower.includes('submit nahi') || lower.includes('problem') || lower.includes('galti') || lower.includes('cannot submit') || lower.includes('not working') || lower.includes('submitting')) {
+                return {
+                    response: kb.formErrors.title,
+                    followUp: kb.formErrors.body,
+                    suggestions: kb.formErrors.chips
+                };
+            }
+
+            // 13. HELPLINES
+            if (lower.includes('helpline') || lower.includes('number') || lower.includes('phone') || lower.includes('call') || lower.includes('toll free')) {
+                return {
+                    response: kb.helpline.title,
+                    followUp: kb.helpline.body,
+                    suggestions: kb.helpline.chips
+                };
+            }
+
+            // 14. GREETINGS (namaste, hi, hello)
+            if (lower === 'hi' || lower === 'hello' || lower === 'namaste' || lower === 'hey' || lower.includes('namaskar')) {
+                return {
+                    response: this.lang === 'hi'
+                        ? "नमस्ते! 🙏 मैं ARIA हूँ। मैं AmbuPriority पोर्टल पर किसी भी फॉर्म को भरने में आपकी सहायता के लिए तैयार हूँ।\n\nआप कौन सा फॉर्म भरना चाहते हैं या किस फ़ील्ड में समस्या आ रही है?"
+                        : "Namaste! 🙏 I am ARIA. I am here to help you navigate and fill any form on the AmbuPriority portal.\n\nWhich form are you filling or what question do you have?",
+                    suggestions: this.lang === 'hi'
+                        ? ["कौन सा फॉर्म भरें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स"]
+                        : ["Which form to fill?", "How to fill Registration Form?", "How to fill Assessment Form?", "Mandatory Fields"]
+                };
+            }
+
+            // 15. DEFAULT / COMPREHENSIVE FORM GUIDE FALLBACK
+            return {
+                response: this.lang === 'hi'
+                    ? "मैं आपकी फॉर्म भरने में मदद करने वाली ARIA सहायक हूँ। आप मुझसे पोर्टल के फॉर्म्स के बारे में कोई भी प्रश्न पूछ सकते हैं:"
+                    : "I am ARIA, your specialized form guidance assistant. You can ask me any question about filling out portal forms:",
+                followUp: kb.whichForm.body,
+                suggestions: this.lang === 'hi'
+                    ? ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स (*)", "GPS लोकेशन कैसे डालें?"]
+                    : ["How to fill Registration Form?", "How to fill Assessment Form?", "What fields are mandatory?", "How to use GPS?"]
             };
-        }
-
-        // Generate contextual suggestion chips from AI reply
-        _suggestionsFromReply(reply, lower) {
-            const chips = [];
-            if (reply.includes('CGHS') || lower.includes('cghs')) chips.push('Check CGHS Hospitals');
-            if (reply.includes('PM-JAY') || reply.includes('Ayushman') || lower.includes('ayushman')) chips.push('Check PM-JAY Hospitals');
-            if (reply.includes('ECHS') || lower.includes('echs')) chips.push('Check ECHS Hospitals');
-            if (reply.includes('ESIC') || lower.includes('esic')) chips.push('Check ESIC Hospitals');
-            if (reply.includes('insurance') || reply.includes('TPA') || lower.includes('insurance')) chips.push('TPA Network Hospitals');
-            if (chips.length === 0) {
-                chips.push('Hospital Panels (Ayushman/CGHS)', 'Form Filling Help', 'Emergency Helplines');
-            }
-            return chips.slice(0, 4);
         }
 
         formatTime() {
@@ -1113,7 +798,7 @@
             this.buildDOM();
             this.attachEvents();
             this.initCharsRenderers();
-            setTimeout(() => this.showGreeting(), 800);
+            setTimeout(() => this.showGreeting(), 600);
         }
 
         injectStyles() {
@@ -1131,13 +816,13 @@
             const launcher = document.createElement('div');
             launcher.id = 'aria-launcher';
             launcher.setAttribute('role', 'button');
-            launcher.setAttribute('aria-label', 'Open ARIA Emergency Assistant');
+            launcher.setAttribute('aria-label', 'Open ARIA Form Assistant');
             launcher.setAttribute('tabindex', '0');
             launcher.innerHTML = `
                 <div id="aria-launcher-avatar">
                     <canvas id="aria-launcher-canvas" width="76" height="76"></canvas>
                 </div>
-                <div id="aria-launcher-label">ARIA • Emergency Assistant</div>
+                <div id="aria-launcher-label">ARIA • Form Assistant</div>
             `;
             document.body.appendChild(launcher);
 
@@ -1145,7 +830,7 @@
             const win = document.createElement('div');
             win.id = 'aria-window';
             win.setAttribute('role', 'dialog');
-            win.setAttribute('aria-label', 'ARIA Emergency Assistant Chat');
+            win.setAttribute('aria-label', 'ARIA Form Assistant Chat');
             win.innerHTML = `
                 <!-- Header -->
                 <div id="aria-header">
@@ -1169,27 +854,27 @@
                         </div>
                         <div id="aria-header-info">
                             <div id="aria-name">ARIA</div>
-                            <div id="aria-designation">Emergency Response Assistant</div>
+                            <div id="aria-designation">Form Assistant (फॉर्म सहायक)</div>
                             <div id="aria-status-row">
                                 <div id="aria-status-dot"></div>
-                                <span id="aria-status-text">Online • 24×7 Active</span>
+                                <span id="aria-status-text">Online • Form Guidance</span>
                             </div>
-                            <div style="margin-top:8px; font-family:'Inter',sans-serif; font-size:9px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.08em;">
-                                AmbuPriority National Portal
+                            <div style="margin-top:8px; font-family:'Inter',sans-serif; font-size:9px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em;">
+                                AmbuPriority Portal Guide
                             </div>
                         </div>
                     </div>
                     <div id="aria-quick-chips">
-                        <div class="aria-chip" data-query="request ambulance">🚑 Request Ambulance</div>
-                        <div class="aria-chip" data-query="emergency helpline numbers">📞 Helplines</div>
-                        <div class="aria-chip" data-query="about ambupriority system">ℹ️ About</div>
-                        <div class="aria-chip" data-query="gps location address">📍 GPS Help</div>
+                        <div class="aria-chip" data-query="रजिस्ट्रेशन फॉर्म कैसे भरें?">📋 Registration Form</div>
+                        <div class="aria-chip" data-query="असेसमेंट फॉर्म कैसे भरें?">🩺 Assessment Form</div>
+                        <div class="aria-chip" data-query="अनिवार्य फ़ील्ड्स कौन सी हैं?">⭐ Mandatory Fields</div>
+                        <div class="aria-chip" data-query="GPS लोकेशन कैसे डालें?">📍 GPS Help</div>
                     </div>
                 </div>
 
                 <!-- Messages -->
                 <div id="aria-messages" role="log" aria-live="polite" aria-label="Conversation">
-                    <!-- Typing indicator (always rendered, shown/hidden) -->
+                    <!-- Typing indicator -->
                     <div id="aria-typing">
                         <div class="aria-msg-avatar-sm"><i class="fa-solid fa-robot" style="font-size:11px"></i></div>
                         <div class="aria-typing-bubble">
@@ -1203,16 +888,16 @@
                 <!-- Input -->
                 <div id="aria-input-area">
                     <input type="text" id="aria-input"
-                           placeholder="Ask about ambulance, helplines, portal..."
+                           placeholder="Ask: 'Form kaise bhare?', 'Konsa form?', 'GPS help'..."
                            maxlength="300"
                            autocomplete="off"
-                           aria-label="Type your question">
+                           aria-label="Type your question about forms">
                     <button id="aria-send-btn" title="Send" aria-label="Send message">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
                 <div id="aria-footer-note">
-                    AmbuPriority • National Health Authority &nbsp;|&nbsp; Emergency: 102 / 108 / 112
+                    AmbuPriority • Form Assistant &nbsp;|&nbsp; Emergency Helplines: 102 / 108 / 112
                 </div>
             `;
             document.body.appendChild(win);
@@ -1247,13 +932,6 @@
                 chip.addEventListener('click', () => this.handleQuery(chip.dataset.query));
             });
 
-            // Close on outside click
-            document.addEventListener('click', (e) => {
-                if (this.isOpen && !this.window.contains(e.target) && !this.launcher.contains(e.target)) {
-                    // Don't auto-close — user must explicitly close
-                }
-            });
-
             // Escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.isOpen) this.close();
@@ -1261,15 +939,13 @@
         }
 
         initCharsRenderers() {
-            // Main character (in chat header)
             const mainCanvas = document.getElementById('aria-3d-canvas');
             if (mainCanvas) {
                 this.mainChar = new ARIACharacter3D(mainCanvas, { isSmall: false });
                 this.mainChar.setState('greeting');
-                setTimeout(() => { if (this.mainChar) this.mainChar.setState('idle'); }, 3000);
+                setTimeout(() => { if (this.mainChar) this.mainChar.setState('idle'); }, 2500);
             }
 
-            // Launcher avatar
             const launcherCanvas = document.getElementById('aria-launcher-canvas');
             if (launcherCanvas) {
                 this.launcherChar = new ARIACharacter3D(launcherCanvas, { isSmall: true });
@@ -1281,14 +957,13 @@
             if (this.mainChar) this.mainChar.setState(state);
             const labels = {
                 idle: 'Ready',
-                greeting: 'Greeting',
+                greeting: 'Namaste 🙏',
                 thinking: 'Thinking...',
-                responding: 'Responding',
+                responding: 'Guide Active',
                 error: 'Error'
             };
             if (this.stateLabel) this.stateLabel.textContent = labels[state] || '';
 
-            // Show/hide thinking indicator
             if (this.thinkIndicator) {
                 this.thinkIndicator.classList.toggle('visible', state === 'thinking');
             }
@@ -1302,9 +977,8 @@
             this.input.focus();
             this.scrollBottom();
 
-            // Greeting state
             this.setCharacterState('greeting');
-            setTimeout(() => this.setCharacterState('idle'), 2500);
+            setTimeout(() => this.setCharacterState('idle'), 2000);
         }
 
         close() {
@@ -1317,49 +991,17 @@
         scrollBottom() {
             setTimeout(() => {
                 this.messages.scrollTop = this.messages.scrollHeight;
-            }, 50);
+            }, 40);
         }
 
         showGreeting() {
-            const onRegister = window.location.pathname.includes('register.html');
-            const onAssessment = window.location.pathname.includes('assessment.html');
-            const onHospitals = window.location.pathname.includes('hospitals.html');
-            const isHindi = (window.govPortal && window.govPortal.currentLang === 'hi');
-
-            let greeting = this.engine.getGreeting();
-            let suggestions = ['Request Ambulance', 'Emergency Helplines', 'GPS Location Help', 'About AmbuPriority'];
-
-            if (onHospitals) {
-                if (isHindi) {
-                    greeting = "नमस्ते! मैं ARIA हूँ। क्या आपके पास आयुष्मान भारत, CGHS, ECHS, ESIC या कोई निजी स्वास्थ्य बीमा है? मुझे बताएं — मैं प्रमाणित पैनल अस्पतालों की सूची दिखा सकती हूँ!";
-                    suggestions = ['मेरे पास आयुष्मान कार्ड है', 'मेरे पास CGHS कार्ड है', 'Star Health Insurance', 'कंपनी का बीमा है'];
-                } else {
-                    greeting = "Namaste! I'm ARIA. Do you hold Ayushman Bharat, CGHS, ECHS, ESIC, or private health insurance? Tell me, and I will check verified empanelled hospitals for you!";
-                    suggestions = ['I have Ayushman Card', 'I have CGHS Card', 'Star Health Policy', 'Corporate Company Policy'];
-                }
-            } else if (onRegister) {
-                if (isHindi) {
-                    greeting = "नमस्ते! मैं ARIA हूं। क्या आपको एम्बुलेंस रजिस्ट्रेशन फ़ॉर्म भरने में कोई सहायता चाहिए? आप मुझसे किसी भी फ़ील्ड, जीपीएस लोकेशन, या आपातकालीन नंबर के बारे में पूछ सकते हैं।";
-                    suggestions = ['फ़ॉर्म कैसे भरें?', 'अनिवार्य फ़ील्ड कौन सी हैं?', 'जीपीएस का उपयोग कैसे करें?', 'लैंडमार्क क्या लिखें?'];
-                } else {
-                    greeting = "Namaste! I'm ARIA. Do you need help filling out this Ambulance Registration form? Feel free to ask about any field, GPS location, mandatory details, or emergency numbers!";
-                    suggestions = ['How to fill form?', 'Mandatory fields?', 'How to use GPS?', 'What is Landmark?'];
-                }
-            } else if (onAssessment) {
-                if (isHindi) {
-                    greeting = "नमस्ते! मैं क्लिनिकल ट्रायज में आपकी मदद के लिए यहाँ हूँ। मुख्य आपातकाल (हृदय, सांस, दुर्घटना आदि) चुनने में कोई संशय हो तो बेझिझक पूछें।";
-                    suggestions = ['सीने का दर्द / हार्ट अटैक', 'स्ट्रोक के लक्षण (FAST)', 'सांस की तकलीफ'];
-                } else {
-                    greeting = "Namaste! I'm ARIA, here to guide you through the Clinical Triage Assessment. If you are unsure which primary complaint or symptom to select, just ask me!";
-                    suggestions = ['Chest Pain guidance', 'Stroke FAST signs', 'Breathing emergency'];
-                }
-            }
-
-            this.addMessage('aria', greeting);
+            // First greeting asks: Namaste! Do you want to continue in Hindi or English?
+            const greetingObj = this.engine.getGreeting();
+            this.addMessage('aria', greetingObj.response);
 
             setTimeout(() => {
-                this.addSuggestions(suggestions);
-            }, 400);
+                this.addSuggestions(greetingObj.chips);
+            }, 300);
         }
 
         addMessage(from, text, options = {}) {
@@ -1379,7 +1021,7 @@
                         ${options.isEmergency ? `
                         <div class="aria-emergency-alert" style="margin-bottom:6px">
                             <i class="fa-solid fa-triangle-exclamation"></i>
-                            If this is a life-threatening emergency, dial 112 immediately.
+                            आपातकालीन स्थिति में तुरंत 112 या 102 डायल करें।
                         </div>` : ''}
                         <div class="aria-bubble">${this.formatText(text)}</div>
                         <div class="aria-msg-time">${time}</div>
@@ -1394,14 +1036,12 @@
                 `;
             }
 
-            // Insert before typing indicator
             this.messages.insertBefore(div, this.typing);
             this.scrollBottom();
             return msgId;
         }
 
         addFollowUp(text) {
-            const time = this.engine.formatTime();
             const div = document.createElement('div');
             div.className = 'aria-msg from-aria';
             div.innerHTML = `
@@ -1428,7 +1068,7 @@
                 const chip = document.createElement('div');
                 chip.className = 'aria-suggestion-chip';
                 chip.textContent = label;
-                chip.addEventListener('click', () => this.handleQuery(label.toLowerCase()));
+                chip.addEventListener('click', () => this.handleQuery(label));
                 row.appendChild(chip);
             });
 
@@ -1440,7 +1080,7 @@
 
         showTyping() {
             this.typing.classList.add('visible');
-            this.messages.appendChild(this.typing); // move to end
+            this.messages.appendChild(this.typing);
             this.scrollBottom();
         }
 
@@ -1461,13 +1101,14 @@
             // Add user message immediately
             this.addMessage('user', text);
 
-            // Start thinking state & show typing instantly
             this.sendBtn.disabled = true;
             this.input.disabled = true;
             this.setCharacterState('thinking');
             this.showTyping();
 
-            // Process query directly without artificial pre-delay
+            // Simulate fast natural typing (pure client-side)
+            await sleep(150);
+
             const result = await this.engine.processQuery(text);
             this.hideTyping();
             this.setCharacterState('responding');
@@ -1482,26 +1123,23 @@
                 }
             }
 
-            // Handle action chips (Only redirect if NOT already on register.html)
-            const onRegisterPage = window.location.pathname.includes('register.html');
-            if (!onRegisterPage && (text.toLowerCase().includes('open registration') || text.toLowerCase().includes('registration form'))) {
-                setTimeout(() => { window.location.href = 'register.html'; }, 1500);
-            }
-            if (text.toLowerCase().includes('view documentation') || text.toLowerCase().includes('documentation')) {
-                setTimeout(() => {
-                    this.addFollowUp('Opening documentation page...');
-                    setTimeout(() => { window.location.href = 'detail.html'; }, 1000);
-                }, 500);
-            }
-            if (text.toLowerCase().includes('call 102')) {
+            // Quick navigation helpers if user requests form opening
+            const lower = text.toLowerCase();
+            if (lower.includes('रजिस्ट्रेशन फॉर्म खोलें') || lower.includes('open registration form') || lower.includes('registration form kholo')) {
+                if (!window.location.pathname.includes('register.html')) {
+                    setTimeout(() => { window.location.href = 'register.html'; }, 1000);
+                }
+            } else if (lower.includes('असेसमेंट फॉर्म खोलें') || lower.includes('open assessment form') || lower.includes('assessment form kholo')) {
+                if (!window.location.pathname.includes('assessment.html')) {
+                    setTimeout(() => { window.location.href = 'assessment.html'; }, 1000);
+                }
+            } else if (lower.includes('कॉल 102') || lower.includes('call 102')) {
                 window.open('tel:102');
-            }
-            if (text.toLowerCase().includes('call 108')) {
+            } else if (lower.includes('कॉल 108') || lower.includes('call 108')) {
                 window.open('tel:108');
             }
 
-            // Return to idle
-            await sleep(2000);
+            await sleep(1200);
             this.setCharacterState('idle');
             this.sendBtn.disabled = false;
             this.input.disabled = false;
@@ -1532,16 +1170,11 @@
        ENTRY POINT
     ============================================================ */
     function initARIA() {
-        // Prevent double init
         if (window.__ariaInitialized) return;
         window.__ariaInitialized = true;
-
-        // Don't load on register.html to avoid UX conflicts during emergency forms
-        // But still provide a minimal launcher
         window.__ARIA = new ARIAUI();
     }
 
-    // Wait for DOM + FA icons
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initARIA);
     } else {
@@ -1549,4 +1182,3 @@
     }
 
 })();
-

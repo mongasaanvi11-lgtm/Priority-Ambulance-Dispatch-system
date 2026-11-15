@@ -501,7 +501,6 @@ def evaluate_abdominal(assessment: Dict[str, Any]) -> Tuple[str, List[str]]:
         return YELLOW, reasons
         
     # Mild/moderate abdominal pain, stable, no rigid abdomen → GREEN
-    if complaint.get("severe_pain") == "no" and clinical.get("severe_pain") == "no":
     if complaint.get("severe_pain") == "no" or clinical.get("severe_pain") == "no":
         reasons.append("GREEN: Mild/moderate abdominal symptoms without peritonitis or red flags [WHO-IITT]")
         return GREEN, reasons
