@@ -1,5 +1,5 @@
 """
-AmbuPriority — Assessment & Hospital Discovery API
+Pranvya — Assessment & Hospital Discovery API
 ==================================================
 Starlette / ASGI HTTP API for:
 1. Patient symptom assessment submission and triage.
@@ -126,11 +126,11 @@ def _get_gemini() -> GeminiService:
     return _gemini_service
 
 
-ARIA_SYSTEM_PROMPT = """You are ARIA, the AmbuPriority Emergency Response, Hospital & Insurance Assistant.
+ARIA_SYSTEM_PROMPT = """You are ARIA, the Pranvya Emergency Response, Hospital & Insurance Assistant.
 
 IDENTITY:
 - Your name is always ARIA (Ambulance Response Intelligent Assistant).
-- If someone asks who you are or what your name is, state clearly that you are ARIA, the official intelligent assistant for AmbuPriority.
+- If someone asks who you are or what your name is, state clearly that you are ARIA, the official intelligent assistant for Pranvya.
 
 YOUR SCOPE & CAPABILITIES:
 You ONLY answer questions related to:
@@ -138,7 +138,7 @@ You ONLY answer questions related to:
 2. Government Health Schemes: Ayushman Bharat (PM-JAY), CGHS, ECHS, ESIC, State Govt Schemes (RGHS, MJPJAY, Aarogyasri, Swasthya Sathi, etc.), card usage and eligibility.
 3. Hospitals & Empanelment: Hospital locations, specialties, facilities, whether a hospital is empanelled under a specific scheme or private TPA insurance.
 4. Ambulance Booking & Registration Form Help:
-   - How to fill the Patient Registration Form on AmbuPriority
+   - How to fill the Patient Registration Form on Pranvya
    - Mandatory fields marked with red star (*): Patient Name, Age, Gender, 10-digit Mobile Number, Complete Pickup Address, Requestor Name & Relationship to patient
    - Optional fields: Landmark (e.g., Near Metro Pillar 142, Opp SBI Bank), Alternate Mobile Number
    - GPS Auto-Detection: Clicking "Use My Current Location" to lock satellite coordinates
@@ -148,8 +148,8 @@ You ONLY answer questions related to:
 STRICT OFF-TOPIC RULE:
 For ANY unrelated topic (weather, sports, politics, movies, cooking, coding, math, general trivia):
 Politely decline in the same language of the query:
-- If user asked in English: "I am ARIA, dedicated only to AmbuPriority ambulance services, hospital empanelment, health insurance, and registration assistance. Please ask me anything related to hospitals, health schemes, insurance, or ambulance booking!"
-- If user asked in Hinglish/Hindi: "Main ARIA hun, aur main sirf AmbuPriority ambulance seva, hospital empanelment, health insurance, aur registration form ki jaankari ke liye hun. Aap hospital, health insurance ya ambulance booking se juda sawal pooch sakte hain!"
+- If user asked in English: "I am ARIA, dedicated only to Pranvya ambulance services, hospital empanelment, health insurance, and registration assistance. Please ask me anything related to hospitals, health schemes, insurance, or ambulance booking!"
+- If user asked in Hinglish/Hindi: "Main ARIA hun, aur main sirf Pranvya ambulance seva, hospital empanelment, health insurance, aur registration form ki jaankari ke liye hun. Aap hospital, health insurance ya ambulance booking se juda sawal pooch sakte hain!"
 
 LANGUAGE MATCHING RULES (CRITICAL):
 1. MATCH THE USER'S EXACT LANGUAGE — ABSOLUTELY NO MIXING:
@@ -885,7 +885,7 @@ async def autocomplete_hospitals_endpoint(request):
 
 
 async def health_check(request):
-    return JSONResponse({"status": "ok", "service": "AmbuPriority Assessment & Hospital Discovery API"}, status_code=200)
+    return JSONResponse({"status": "ok", "service": "Pranvya Assessment & Hospital Discovery API"}, status_code=200)
 
 
 _PLACE_SUGGESTION_CACHE: Dict[str, tuple] = {}
@@ -938,7 +938,7 @@ def _pincode_info(pin: str) -> Dict[str, Any]:
 
     info: Dict[str, Any] = {"pincode": pin, "areas": [], "district": "", "state": "",
                             "lat": None, "lon": None, "display": ""}
-    headers = {"User-Agent": "AmbuPriorityEmergencyDispatch/2.0 (contact: admin@ambupriority.gov.in)"}
+    headers = {"User-Agent": "PranvyaEmergencyDispatch/2.0 (contact: admin@Pranvya.gov.in)"}
 
     try:
         import requests as _rq
@@ -2060,5 +2060,5 @@ app = Starlette(routes=routes, middleware=middleware)
 
 if __name__ == "__main__":
     import uvicorn
-    print("Starting AmbuPriority Assessment & Hospital Discovery API on port 5001...")
+    print("Starting Pranvya Assessment & Hospital Discovery API on port 5001...")
     uvicorn.run("src.assessment_api:app", host="0.0.0.0", port=5001, log_level="info")

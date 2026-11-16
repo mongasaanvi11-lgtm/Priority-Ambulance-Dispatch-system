@@ -1,5 +1,5 @@
 """
-AmbuPriority — Background area scanner for hospital insurance panels
+Pranvya — Background area scanner for hospital insurance panels
 ====================================================================
 Runs in a worker thread, in strict priority order:
 

@@ -1,5 +1,5 @@
 """
-AmbuPriority ÃƒÂ¢Ã¢â€šÂ¬” Gemini Hospital Panel & Scheme Intelligence Service
+Pranvya ÃƒÂ¢Ã¢â€šÂ¬” Gemini Hospital Panel & Scheme Intelligence Service
 ===================================================================
 Researches returned hospitals using Gemini Developer API with:
 1. Google Search Grounding (gemini-3.5-flash-lite / compatible Flash models)

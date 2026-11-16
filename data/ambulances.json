@@ -12524,10 +12524,10 @@
       "qualified_staff": "Advanced Paramedic & Emergency Nurse"
     }
   ],
-  "sanjeevani_hospital_c76f1f": [
+  "Pranvya_hospital_c76f1f": [
     {
       "ambulance_id": "PVT-AMB-535-ICU",
-      "hospital_id": "sanjeevani_hospital_c76f1f",
+      "hospital_id": "Pranvya_hospital_c76f1f",
       "type": "ICU",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -12536,7 +12536,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Hospital Emergency Fleet",
+      "provider_name": "Pranvya Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-0535",
       "verified_capabilities": [
         "ICU Multi-channel Ventilator",
@@ -12550,7 +12550,7 @@
     },
     {
       "ambulance_id": "PVT-AMB-536-ALS",
-      "hospital_id": "sanjeevani_hospital_c76f1f",
+      "hospital_id": "Pranvya_hospital_c76f1f",
       "type": "ALS",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -12559,7 +12559,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Hospital Emergency Fleet",
+      "provider_name": "Pranvya Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-0536",
       "verified_capabilities": [
         "Multipara Cardiac Monitor / Defibrillator",
@@ -24761,10 +24761,10 @@
       "qualified_staff": "Certified Emergency Medical Technician (EMT-Basic)"
     }
   ],
-  "sanjeevani_hospital_gurg_167b46": [
+  "Pranvya_hospital_gurg_167b46": [
     {
       "ambulance_id": "PVT-AMB-547-ICU",
-      "hospital_id": "sanjeevani_hospital_gurg_167b46",
+      "hospital_id": "Pranvya_hospital_gurg_167b46",
       "type": "ICU",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -24773,7 +24773,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Hospital, Gurgaon Emergency Fleet",
+      "provider_name": "Pranvya Hospital, Gurgaon Emergency Fleet",
       "vehicle_id": "DL-04-EA-0547",
       "verified_capabilities": [
         "ICU Multi-channel Ventilator",
@@ -24787,7 +24787,7 @@
     },
     {
       "ambulance_id": "PVT-AMB-548-ALS",
-      "hospital_id": "sanjeevani_hospital_gurg_167b46",
+      "hospital_id": "Pranvya_hospital_gurg_167b46",
       "type": "ALS",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -24796,7 +24796,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Hospital, Gurgaon Emergency Fleet",
+      "provider_name": "Pranvya Hospital, Gurgaon Emergency Fleet",
       "vehicle_id": "DL-04-EA-0548",
       "verified_capabilities": [
         "Multipara Cardiac Monitor / Defibrillator",
@@ -28650,10 +28650,10 @@
       "qualified_staff": "Advanced Paramedic & Emergency Nurse"
     }
   ],
-  "sanjeevni_hospital_2c63f8": [
+  "Pranvya_hospital_2c63f8": [
     {
       "ambulance_id": "PVT-AMB-1327-ICU",
-      "hospital_id": "sanjeevni_hospital_2c63f8",
+      "hospital_id": "Pranvya_hospital_2c63f8",
       "type": "ICU",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -28662,7 +28662,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevni Hospital Emergency Fleet",
+      "provider_name": "Pranvya Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-1327",
       "verified_capabilities": [
         "ICU Multi-channel Ventilator",
@@ -28676,7 +28676,7 @@
     },
     {
       "ambulance_id": "PVT-AMB-1328-ALS",
-      "hospital_id": "sanjeevni_hospital_2c63f8",
+      "hospital_id": "Pranvya_hospital_2c63f8",
       "type": "ALS",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -28685,7 +28685,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevni Hospital Emergency Fleet",
+      "provider_name": "Pranvya Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-1328",
       "verified_capabilities": [
         "Multipara Cardiac Monitor / Defibrillator",
@@ -33262,10 +33262,10 @@
       "qualified_staff": "Advanced Paramedic & Emergency Nurse"
     }
   ],
-  "sanjeevani_maternity_chi_c00ca2": [
+  "Pranvya_maternity_chi_c00ca2": [
     {
       "ambulance_id": "PVT-AMB-1044-ICU",
-      "hospital_id": "sanjeevani_maternity_chi_c00ca2",
+      "hospital_id": "Pranvya_maternity_chi_c00ca2",
       "type": "ICU",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -33274,7 +33274,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Maternity & Children Hospital Emergency Fleet",
+      "provider_name": "Pranvya Maternity & Children Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-1044",
       "verified_capabilities": [
         "ICU Multi-channel Ventilator",
@@ -33288,7 +33288,7 @@
     },
     {
       "ambulance_id": "PVT-AMB-1045-ALS",
-      "hospital_id": "sanjeevani_maternity_chi_c00ca2",
+      "hospital_id": "Pranvya_maternity_chi_c00ca2",
       "type": "ALS",
       "availability_status": "AVAILABLE",
       "supported_priorities": [
@@ -33297,7 +33297,7 @@
         "GREEN"
       ],
       "ownership": "Private",
-      "provider_name": "Sanjeevani Maternity & Children Hospital Emergency Fleet",
+      "provider_name": "Pranvya Maternity & Children Hospital Emergency Fleet",
       "vehicle_id": "DL-04-EA-1045",
       "verified_capabilities": [
         "Multipara Cardiac Monitor / Defibrillator",

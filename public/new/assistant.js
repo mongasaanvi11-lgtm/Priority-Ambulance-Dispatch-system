@@ -1,11 +1,11 @@
 /**
- * AmbuPriority — ARIA (Ambulance Response Intelligent Assistant)
+ * Pranvya — ARIA (Ambulance Response Intelligent Assistant)
  * 3D AI Virtual Assistant powered by Three.js
  * 
  * Architecture:
  *  - Three.js WebGL scene with procedurally animated 3D character
  *  - State machine: idle → greeting → thinking → responding → error
- *  - Domain-specific AmbuPriority knowledge base
+ *  - Domain-specific Pranvya knowledge base
  *  - Bilingual support (EN/HI) synced with govPortal language state
  *  - Fully self-contained, no server required
  */
@@ -25,13 +25,13 @@
     };
 
     /* ============================================================
-       KNOWLEDGE BASE — AmbuPriority Domain
+       KNOWLEDGE BASE — Pranvya Domain
     ============================================================ */
     const KB = {
         en: {
             greetings: [
-                "Namaste! I'm ARIA, your AmbuPriority assistant. I can help you request an ambulance, understand our emergency services, or navigate the portal. How can I assist you today?",
-                "Welcome to AmbuPriority! I'm ARIA. Whether you need an ambulance, information about our dispatch system, or portal guidance — I'm here to help. What can I do for you?"
+                "Namaste! I'm ARIA, your Pranvya assistant. I can help you request an ambulance, understand our emergency services, or navigate the portal. How can I assist you today?",
+                "Welcome to Pranvya! I'm ARIA. Whether you need an ambulance, information about our dispatch system, or portal guidance — I'm here to help. What can I do for you?"
             ],
             intents: [
                 {
@@ -39,7 +39,7 @@
                     phrases: ['help me', 'what can you do', 'how to use', 'i need help', 'please help', 'help please', 'how does this work'],
                     patterns: ['help', 'assist', 'guide', 'options', 'menu'],
                     response: "I can help you with the following:",
-                    followUp: "1. 🚑 **Ambulance Request** — How to call or register for an ambulance\n2. 📋 **Form Filling Guide** — Step-by-step help filling the registration form\n3. 📍 **GPS Location** — Auto-detect your address using GPS\n4. 📞 **Emergency Helplines** — Dial 102 / 108 / 112 (toll-free)\n5. ℹ️ **About AmbuPriority** — System features and documentation\n\nJust ask about any of these topics!",
+                    followUp: "1. 🚑 **Ambulance Request** — How to call or register for an ambulance\n2. 📋 **Form Filling Guide** — Step-by-step help filling the registration form\n3. 📍 **GPS Location** — Auto-detect your address using GPS\n4. 📞 **Emergency Helplines** — Dial 102 / 108 / 112 (toll-free)\n5. ℹ️ **About Pranvya** — System features and documentation\n\nJust ask about any of these topics!",
                     suggestions: ['Form Filling Help', 'Request Ambulance', 'Emergency Numbers', 'GPS Location Help'],
                     priority: 0 // lowest — only wins if nothing more specific matches
                 },
@@ -136,7 +136,7 @@
                 {
                     phrases: ['how long', 'arrival time', 'response time', 'how fast', 'how many minutes', 'when will ambulance come'],
                     patterns: ['time', 'arrival', 'long', 'wait', 'eta', 'fast', 'quick', 'minutes'],
-                    response: "AmbuPriority's average response time:",
+                    response: "Pranvya's average response time:",
                     followUp: "⏱ **Average: 6.8 minutes** in covered metropolitan areas\n\nOur system uses:\n• Real-time GPS routing to the nearest idle unit\n• Traffic signal preemption (green corridors)\n• Pre-alert to destination hospital ICU\n\nResponse times vary based on location and traffic conditions.",
                     suggestions: ['How it Works', 'Request Ambulance'],
                     priority: 5
@@ -144,7 +144,7 @@
                 {
                     phrases: ['hospital integration', 'which hospitals', 'hospital list', 'icu bed'],
                     patterns: ['hospital', 'icu', 'bed', 'trauma', 'facility'],
-                    response: "AmbuPriority integrates with 48+ hospitals across India:",
+                    response: "Pranvya integrates with 48+ hospitals across India:",
                     followUp: "Our system automatically:\n• Pre-alerts destination trauma centres\n• Transmits patient vitals via FHIR-compliant API\n• Reserves ICU/emergency bay before arrival\n\nThis eliminates critical delays at the emergency entrance.",
                     suggestions: ['View Documentation', 'Request Ambulance'],
                     priority: 5
@@ -152,7 +152,7 @@
                 {
                     phrases: ['green corridor', 'signal preemption', 'traffic signals', 'smart signal'],
                     patterns: ['signal', 'traffic', 'green', 'corridor', 'preemption'],
-                    response: "Smart Signal Preemption — a core AmbuPriority feature:",
+                    response: "Smart Signal Preemption — a core Pranvya feature:",
                     followUp: "When an ambulance is dispatched, our RF signal system turns traffic signals GREEN on the route — up to 500m ahead of the vehicle.\n\nThis system is operational at **120+ major junctions** across covered cities.",
                     suggestions: ['View Documentation'],
                     priority: 5
@@ -168,7 +168,7 @@
                 {
                     phrases: ['switch to hindi', 'hindi me', 'change language', 'bhasha'],
                     patterns: ['hindi', 'हिंदी', 'language', 'भाषा', 'translate'],
-                    response: "AmbuPriority supports Hindi and English:",
+                    response: "Pranvya supports Hindi and English:",
                     followUp: "Click the **हिंदी** button in the top utility bar to switch the entire portal to Hindi. Click again to return to English.",
                     suggestions: [],
                     priority: 3
@@ -176,7 +176,7 @@
                 {
                     phrases: ['ais 125', 'compliance', 'certification', 'standards'],
                     patterns: ['ais', '125', 'standard', 'compliant', 'certification', 'iso'],
-                    response: "AmbuPriority complies with multiple national standards:",
+                    response: "Pranvya complies with multiple national standards:",
                     followUp: "• **AIS-125** — Ambulance construction & equipment\n• **GIGW 3.0** — Government web portal standards\n• **HL7 FHIR R4** — Health data exchange\n• **DPDPA 2023** — Data privacy\n• **ISO 9001:2015** — Quality management\n\nSee the Documentation page for full details.",
                     suggestions: ['View Documentation'],
                     priority: 5
@@ -190,9 +190,9 @@
                     priority: 5
                 },
                 {
-                    phrases: ['what is ambupriority', 'about this portal', 'about ambupriority', 'what does this do', 'tell me about'],
-                    patterns: ['about', 'ambupriority', 'explain', 'system', 'portal'],
-                    response: "AmbuPriority is India's National Emergency Ambulance Priority System:",
+                    phrases: ['what is Pranvya', 'about this portal', 'about Pranvya', 'what does this do', 'tell me about'],
+                    patterns: ['about', 'Pranvya', 'explain', 'system', 'portal'],
+                    response: "Pranvya is India's National Emergency Ambulance Priority System:",
                     followUp: "It connects three systems in real-time:\n1. **GPS Ambulances** — nearest unit dispatch\n2. **Smart Traffic Signals** — green corridor creation\n3. **Hospital ICU dashboards** — pre-arrival alerts\n\nOperated by the National Health Authority under the Ministry of Health & Family Welfare.",
                     suggestions: ['Request Ambulance', 'View Documentation', 'Emergency Numbers'],
                     priority: 3
@@ -201,7 +201,7 @@
                     // GREETINGS
                     phrases: ['hi', 'hello', 'hey', 'namaste', 'good morning', 'good evening', 'good afternoon', 'hii', 'hiii'],
                     patterns: ['hi', 'hello', 'hey', 'namaste'],
-                    response: "Namaste! 🙏 Welcome to AmbuPriority.",
+                    response: "Namaste! 🙏 Welcome to Pranvya.",
                     followUp: "I'm ARIA, your emergency services assistant. I can help you with:\n\n🚑 Request an ambulance\n📋 Guide you through form filling\n📍 Help with GPS location\n📞 Share emergency helplines\n\nWhat would you like help with?",
                     suggestions: ['Request Ambulance', 'Form Filling Help', 'Emergency Numbers', 'GPS Location Help'],
                     priority: 2
@@ -217,17 +217,17 @@
                 }
             ],
             fallback: [
-                "I'm designed to assist with AmbuPriority emergency services. Could you rephrase your question? You can ask about requesting an ambulance, our system features, emergency helplines, or portal navigation.",
+                "I'm designed to assist with Pranvya emergency services. Could you rephrase your question? You can ask about requesting an ambulance, our system features, emergency helplines, or portal navigation.",
                 "I didn't quite catch that. I can help with ambulance registration, emergency helplines (102/108/112), our dispatch system, or portal guidance. What would you like to know?"
             ],
             hiName: 'ARIA (एरिया)',
         },
         hi: {
             greetings: [
-                "नमस्ते! मैं ARIA हूं, आपकी AmbuPriority सहायक। मैं आपको एम्बुलेंस बुलाने, हमारी सेवाओं के बारे में जानकारी देने या पोर्टल में मदद करने के लिए यहाँ हूं। आज मैं आपकी कैसे सहायता कर सकती हूं?",
+                "नमस्ते! मैं ARIA हूं, आपकी Pranvya सहायक। मैं आपको एम्बुलेंस बुलाने, हमारी सेवाओं के बारे में जानकारी देने या पोर्टल में मदद करने के लिए यहाँ हूं। आज मैं आपकी कैसे सहायता कर सकती हूं?",
             ],
             fallback: [
-                "मैं AmbuPriority की आपातकालीन सेवाओं के बारे में सहायता के लिए यहाँ हूं। कृपया एम्बुलेंस अनुरोध, हेल्पलाइन नंबर, या सिस्टम के बारे में पूछें।"
+                "मैं Pranvya की आपातकालीन सेवाओं के बारे में सहायता के लिए यहाँ हूं। कृपया एम्बुलेंस अनुरोध, हेल्पलाइन नंबर, या सिस्टम के बारे में पूछें।"
             ]
         }
     };
@@ -702,7 +702,7 @@
             // Minimum threshold: need at least a meaningful match
             if (!best || bestScore < 4) {
                 const fb = KB.en.fallback;
-                return { response: fb[Math.floor(Math.random() * fb.length)], suggestions: ['Request Ambulance', 'Emergency Helplines', 'Form Filling Help', 'About AmbuPriority'] };
+                return { response: fb[Math.floor(Math.random() * fb.length)], suggestions: ['Request Ambulance', 'Emergency Helplines', 'Form Filling Help', 'About Pranvya'] };
             }
 
             return {
@@ -795,14 +795,14 @@
                                 <span id="aria-status-text">Online • 24×7 Active</span>
                             </div>
                             <div style="margin-top:8px; font-family:'Inter',sans-serif; font-size:9px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.08em;">
-                                AmbuPriority National Portal
+                                Pranvya National Portal
                             </div>
                         </div>
                     </div>
                     <div id="aria-quick-chips">
                         <div class="aria-chip" data-query="request ambulance">🚑 Request Ambulance</div>
                         <div class="aria-chip" data-query="emergency helpline numbers">📞 Helplines</div>
-                        <div class="aria-chip" data-query="about ambupriority system">ℹ️ About</div>
+                        <div class="aria-chip" data-query="about Pranvya system">ℹ️ About</div>
                         <div class="aria-chip" data-query="gps location address">📍 GPS Help</div>
                     </div>
                 </div>
@@ -832,7 +832,7 @@
                     </button>
                 </div>
                 <div id="aria-footer-note">
-                    AmbuPriority • National Health Authority &nbsp;|&nbsp; Emergency: 102 / 108 / 112
+                    Pranvya • National Health Authority &nbsp;|&nbsp; Emergency: 102 / 108 / 112
                 </div>
             `;
             document.body.appendChild(win);
@@ -946,7 +946,7 @@
 
             // Show initial suggestions after greeting
             setTimeout(() => {
-                this.addSuggestions(['Request Ambulance', 'Emergency Helplines', 'GPS Location Help', 'About AmbuPriority']);
+                this.addSuggestions(['Request Ambulance', 'Emergency Helplines', 'GPS Location Help', 'About Pranvya']);
             }, 400);
         }
 

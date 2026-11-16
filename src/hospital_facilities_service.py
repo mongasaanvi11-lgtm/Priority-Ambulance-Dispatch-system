@@ -1,5 +1,5 @@
 """
-AmbuPriority — Hospital Facilities, Capability, Cost & Recommendations Engine
+Pranvya — Hospital Facilities, Capability, Cost & Recommendations Engine
 =============================================================================
 Provides verified facility definitions, government vs private pricing tariffs,
 specialties, ICU/Trauma capabilities, ambulance compatibility, and structured

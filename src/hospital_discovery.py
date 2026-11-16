@@ -1,5 +1,5 @@
 """
-AmbuPriority — Hospital Discovery Service (Production Edition)
+Pranvya — Hospital Discovery Service (Production Edition)
 =============================================================
 Hierarchical Hospital Discovery & Accurate Text Search:
 1. Locality/Neighborhood Radius (Real Grounded OpenStreetMap + Nominatim amenity=hospital).
@@ -72,7 +72,7 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
 def _get_nominatim_headers() -> Dict[str, str]:
     return {
-        "User-Agent": "AmbuPriorityNationalPortal/3.0 (emergency-dispatch@nhp.gov.in)",
+        "User-Agent": "PranvyaNationalPortal/3.0 (emergency-dispatch@nhp.gov.in)",
         "Accept": "application/json",
         "Accept-Language": "en-US,en;q=0.9"
     }
