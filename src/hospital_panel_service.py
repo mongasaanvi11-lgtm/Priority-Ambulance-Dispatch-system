@@ -1,5 +1,5 @@
 """
-AmbuPriority — Hospital Panel & Empanelment Registry
+Pranvya — Hospital Panel & Empanelment Registry
 =====================================================
 Manages verified empanelment and healthcare panel data for hospitals in India.
 

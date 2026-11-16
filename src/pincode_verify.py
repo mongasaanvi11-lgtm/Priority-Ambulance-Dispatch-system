@@ -1,5 +1,5 @@
 """
-AmbuPriority â€” PIN code verification against India Post
+Pranvya â€” PIN code verification against India Post
 =======================================================
 OpenStreetMap's address tags are community-maintained and occasionally wrong
 (e.g. the OSM node "Sadar Bazar, Delhi Cantonment" is tagged 110046, but that
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 _API = "https://api.postalpincode.in/postoffice/{q}"
 _HEADERS = {
-    "User-Agent": "AmbuPriorityEmergencyDispatch/2.0 (contact: admin@ambupriority.gov.in)"
+    "User-Agent": "PranvyaEmergencyDispatch/2.0 (contact: admin@Pranvya.gov.in)"
 }
 _CACHE: Dict[str, Tuple[float, List[Dict[str, str]]]] = {}
 _CACHE_TTL = 86400           # 1 day

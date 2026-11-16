@@ -1,5 +1,5 @@
 """
-AmbuPriority — Ambulance Fare Calculation & Rate Engine
+Pranvya — Ambulance Fare Calculation & Rate Engine
 ======================================================
 Manages ambulance tariff structures, government vs private vehicle rates,
 official Delhi CATS free emergency service rules, and exact road-route fare calculations.

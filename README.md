@@ -1,4 +1,8 @@
-# 🚑 E-Sanjeevni — National Emergency Medical Priority Routing & Triage System
+<<<<<<< Updated upstream
+# 🚑 Pranvya — National Emergency Medical Priority Routing & Triage System
+=======
+# 🚑 Pranvya — National Emergency Medical Priority Routing & Triage System
+>>>>>>> Stashed changes
 
 [![Government Standard](https://img.shields.io/badge/MoHFW-Clinical_Triage_Standard-blue?style=for-the-badge&logo=shield)](https://www.mohfw.gov.in/)
 [![Vehicle Standard](https://img.shields.io/badge/AIS--125-Road_Ambulance_Compliance-orange?style=for-the-badge)](https://morth.nic.in/)
@@ -12,7 +16,11 @@
 
 ## 📌 Project Overview
 
-**E-Sanjeevni** is an intelligent emergency ambulance allocation, clinical triage, and hospital suitability recommendation platform aligned with official Indian National Health Authority (NHA), WHO Interagency Integrated Triage Tool (IITT), and Automotive Industry Standard (AIS-125) norms.
+<<<<<<< Updated upstream
+**Pranvya** is an intelligent emergency ambulance allocation, clinical triage, and hospital suitability recommendation platform aligned with official Indian National Health Authority (NHA), WHO Interagency Integrated Triage Tool (IITT), and Automotive Industry Standard (AIS-125) norms.
+=======
+**Pranvya** is an intelligent emergency ambulance allocation, clinical triage, and hospital suitability recommendation platform aligned with official Indian National Health Authority (NHA), WHO Interagency Integrated Triage Tool (IITT), and Automotive Industry Standard (AIS-125) norms.
+>>>>>>> Stashed changes
 
 The platform provides a complete digital emergency lifecycle:
 1. **Patient Intake & Registration** (`register.html`): Rapid geolocation lookup, chief complaint, caller identity verification.
@@ -26,7 +34,11 @@ The platform provides a complete digital emergency lifecycle:
 
 ## 🤖 ARIA (Ambulance Response Intelligent Assistant)
 
-**ARIA** is an interactive, browser-native 3D AI Virtual Assistant integrated across the E-Sanjeevni portal:
+<<<<<<< Updated upstream
+**ARIA** is an interactive, browser-native 3D AI Virtual Assistant integrated across the Pranvya portal:
+=======
+**ARIA** is an interactive, browser-native 3D AI Virtual Assistant integrated across the Pranvya portal:
+>>>>>>> Stashed changes
 * **Three.js Powered 3D Avatar:** Procedurally modeled and animated 3D character with real-time responsive states (`idle`, `greeting`, `thinking`, `responding`, `error`).
 * **Bilingual Intelligence (English & हिंदी):** Understands queries and form-filling questions in both languages, seamlessly synced with the portal's language toggle.
 * **Emergency Domain Knowledge Base:** Provides immediate answers on triage priority meanings, AIS-125 ambulance types, GPS geolocation usage, hospital capability matching, and emergency protocols (102/108/112).
@@ -72,7 +84,11 @@ Under National Health Mission norms, ambulances are categorized based on clinica
 ## 📂 Repository Directory Structure
 
 ```plaintext
-E-Sanjeevni/
+<<<<<<< Updated upstream
+Pranvya/
+=======
+Pranvya/
+>>>>>>> Stashed changes
 ├── app.py                       # Application entrypoint
 ├── config.py                    # Environment & system configurations
 ├── requirements.txt             # Python dependencies
@@ -120,8 +136,13 @@ E-Sanjeevni/
 
 ### 2. Clone / Setup the Repository
 ```bash
-git clone https://github.com/your-username/E-Sanjeevni.git
-cd E-Sanjeevni
+<<<<<<< Updated upstream
+git clone https://github.com/your-username/Pranvya.git
+cd Pranvya
+=======
+git clone https://github.com/your-username/Pranvya.git
+cd Pranvya
+>>>>>>> Stashed changes
 ```
 
 ### 3. Create a Virtual Environment & Install Dependencies

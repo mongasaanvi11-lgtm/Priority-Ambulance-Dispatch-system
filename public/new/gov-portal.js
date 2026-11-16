@@ -13,7 +13,7 @@ const translations = {
         "lang_current": "English",
         
         // Brand & Header
-        "portal_name": "AmbuPriority",
+        "portal_name": "Pranvya",
         "portal_subtitle": "National Ambulance Priority Routing & Dispatch System",
         "ministry_name": "Ministry of Health and Family Welfare",
         "nav_home": "Home",
@@ -25,7 +25,7 @@ const translations = {
 
         // Ticker
         "ticker_latest": "LATEST DISPATCH UPDATE",
-        "ticker_news": "AmbuPriority green-corridor priority integrated across 48 major metropolitan hospitals. | Real-time traffic signal preemption operational at 120 key junctions. | Multilingual emergency hotline 102 & 108 operating 24x7 nationwide.",
+        "ticker_news": "Pranvya green-corridor priority integrated across 48 major metropolitan hospitals. | Real-time traffic signal preemption operational at 120 key junctions. | Multilingual emergency hotline 102 & 108 operating 24x7 nationwide.",
 
         // Hero Section
         "hero_tag": "NATIONAL HEALTH EMERGENCY CORRIDOR",
@@ -61,7 +61,7 @@ const translations = {
         "gallery_next": "Next Photo",
 
         // Footer
-        "footer_title": "AmbuPriority National Portal",
+        "footer_title": "Pranvya National Portal",
         "footer_dept": "National Health Authority • Ministry of Health and Family Welfare, Government of India",
         "footer_disclaimer": "Official Central Citizen Emergency Health Corridor System. All ambulances are monitored under Real-Time Priority Routing Protocol (AIS-125 Compliant).",
         "footer_links_home": "Home",

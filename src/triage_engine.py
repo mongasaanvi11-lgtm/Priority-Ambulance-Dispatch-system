@@ -1,5 +1,5 @@
 """
-AmbuPriority — Clinical Triage Decision Engine
+Pranvya — Clinical Triage Decision Engine
 ================================================
 Pre-hospital telephone triage assessment module.
 

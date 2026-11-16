@@ -1,5 +1,5 @@
 """
-AmbuPriority — Hospital API Fetch Service with Safe Rotating Key Manager
+Pranvya — Hospital API Fetch Service with Safe Rotating Key Manager
 ========================================================================
 Uses the SafeGeminiKeyManager for robust key rotation, backoff, and model calls.
 """

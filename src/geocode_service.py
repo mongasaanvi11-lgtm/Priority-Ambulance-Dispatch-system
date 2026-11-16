@@ -1,5 +1,5 @@
 """
-AmbuPriority — Resilient geocoding service
+Pranvya — Resilient geocoding service
 ==========================================
 OpenStreetMap's Nominatim is free but throttles hard (HTTP 429). Once throttled,
 every reverse-geocode call fails and the UI degrades to raw coordinates.
@@ -27,7 +27,7 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-_UA = "AmbuPriorityEmergencyDispatch/2.0 (contact: admin@ambupriority.gov.in)"
+_UA = "PranvyaEmergencyDispatch/1.0 (prototype)"
 
 # ── Rate limiting ────────────────────────────────────────────────────────────
 _nominatim_lock = threading.Lock()

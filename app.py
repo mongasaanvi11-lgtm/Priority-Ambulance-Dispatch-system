@@ -5,7 +5,7 @@ from src.conversation import ConversationManager
 
 # Page Configuration
 st.set_page_config(
-    page_title="AmbuPriority & FirstAid AI",
+    page_title="Pranvya & FirstAid AI",
     page_icon="🚑",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -77,7 +77,7 @@ if "conv_manager" not in st.session_state:
     st.session_state.conv_manager = ConversationManager()
 
 # Top Tab Navigation: Portal vs Live FirstAid AI
-tabs = st.tabs(["🌐 AmbuPriority Government Portal", "🩺 FirstAid AI Chatbot Assistant", "📄 Portal Documentation"])
+tabs = st.tabs(["🌐 Pranvya Government Portal", "🩺 FirstAid AI Chatbot Assistant", "📄 Portal Documentation"])
 
 PUBLIC_DIR = Path(__file__).resolve().parent / "public"
 
