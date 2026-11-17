@@ -1,9 +1,5 @@
 /**
-<<<<<<< Updated upstream
  * Pranvya — ARIA (Ambulance Response Intelligent Assistant)
-=======
- * Pranvya — ARIA (Ambulance Response Intelligent Assistant)
->>>>>>> Stashed changes
  * 3D Procedural AI Virtual Assistant powered by Canvas/Three.js
  * 
  * Purely Client-Side Form Assistance Engine:
@@ -32,19 +28,11 @@
     ============================================================ */
     const FORM_KNOWLEDGE = {
         hi: {
-<<<<<<< Updated upstream
             greeting: "नमस्ते! 🙏 मैं **ARIA (एरिया)** हूँ, आपकी Pranvya सहायक।\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
             greetingChips: ["हिंदी (Hindi)", "English", "फॉर्म कैसे भरें?", "कौन सा फॉर्म भरें?"],
             
             whichForm: {
                 title: "Pranvya पोर्टल पर मुख्य रूप से 3 फॉर्म उपलब्ध हैं:",
-=======
-            greeting: "नमस्ते! 🙏 मैं **ARIA (एरिया)** हूँ, आपकी Pranvya सहायक।\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
-            greetingChips: ["हिंदी (Hindi)", "English", "फॉर्म कैसे भरें?", "कौन सा फॉर्म भरें?"],
-            
-            whichForm: {
-                title: "Pranvya पोर्टल पर मुख्य रूप से 3 फॉर्म उपलब्ध हैं:",
->>>>>>> Stashed changes
                 body: "1. 📝 **एम्बुलेंस पंजीकरण फ़ॉर्म (Registration Form - register.html):**\n• जब किसी मरीज के लिए तत्काल सरकारी/प्राइवेट एम्बुलेंस बुलानी हो।\n• इसमें मरीज का नाम, पता, संपर्क नंबर और GPS लोकेशन भरी जाती है।\n\n2. 🩺 **क्लिनिकल असेसमेंट / ट्रायज फ़ॉर्म (Clinical Assessment - assessment.html):**\n• मरीज की स्वास्थ्य स्थिति और लक्षणों (सीने में दर्द, सांस लेने में तकलीफ, स्ट्रोक आदि) का मूल्यांकन करने के लिए।\n• इससे सिस्टम तय करता है कि ALS (Advanced Life Support) चाहिए या BLS।\n\n3. 🔍 **अस्पताल खोज फ़ॉर्म (Hospital Search - hospitals.html):**\n• नजदीकी पैनल (आयुष्मान PM-JAY, CGHS, ECHS, बीमा) और आपातकालीन बेड खोजने के लिए।\n\n👉 आपको इनमें से किस फॉर्म के बारे में जानकारी चाहिए?",
                 chips: ["रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स कौन सी हैं?", "GPS लोकेशन कैसे डालें?"]
             },
@@ -111,19 +99,11 @@
         },
 
         en: {
-<<<<<<< Updated upstream
             greeting: "Namaste! 🙏 I am **ARIA**, your Pranvya Virtual Assistant.\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
             greetingChips: ["English", "हिंदी (Hindi)", "How to fill form?", "Which form to fill?"],
             
             whichForm: {
                 title: "There are 3 main forms available on Pranvya:",
-=======
-            greeting: "Namaste! 🙏 I am **ARIA**, your Pranvya Virtual Assistant.\n\nDo you want to continue in **Hindi** or **English**?\n(क्या आप हिंदी में आगे बढ़ना चाहते हैं या English में?)",
-            greetingChips: ["English", "हिंदी (Hindi)", "How to fill form?", "Which form to fill?"],
-            
-            whichForm: {
-                title: "There are 3 main forms available on Pranvya:",
->>>>>>> Stashed changes
                 body: "1. 📝 **Ambulance Registration Form (register.html):**\n• Use this when you urgently need to call or dispatch an ambulance for a patient.\n• Captures patient identity, 10-digit mobile, pickup address, and GPS coordinates.\n\n2. 🩺 **Clinical Triage Assessment Form (assessment.html):**\n• Evaluates medical urgency (cardiac chest pain, stroke FAST symptoms, trauma, respiratory arrest).\n• Categorizes urgency into RED (Immediate ALS), YELLOW, or GREEN tier.\n\n3. 🔍 **Hospital Search Form (hospitals.html):**\n• Search for empanelled hospitals under Ayushman PM-JAY, CGHS, ECHS, or private insurance.\n\n👉 Which of these forms do you need assistance with?",
                 chips: ["How to fill Registration Form?", "How to fill Assessment Form?", "What fields are mandatory?", "How to use GPS?"]
             },
@@ -626,20 +606,12 @@
             this.lang = langCode === 'hi' ? 'hi' : 'en';
             if (this.lang === 'hi') {
                 return {
-<<<<<<< Updated upstream
                     response: "बहुत बढ़िया! मैं अब आपसे **हिंदी** में बात करूँगी। 😊\n\nमैं Pranvya के सभी फॉर्म भरने में आपकी पूरी सहायता कर सकती हूँ। आप पूछ सकते हैं:\n• कौन सा फॉर्म भरना है?\n• एम्बुलेंस रजिस्ट्रेशन फॉर्म कैसे भरें?\n• क्लिनिकल असेसमेंट फॉर्म कैसे भरें?\n• अनिवार्य फ़ील्ड्स कौन सी हैं?\n• GPS लोकेशन कैसे डालें?",
-=======
-                    response: "बहुत बढ़िया! मैं अब आपसे **हिंदी** में बात करूँगी। 😊\n\nमैं Pranvya के सभी फॉर्म भरने में आपकी पूरी सहायता कर सकती हूँ। आप पूछ सकते हैं:\n• कौन सा फॉर्म भरना है?\n• एम्बुलेंस रजिस्ट्रेशन फॉर्म कैसे भरें?\n• क्लिनिकल असेसमेंट फॉर्म कैसे भरें?\n• अनिवार्य फ़ील्ड्स कौन सी हैं?\n• GPS लोकेशन कैसे डालें?",
->>>>>>> Stashed changes
                     suggestions: ["कौन सा फॉर्म भरें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स कौन सी हैं?"]
                 };
             } else {
                 return {
-<<<<<<< Updated upstream
                     response: "Great! We will continue in **English**. 😊\n\nI can guide you through every form on the Pranvya portal:\n• Which form should I fill?\n• How to fill the Ambulance Registration Form?\n• How to fill the Clinical Triage Assessment Form?\n• What fields are mandatory?\n• How does the GPS location button work?",
-=======
-                    response: "Great! We will continue in **English**. 😊\n\nI can guide you through every form on the Pranvya portal:\n• Which form should I fill?\n• How to fill the Ambulance Registration Form?\n• How to fill the Clinical Triage Assessment Form?\n• What fields are mandatory?\n• How does the GPS location button work?",
->>>>>>> Stashed changes
                     suggestions: ["Which form to fill?", "How to fill Registration Form?", "How to fill Assessment Form?", "What fields are mandatory?"]
                 };
             }
@@ -786,13 +758,8 @@
             if (lower === 'hi' || lower === 'hello' || lower === 'namaste' || lower === 'hey' || lower.includes('namaskar')) {
                 return {
                     response: this.lang === 'hi'
-<<<<<<< Updated upstream
                         ? "नमस्ते! 🙏 मैं ARIA हूँ। मैं Pranvya पोर्टल पर किसी भी फॉर्म को भरने में आपकी सहायता के लिए तैयार हूँ।\n\nआप कौन सा फॉर्म भरना चाहते हैं या किस फ़ील्ड में समस्या आ रही है?"
                         : "Namaste! 🙏 I am ARIA. I am here to help you navigate and fill any form on the Pranvya portal.\n\nWhich form are you filling or what question do you have?",
-=======
-                        ? "नमस्ते! 🙏 मैं ARIA हूँ। मैं Pranvya पोर्टल पर किसी भी फॉर्म को भरने में आपकी सहायता के लिए तैयार हूँ।\n\nआप कौन सा फॉर्म भरना चाहते हैं या किस फ़ील्ड में समस्या आ रही है?"
-                        : "Namaste! 🙏 I am ARIA. I am here to help you navigate and fill any form on the Pranvya portal.\n\nWhich form are you filling or what question do you have?",
->>>>>>> Stashed changes
                     suggestions: this.lang === 'hi'
                         ? ["कौन सा फॉर्म भरें?", "रजिस्ट्रेशन फॉर्म कैसे भरें?", "असेसमेंट फॉर्म कैसे भरें?", "अनिवार्य फ़ील्ड्स"]
                         : ["Which form to fill?", "How to fill Registration Form?", "How to fill Assessment Form?", "Mandatory Fields"]
@@ -893,11 +860,7 @@
                                 <span id="aria-status-text">Online • Form Guidance</span>
                             </div>
                             <div style="margin-top:8px; font-family:'Inter',sans-serif; font-size:9px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em;">
-<<<<<<< Updated upstream
                                 Pranvya Portal Guide
-=======
-                                Pranvya Portal Guide
->>>>>>> Stashed changes
                             </div>
                         </div>
                     </div>
@@ -934,11 +897,7 @@
                     </button>
                 </div>
                 <div id="aria-footer-note">
-<<<<<<< Updated upstream
                     Pranvya • Form Assistant &nbsp;|&nbsp; Emergency Helplines: 102 / 108 / 112
-=======
-                    Pranvya • Form Assistant &nbsp;|&nbsp; Emergency Helplines: 102 / 108 / 112
->>>>>>> Stashed changes
                 </div>
             `;
             document.body.appendChild(win);
